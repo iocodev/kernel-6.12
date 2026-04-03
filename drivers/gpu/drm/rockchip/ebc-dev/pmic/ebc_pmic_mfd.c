@@ -12,6 +12,8 @@
 #include <linux/regmap.h>
 #include <linux/version.h>
 
+#include "g2195.h"
+
 struct pmic_mfd_data {
 	struct device *dev;
 	const struct regmap_config *regmap_config;
@@ -93,10 +95,26 @@ static struct pmic_mfd_data fitipower_fp9936 = {
 	.mfd_cell_size = ARRAY_SIZE(fp9936_cells),
 };
 
+#ifdef CONFIG_EPD_G2195_PMIC
+static const struct mfd_cell g2195_cells[] = {
+	{ .name = "g2195-regulator", },
+	{ .name = "g2195-thermal", },
+};
+
+static struct pmic_mfd_data gmt_g2195 = {
+	.mfd_cell = g2195_cells,
+	.mfd_cell_size = ARRAY_SIZE(g2195_cells),
+	.regmap_config = &regmap_config_g2195,
+};
+#endif
+
 static const struct of_device_id pmic_mfd_i2c_of_match[] = {
 	{ .compatible = "silergy,sy7636a-pmic", .data = &silergy_sy7636a },
 	{ .compatible = "fitipower,fp9931-pmic", .data = &fitipower_fp9931 },
 	{ .compatible = "fitipower,fp9936-pmic", .data = &fitipower_fp9936 },
+#ifdef CONFIG_EPD_G2195_PMIC
+	{ .compatible = "gmt,g2195-pmic", .data = &gmt_g2195 },
+#endif
 	{}
 };
 MODULE_DEVICE_TABLE(of, pmic_mfd_i2c_of_match);

@@ -9,7 +9,7 @@
 	.file	"ebc_dev_y8.c"
                                         // Start of file scope inline assembly
 	.section	.initcall6s.init,"a",@progbits
-__initcall__kmod_rkebc__649_4720_ebc_init6s:
+__initcall__kmod_rkebc__649_4911_ebc_init6s:
 .Ltmp0:
 	.word	ebc_init-.Ltmp0
 	.text
@@ -227,8 +227,8 @@ ebc_probe:                              // @ebc_probe
 	cmp	w0, #5
 	b.hs	.LBB2_27
 // %bb.26:
-	adrp	x8, .Lswitch.table.ebc_probe.274
-	add	x8, x8, :lo12:.Lswitch.table.ebc_probe.274
+	adrp	x8, .Lswitch.table.ebc_probe.275
+	add	x8, x8, :lo12:.Lswitch.table.ebc_probe.275
 	ldr	w22, [x8, w0, uxtw #2]
 	b	.LBB2_33
 .LBB2_27:
@@ -917,11 +917,10 @@ ebc_panel_probe:                        // @ebc_panel_probe
 	mov	x2, x20
 	mov	w3, #1                          // =0x1
 	mov	x4, xzr
-	mov	w22, #1                         // =0x1
 	bl	of_property_read_variable_u32_array
 	tbz	w0, #31, .LBB5_18
 // %bb.17:
-	str	w22, [x20]
+	str	wzr, [x20]
 .LBB5_18:
 	ldr	x0, [x21, #696]
 	add	x20, x19, #264
@@ -1207,7 +1206,7 @@ ebc_lut_table_init:                     // @ebc_lut_table_init
 	add	x1, x1, :lo12:.L.str.80
 	adrp	x2, .L__func__.ebc_lut_table_init
 	add	x2, x2, :lo12:.L__func__.ebc_lut_table_init
-	mov	w3, #3846                       // =0xf06
+	mov	w3, #4035                       // =0xfc3
 	bl	_dev_err
 	mov	w0, #-12                        // =0xfffffff4
 	b	.LBB6_9
@@ -1246,43 +1245,31 @@ ebc_ability_init:                       // @ebc_ability_init
 	bl	epd_lut_get_wf_bit
 	ldr	w8, [x19, #2132]
 	cmp	w0, #32
+	mov	w10, #257                       // =0x101
 	cset	w9, eq
-	cmp	w8, #3576
+	strh	w10, [x19, #2144]
+	cmp	w8, #3572
 	strb	w9, [x19, #2146]
-	b.ne	.LBB7_2
+	b.ne	.LBB7_3
 // %bb.1:
-	mov	w9, #1                          // =0x1
-	b	.LBB7_3
-.LBB7_2:
-	ldr	w9, [x19, #2136]
-	cmp	w8, #3572
-	mov	w10, #3576                      // =0xdf8
-	ccmp	w9, w10, #4, ne
-	cset	w9, eq
-.LBB7_3:
-	cmp	w8, #3572
-	strb	w9, [x19, #2144]
-	strb	w9, [x19, #2145]
-	b.ne	.LBB7_6
-// %bb.4:
 	ldr	w8, [x19, #272]
-	cbnz	w8, .LBB7_6
-// %bb.5:
+	cbnz	w8, .LBB7_3
+// %bb.2:
 	ldr	w8, [x19, #268]
-	cbz	w8, .LBB7_12
+	cbz	w8, .LBB7_9
+.LBB7_3:
+	mov	w8, wzr
+.LBB7_4:
+	ldr	w9, [x19, #2140]
+	strb	w8, [x19, #2149]
+	cbnz	w9, .LBB7_6
+// %bb.5:
+	ldr	w8, [x19, #264]
+	cmp	w8, #230
+	b.ne	.LBB7_8
 .LBB7_6:
 	mov	w8, wzr
 .LBB7_7:
-	ldr	w9, [x19, #2140]
-	strb	w8, [x19, #2149]
-	cbnz	w9, .LBB7_9
-// %bb.8:
-	ldr	w8, [x19, #264]
-	cmp	w8, #230
-	b.ne	.LBB7_11
-.LBB7_9:
-	mov	w8, wzr
-.LBB7_10:
 	strb	w8, [x19, #2147]
 	adrp	x1, .L.str.84
 	add	x1, x1, :lo12:.L.str.84
@@ -1296,7 +1283,7 @@ ebc_ability_init:                       // @ebc_ability_init
 	ldp	x29, x30, [sp], #32             // 16-byte Folded Reload
 	ldr	x30, [x18, #-8]!
 	ret
-.LBB7_11:
+.LBB7_8:
 	ldr	x0, [x20, #696]
 	adrp	x1, .L.str.83
 	add	x1, x1, :lo12:.L.str.83
@@ -1304,10 +1291,10 @@ ebc_ability_init:                       // @ebc_ability_init
 	bl	of_find_property
 	cmp	x0, #0
 	cset	w8, eq
-	b	.LBB7_10
-.LBB7_12:
-	mov	w8, #1                          // =0x1
 	b	.LBB7_7
+.LBB7_9:
+	mov	w8, #1                          // =0x1
+	b	.LBB7_4
 .Lfunc_end7:
 	.size	ebc_ability_init, .Lfunc_end7-ebc_ability_init
                                         // -- End function
@@ -2953,32 +2940,33 @@ ebc_thread:                             // @ebc_thread
 	add	x29, sp, #144
 	stp	x28, x27, [sp, #160]            // 16-byte Folded Spill
 	stp	x26, x25, [sp, #176]            // 16-byte Folded Spill
-	add	x20, x19, #4, lsl #12           // =16384
 	stp	x24, x23, [sp, #192]            // 16-byte Folded Spill
 	stp	x22, x21, [sp, #208]            // 16-byte Folded Spill
+	add	x22, x19, #4, lsl #12           // =16384
 	bl	ebc_empty_osd_buf_get
 	add	x8, x19, #1880
-	mov	w24, wzr
+	mov	w26, wzr
 	mov	w21, #1                         // =0x1
-	stp	xzr, x8, [sp, #56]              // 16-byte Folded Spill
+	stp	xzr, x8, [sp, #48]              // 16-byte Folded Spill
 	add	x8, x19, #136
 	mov	w23, #2                         // =0x2
-	str	x8, [sp, #32]                   // 8-byte Folded Spill
+	str	x8, [sp, #24]                   // 8-byte Folded Spill
 	//APP
 	mrs	x8, SP_EL0
 	//NO_APP
-	mov	w28, #1                         // =0x1
+	mov	w27, #1                         // =0x1
 	stur	x8, [x29, #-64]                 // 8-byte Folded Spill
 	mov	w8, #1                          // =0x1
 	stur	wzr, [x29, #-52]                // 4-byte Folded Spill
-	stp	wzr, wzr, [sp, #44]             // 8-byte Folded Spill
+	str	wzr, [sp, #72]                  // 4-byte Folded Spill
+	str	wzr, [sp, #40]                  // 4-byte Folded Spill
 	str	x0, [x19, #1816]
-	str	w8, [sp, #72]                   // 4-byte Folded Spill
-	stur	x20, [x29, #-48]                // 8-byte Folded Spill
+	str	w8, [sp, #68]                   // 4-byte Folded Spill
+	stur	x22, [x29, #-48]                // 8-byte Folded Spill
 	b	.LBB15_4
 .LBB15_1:                               //   in Loop: Header=BB15_4 Depth=1
 	ldrsw	x8, [x19, #184]
-	ldr	x9, [sp, #64]                   // 8-byte Folded Reload
+	ldr	x9, [sp, #56]                   // 8-byte Folded Reload
 	add	x1, x19, #304
 	mov	w2, #2                          // =0x2
 	ldr	x0, [x9, x8, lsl #3]
@@ -3000,23 +2988,23 @@ ebc_thread:                             // @ebc_thread
                                         //         Child Loop BB15_23 Depth 4
                                         //     Child Loop BB15_48 Depth 2
                                         //       Child Loop BB15_53 Depth 3
-                                        //     Child Loop BB15_138 Depth 2
-                                        //     Child Loop BB15_155 Depth 2
-                                        //     Child Loop BB15_162 Depth 2
-                                        //       Child Loop BB15_166 Depth 3
-                                        //     Child Loop BB15_180 Depth 2
-                                        //     Child Loop BB15_173 Depth 2
-                                        //     Child Loop BB15_151 Depth 2
-                                        //     Child Loop BB15_186 Depth 2
-                                        //       Child Loop BB15_189 Depth 3
-                                        //         Child Loop BB15_192 Depth 4
-                                        //     Child Loop BB15_277 Depth 2
-                                        //     Child Loop BB15_242 Depth 2
-                                        //     Child Loop BB15_288 Depth 2
-                                        //     Child Loop BB15_325 Depth 2
-                                        //     Child Loop BB15_252 Depth 2
-                                        //       Child Loop BB15_255 Depth 3
-                                        //         Child Loop BB15_261 Depth 4
+                                        //     Child Loop BB15_137 Depth 2
+                                        //     Child Loop BB15_154 Depth 2
+                                        //     Child Loop BB15_161 Depth 2
+                                        //       Child Loop BB15_165 Depth 3
+                                        //     Child Loop BB15_179 Depth 2
+                                        //     Child Loop BB15_172 Depth 2
+                                        //     Child Loop BB15_150 Depth 2
+                                        //     Child Loop BB15_185 Depth 2
+                                        //       Child Loop BB15_188 Depth 3
+                                        //         Child Loop BB15_191 Depth 4
+                                        //     Child Loop BB15_276 Depth 2
+                                        //     Child Loop BB15_241 Depth 2
+                                        //     Child Loop BB15_287 Depth 2
+                                        //     Child Loop BB15_319 Depth 2
+                                        //     Child Loop BB15_251 Depth 2
+                                        //       Child Loop BB15_254 Depth 3
+                                        //         Child Loop BB15_260 Depth 4
                                         //     Child Loop BB15_351 Depth 2
                                         //       Child Loop BB15_356 Depth 3
                                         //     Child Loop BB15_388 Depth 2
@@ -3024,10 +3012,10 @@ ebc_thread:                             // @ebc_thread
 	adrp	x0, ebc_assist_finished_flag_sem
 	add	x0, x0, :lo12:ebc_assist_finished_flag_sem
 	bl	down
-	tbz	w24, #0, .LBB15_6
+	tbz	w26, #0, .LBB15_6
 // %bb.5:                               //   in Loop: Header=BB15_4 Depth=1
 	ldrsw	x8, [x19, #184]
-	ldr	x10, [sp, #64]                  // 8-byte Folded Reload
+	ldr	x10, [sp, #56]                  // 8-byte Folded Reload
 	ldrsw	x2, [x19, #540]
 	sub	w9, w21, w8
 	ldr	x1, [x10, x8, lsl #3]
@@ -3081,43 +3069,42 @@ ebc_thread:                             // @ebc_thread
 .LBB15_12:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #2
-	b.ge	.LBB15_108
+	b.ge	.LBB15_107
 .LBB15_13:                              //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_power_on
-	ldr	w8, [x20, #2168]
+	ldr	w8, [x22, #2168]
 	cmp	w8, #1
 	b.ne	.LBB15_24
 // %bb.14:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #1912]
-	stur	w28, [x29, #-68]                // 4-byte Folded Spill
+	stur	w27, [x29, #-68]                // 4-byte Folded Spill
 	ldr	x0, [x19, #1656]
-	ldp	w25, w26, [x19, #188]
-	str	w8, [sp, #52]                   // 4-byte Folded Spill
+	ldp	w24, w25, [x19, #188]
+	str	w8, [sp, #44]                   // 4-byte Folded Spill
 	adrp	x8, global_ebc
-	ldr	x22, [x19, #1728]
-	ldr	x27, [x8, :lo12:global_ebc]
+	ldr	x23, [x19, #1728]
+	ldr	x28, [x8, :lo12:global_ebc]
 	ldr	w8, [x19, #2128]
-	ldr	x24, [x19, #1648]
-	ldr	x28, [x19, #1720]
+	ldr	x26, [x19, #1648]
+	ldr	x27, [x19, #1720]
 	strb	w21, [x19, #1904]
 	cmp	w8, #2
-	b.ge	.LBB15_310
+	b.ge	.LBB15_304
 .LBB15_15:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2160]
+	ldrb	w8, [x22, #2160]
 	cmp	w8, #1
 	b.ne	.LBB15_35
 // %bb.16:                              //   in Loop: Header=BB15_4 Depth=1
-	ldur	x8, [x29, #-48]                 // 8-byte Folded Reload
-	str	x0, [sp, #24]                   // 8-byte Folded Spill
-	strb	wzr, [x8, #2160]
-	ldr	w23, [x27, #1840]
+	strb	wzr, [x22, #2160]
+	str	x23, [sp, #16]                  // 8-byte Folded Spill
+	ldr	w23, [x28, #1840]
+	str	x0, [sp, #32]                   // 8-byte Folded Spill
 	cmp	w23, #64
-	b.gt	.LBB15_321
+	b.gt	.LBB15_315
 // %bb.17:                              //   in Loop: Header=BB15_4 Depth=1
 	lsl	w8, w23, #8
-	add	x20, x27, #2160
-	str	x22, [sp, #16]                  // 8-byte Folded Spill
-	ldr	x22, [x27, #1864]
+	add	x20, x28, #2160
+	ldr	x22, [x28, #1864]
 	mov	x0, x20
 	mov	w1, wzr
 	sxtw	x2, w8
@@ -3171,18 +3158,19 @@ ebc_thread:                             // @ebc_thread
 .LBB15_24:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	ldrsw	x20, [x19, #184]
+	mov	w26, w27
 	strb	w21, [x19, #1904]
 	cmp	w8, #2
 	mov	w8, w20
-	b.ge	.LBB15_311
+	b.ge	.LBB15_305
 .LBB15_25:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w10, #24                        // =0x18
-	ldr	x9, [sp, #32]                   // 8-byte Folded Reload
+	ldr	x9, [sp, #24]                   // 8-byte Folded Reload
 	ldr	w22, [x19, #252]
 	smaddl	x23, w20, w10, x9
 	sub	w9, w21, w8
 	ldr	w8, [x19, #280]
-	ldp	w25, w26, [x19, #244]
+	ldp	w24, w25, [x19, #244]
 	str	w9, [x19, #184]
 	cbz	w8, .LBB15_27
 // %bb.26:                              //   in Loop: Header=BB15_4 Depth=1
@@ -3222,7 +3210,7 @@ ebc_thread:                             // @ebc_thread
 	mov	w2, wzr
 	mov	w3, wzr
 	mov	w4, wzr
-	add	w20, w26, w25
+	add	w20, w25, w24
 	ldr	x8, [x0, #184]
 	ldur	w16, [x8, #-4]
 	movk	w17, #41546
@@ -3267,27 +3255,28 @@ ebc_thread:                             // @ebc_thread
 	brk	#0x8228
 .Ltmp20:
 	blr	x8
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	ldrb	w8, [x20, #2249]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	mov	w27, w26
+	ldrb	w8, [x22, #2249]
 	cmp	w8, #1
 	b.ne	.LBB15_31
 // %bb.30:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2264]
+	ldr	w8, [x22, #2264]
 	mov	w23, #2                         // =0x2
 	add	w8, w8, #1
-	str	w8, [x20, #2264]
+	str	w8, [x22, #2264]
 	ldrb	w8, [x19, #1912]
 	tbnz	w8, #3, .LBB15_42
 	b	.LBB15_64
 .LBB15_31:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2184]
+	ldr	w8, [x22, #2184]
 	mov	w23, #2                         // =0x2
 	tbnz	w8, #31, .LBB15_41
 // %bb.32:                              //   in Loop: Header=BB15_4 Depth=1
 	sub	w8, w8, #1
 	b	.LBB15_58
 .LBB15_33:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	x0, [x27, #8]
+	ldr	x0, [x28, #8]
 	mov	x1, x20
 	mov	w2, w23
 	mov	w3, #1                          // =0x1
@@ -3300,50 +3289,50 @@ ebc_thread:                             // @ebc_thread
 	brk	#0x8228
 .Ltmp21:
 	blr	x8
-	ldr	x22, [sp, #16]                  // 8-byte Folded Reload
 	mov	w20, wzr
 .LBB15_34:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
-	ldr	x0, [sp, #24]                   // 8-byte Folded Reload
+	ldr	x23, [sp, #16]                  // 8-byte Folded Reload
+	ldr	x0, [sp, #32]                   // 8-byte Folded Reload
 	cmp	w8, #2
-	b.ge	.LBB15_322
+	b.ge	.LBB15_316
 .LBB15_35:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	x8, [x19, #1792]
-	mul	w20, w26, w25
+	mul	w20, w25, w24
 	ldr	x1, [x8, #8]
 	mov	x2, x20
 	bl	memcpy
 	ldr	x8, [x19, #1800]
-	mov	x0, x22
+	mov	x0, x23
 	mov	x2, x20
 	ldr	x1, [x8, #8]
 	bl	memcpy
 	ldr	x0, [x19, #112]
 	ldr	w22, [x19, #252]
-	ldp	w23, w25, [x19, #244]
+	ldp	w23, w24, [x19, #244]
 	ldrb	w8, [x0, #796]
 	tbnz	w8, #6, .LBB15_37
 // %bb.36:                              //   in Loop: Header=BB15_4 Depth=1
-	mov	x1, x24
+	mov	x1, x26
 	mov	x2, x20
 	mov	w3, #1                          // =0x1
 	bl	__dma_sync_single_for_device
 	ldr	x0, [x19, #112]
 	ldrb	w8, [x0, #796]
 .LBB15_37:                              //   in Loop: Header=BB15_4 Depth=1
-	mov	x26, x28
-	ldur	w28, [x29, #-68]                // 4-byte Folded Reload
+	mov	x25, x27
+	ldur	w27, [x29, #-68]                // 4-byte Folded Reload
 	tbnz	w8, #6, .LBB15_39
 // %bb.38:                              //   in Loop: Header=BB15_4 Depth=1
-	mov	x1, x26
+	mov	x1, x25
 	mov	x2, x20
 	mov	w3, #1                          // =0x1
 	bl	__dma_sync_single_for_device
 .LBB15_39:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #120]
-	ldr	w8, [sp, #52]                   // 4-byte Folded Reload
+	ldr	w8, [sp, #44]                   // 4-byte Folded Reload
 	mov	w1, #4                          // =0x4
-	add	w23, w25, w23
+	add	w23, w24, w23
 	cmp	w8, #2
 	ldr	x8, [x0, #216]
 	cset	w20, eq
@@ -3370,8 +3359,8 @@ ebc_thread:                             // @ebc_thread
 .Ltmp23:
 	blr	x8
 	ldr	x0, [x19, #120]
-	mov	w1, w24
-	mov	w2, w26
+	mov	w1, w26
+	mov	w2, w25
 	ldr	x8, [x0, #192]
 	ldur	w16, [x8, #-4]
 	movk	w17, #51812
@@ -3394,8 +3383,8 @@ ebc_thread:                             // @ebc_thread
 .Ltmp25:
 	blr	x8
 	ldr	x0, [x19, #120]
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	ldr	w1, [x20, #2172]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	ldr	w1, [x22, #2172]
 	ldr	x8, [x0, #224]
 	ldur	w16, [x8, #-4]
 	movk	w17, #5533
@@ -3405,22 +3394,22 @@ ebc_thread:                             // @ebc_thread
 	brk	#0x8228
 .Ltmp26:
 	blr	x8
-	ldrb	w8, [x20, #2249]
+	ldrb	w8, [x22, #2249]
 	cmp	w8, #1
 	b.ne	.LBB15_57
 // %bb.40:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, #257                        // =0x101
-	strb	w21, [x20, #2278]
+	strb	w21, [x22, #2278]
 	mov	w23, #2                         // =0x2
-	strh	w8, [x20, #2276]
+	strh	w8, [x22, #2276]
 .LBB15_41:                              //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
 	tbz	w8, #3, .LBB15_64
 .LBB15_42:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2232]
+	ldr	w8, [x22, #2232]
 	cbnz	w8, .LBB15_64
 // %bb.43:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2224]
+	ldrb	w8, [x22, #2224]
 	tbz	w8, #0, .LBB15_64
 // %bb.44:                              //   in Loop: Header=BB15_4 Depth=1
 	adrp	x8, global_ebc
@@ -3491,19 +3480,19 @@ ebc_thread:                             // @ebc_thread
 	mov	w8, #-1                         // =0xffffffff
 	mov	w23, #2                         // =0x2
 .LBB15_58:                              //   in Loop: Header=BB15_4 Depth=1
-	str	w8, [x20, #2184]
+	str	w8, [x22, #2184]
 	ldrb	w8, [x19, #1912]
 	tbnz	w8, #3, .LBB15_42
 	b	.LBB15_64
 .LBB15_59:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w12, wzr
 .LBB15_60:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2282]
-	ldrb	w9, [x20, #2281]
+	ldrb	w8, [x22, #2282]
+	ldrb	w9, [x22, #2281]
 	orr	w10, w8, w12
 	orr	w11, w9, w12
-	strb	w10, [x20, #2282]
-	strb	w11, [x20, #2281]
+	strb	w10, [x22, #2282]
+	strb	w11, [x22, #2281]
 	cbz	w12, .LBB15_63
 // %bb.61:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
@@ -3530,8 +3519,8 @@ ebc_thread:                             // @ebc_thread
 	//APP
 	dmb	ish
 	//NO_APP
-	ldrb	w8, [x20, #2281]
-	ldrb	w9, [x20, #2282]
+	ldrb	w8, [x22, #2281]
+	ldrb	w9, [x22, #2282]
 	orr	w8, w9, w8
 	cbz	w8, .LBB15_66
 // %bb.65:                              //   in Loop: Header=BB15_4 Depth=1
@@ -3542,116 +3531,109 @@ ebc_thread:                             // @ebc_thread
 	eor	w9, w9, #0x1
 	stur	w9, [x29, #-68]                 // 4-byte Folded Spill
 .LBB15_67:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w9, [x20, #2249]
+	ldrb	w9, [x22, #2249]
 	cmp	w9, #1
 	b.ne	.LBB15_72
 // %bb.68:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w10, [x20, #2276]
+	ldrb	w10, [x22, #2276]
 	cmp	w10, #1
 	b.ne	.LBB15_71
 // %bb.69:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w10, [x20, #2277]
+	ldrb	w10, [x22, #2277]
 	cmp	w10, #1
 	b.ne	.LBB15_71
 // %bb.70:                              //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x20, #2278]
+	strb	w21, [x22, #2278]
 .LBB15_71:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w27, [x20, #2278]
-	strb	w8, [x20, #2283]
+	ldrb	w28, [x22, #2278]
+	strb	w8, [x22, #2283]
 	cbnz	w8, .LBB15_74
 	b	.LBB15_73
 .LBB15_72:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	w10, [x20, #2184]
+	ldr	w10, [x22, #2184]
 	cmp	w10, #1
-	cset	w27, lt
-	strb	w8, [x20, #2283]
+	cset	w28, lt
+	strb	w8, [x22, #2283]
 	cbnz	w8, .LBB15_74
 .LBB15_73:                              //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w10, [x19, #2118]
-	tbz	w10, #0, .LBB15_84
+	tbz	w10, #0, .LBB15_83
 .LBB15_74:                              //   in Loop: Header=BB15_4 Depth=1
-	mov	w24, #2                         // =0x2
+	mov	w26, #2                         // =0x2
 	mov	w23, wzr
 .LBB15_75:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w9, [x19, #2128]
 	cmp	w9, #2
-	b.ge	.LBB15_94
+	b.ge	.LBB15_93
 .LBB15_76:                              //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_get_osd_list_enum_num
 	cmp	w0, #0
-	mov	w26, w0
+	mov	w24, w0
 	cset	w20, ne
 	strb	w20, [x19, #2117]
 	bl	ebc_get_dsp_list_enum_num
 	mov	w25, w0
 	strb	wzr, [x19, #2116]
-	cbz	w0, .LBB15_114
+	cbz	w0, .LBB15_113
 // %bb.77:                              //   in Loop: Header=BB15_4 Depth=1
-	tbnz	w23, #0, .LBB15_80
+	tbnz	w23, #0, .LBB15_79
 // %bb.78:                              //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
-	tbnz	w8, #3, .LBB15_80
-// %bb.79:                              //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	b	.LBB15_118
-.LBB15_80:                              //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #3, .LBB15_117
+.LBB15_79:                              //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_dsp_buf_get
-	cbz	x0, .LBB15_114
-// %bb.81:                              //   in Loop: Header=BB15_4 Depth=1
-	ldur	x12, [x29, #-48]                // 8-byte Folded Reload
-	ldrb	w8, [x12, #2279]
-	ldrb	w9, [x12, #2280]
-	ldrb	w10, [x12, #2249]
-	ldr	w22, [x12, #2200]
+	cbz	x0, .LBB15_113
+// %bb.80:                              //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w8, [x22, #2279]
+	adrp	x10, global_ebc
+	ldrb	w9, [x22, #2249]
+	ldr	x10, [x10, :lo12:global_ebc]
+	mov	x11, x22
+	ldr	w22, [x22, #2200]
 	cmp	w8, #0
-	adrp	x8, global_ebc
-	ldr	x8, [x8, :lo12:global_ebc]
-	cset	w11, ne
+	cset	w8, ne
 	cmp	w9, #0
-	mov	w9, #4                          // =0x4
-	csel	w9, w9, wzr, ne
-	ldr	w8, [x8, #264]
-	cmp	w10, #0
-	orr	w9, w9, w11, lsl #1
-	ldrb	w10, [x12, #2261]
-	csel	w11, w24, wzr, ne
+	ldr	w9, [x10, #264]
+	ldrb	w10, [x11, #2261]
+	csel	w11, w26, wzr, ne
 	cmp	w22, #0
-	cset	w13, ne
-	cmp	w8, #230
-	orr	w12, w9, w20
-	orr	w8, w11, w10
-	stp	w13, w12, [sp, #44]             // 8-byte Folded Spill
-	str	w8, [sp, #60]                   // 4-byte Folded Spill
-	b.ne	.LBB15_89
-// %bb.82:                              //   in Loop: Header=BB15_4 Depth=1
+	orr	w8, w20, w8, lsl #1
+	cset	w12, ne
+	cmp	w9, #230
+	orr	w9, w11, w10
+	str	w12, [sp, #40]                  // 4-byte Folded Spill
+	str	w9, [sp, #72]                   // 4-byte Folded Spill
+	str	w8, [sp, #48]                   // 4-byte Folded Spill
+	b.ne	.LBB15_88
+// %bb.81:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w6, #2                          // =0x2
-.LBB15_83:                              //   in Loop: Header=BB15_4 Depth=1
+.LBB15_82:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w20, #4                         // =0x4
 	str	w6, [x0, #32]
-	b	.LBB15_96
-.LBB15_84:                              //   in Loop: Header=BB15_4 Depth=1
-	mov	w24, #2                         // =0x2
-	cbz	w9, .LBB15_93
+	b	.LBB15_95
+.LBB15_83:                              //   in Loop: Header=BB15_4 Depth=1
+	mov	w26, #2                         // =0x2
+	cbz	w9, .LBB15_92
+// %bb.84:                              //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w9, [x22, #2276]
+	cmp	w9, #1
+	b.ne	.LBB15_87
 // %bb.85:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w9, [x20, #2276]
+	ldrb	w9, [x22, #2277]
 	cmp	w9, #1
-	b.ne	.LBB15_88
+	b.ne	.LBB15_87
 // %bb.86:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w9, [x20, #2277]
-	cmp	w9, #1
-	b.ne	.LBB15_88
-// %bb.87:                              //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x20, #2278]
-.LBB15_88:                              //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w23, [x20, #2278]
+	strb	w21, [x22, #2278]
+.LBB15_87:                              //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w23, [x22, #2278]
 	b	.LBB15_75
-.LBB15_89:                              //   in Loop: Header=BB15_4 Depth=1
+.LBB15_88:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w6, [x0, #32]
-	cmp	w12, #0
+	cmp	w8, #0
 	cset	w8, ne
 	cmp	w6, #21
-	b.hi	.LBB15_314
-// %bb.90:                              //   in Loop: Header=BB15_4 Depth=1
+	b.hi	.LBB15_308
+// %bb.89:                              //   in Loop: Header=BB15_4 Depth=1
 	ldur	w10, [x29, #-68]                // 4-byte Folded Reload
 	lsl	w9, w21, w6
 	orn	w8, w8, w10
@@ -3659,20 +3641,20 @@ ebc_thread:                             // @ebc_thread
 	movk	w10, #34, lsl #16
 	and	w8, w8, #0x1
 	tst	w9, w10
-	b.ne	.LBB15_95
-// %bb.91:                              //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_94
+// %bb.90:                              //   in Loop: Header=BB15_4 Depth=1
 	mov	w10, #36736                     // =0x8f80
 	tst	w9, w10
-	b.eq	.LBB15_103
-.LBB15_92:                              //   in Loop: Header=BB15_4 Depth=1
+	b.eq	.LBB15_102
+.LBB15_91:                              //   in Loop: Header=BB15_4 Depth=1
 	orr	w20, w8, #0x2
-	b	.LBB15_96
-.LBB15_93:                              //   in Loop: Header=BB15_4 Depth=1
-	ldr	w9, [x20, #2184]
+	b	.LBB15_95
+.LBB15_92:                              //   in Loop: Header=BB15_4 Depth=1
+	ldr	w9, [x22, #2184]
 	cmp	w9, #1
 	cset	w23, lt
 	b	.LBB15_75
-.LBB15_94:                              //   in Loop: Header=BB15_4 Depth=1
+.LBB15_93:                              //   in Loop: Header=BB15_4 Depth=1
 	tst	w23, #0x1
 	adrp	x9, .L.str.116
 	add	x9, x9, :lo12:.L.str.116
@@ -3680,7 +3662,7 @@ ebc_thread:                             // @ebc_thread
 	add	x10, x10, :lo12:.L.str.115
 	ldur	w11, [x29, #-68]                // 4-byte Folded Reload
 	csel	x3, x10, x9, ne
-	tst	w27, #0x1
+	tst	w28, #0x1
 	ldr	x0, [x19, #304]
 	csel	x4, x10, x9, ne
 	tst	w11, #0x1
@@ -3693,50 +3675,51 @@ ebc_thread:                             // @ebc_thread
 	add	x2, x2, :lo12:.L.str.121
 	bl	_dev_info
 	b	.LBB15_76
-.LBB15_95:                              //   in Loop: Header=BB15_4 Depth=1
+.LBB15_94:                              //   in Loop: Header=BB15_4 Depth=1
 	orr	w20, w8, #0x4
-.LBB15_96:                              //   in Loop: Header=BB15_4 Depth=1
+.LBB15_95:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #2
-	b.ge	.LBB15_109
-// %bb.97:                              //   in Loop: Header=BB15_4 Depth=1
-	tbnz	w20, #3, .LBB15_110
-.LBB15_98:                              //   in Loop: Header=BB15_4 Depth=1
+	b.ge	.LBB15_108
+// %bb.96:                              //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w20, #3, .LBB15_109
+.LBB15_97:                              //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
-	tbnz	w8, #3, .LBB15_100
-// %bb.99:                              //   in Loop: Header=BB15_4 Depth=1
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	tbnz	w8, #3, .LBB15_99
+// %bb.98:                              //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x0, #32]
-	ldr	w9, [sp, #56]                   // 4-byte Folded Reload
+	ldr	w9, [sp, #52]                   // 4-byte Folded Reload
 	cmp	w9, w8
-	b.eq	.LBB15_112
-	b	.LBB15_116
-.LBB15_100:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	tbz	w23, #0, .LBB15_102
-// %bb.101:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2236]
-	cbz	w8, .LBB15_117
+	b.eq	.LBB15_111
+	b	.LBB15_115
+.LBB15_99:                              //   in Loop: Header=BB15_4 Depth=1
+	tbz	w23, #0, .LBB15_101
+// %bb.100:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2236]
+	cbz	w8, .LBB15_116
+.LBB15_101:                             //   in Loop: Header=BB15_4 Depth=1
+	str	w26, [x22, #2236]
+	b	.LBB15_113
 .LBB15_102:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w24, [x20, #2236]
-	b	.LBB15_114
-.LBB15_103:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w10, #28672                     // =0x7000
 	movk	w10, #1, lsl #16
 	tst	w9, w10
-	b.eq	.LBB15_314
+	b.eq	.LBB15_308
+// %bb.103:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	w22, .LBB15_91
 // %bb.104:                             //   in Loop: Header=BB15_4 Depth=1
-	cbz	w22, .LBB15_92
+	ldr	w9, [sp, #72]                   // 4-byte Folded Reload
+	cbnz	w9, .LBB15_91
 // %bb.105:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w9, [sp, #60]                   // 4-byte Folded Reload
-	cbnz	w9, .LBB15_92
+	ldr	w8, [sp, #48]                   // 4-byte Folded Reload
+	cbz	w8, .LBB15_430
 // %bb.106:                             //   in Loop: Header=BB15_4 Depth=1
-	cbz	w12, .LBB15_430
-// %bb.107:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w6, #14                         // =0xe
 	mov	w20, #9                         // =0x9
 	str	w6, [x0, #32]
-	b	.LBB15_96
-.LBB15_108:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_95
+.LBB15_107:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.120
 	add	x1, x1, :lo12:.L.str.120
@@ -3744,10 +3727,10 @@ ebc_thread:                             // @ebc_thread
 	add	x2, x2, :lo12:.L.str.121
 	bl	_dev_info
 	b	.LBB15_13
-.LBB15_109:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_108:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x8, [x19, #304]
 	cmp	w22, #0
-	ldr	w4, [sp, #60]                   // 4-byte Folded Reload
+	ldr	w4, [sp, #72]                   // 4-byte Folded Reload
 	ldr	w5, [sp, #48]                   // 4-byte Folded Reload
 	cset	w3, ne
 	mov	x22, x0
@@ -3759,176 +3742,175 @@ ebc_thread:                             // @ebc_thread
 	mov	w7, w20
 	bl	_dev_info
 	mov	x0, x22
-	tbz	w20, #3, .LBB15_98
-.LBB15_110:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w20, #3, .LBB15_97
+.LBB15_109:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x0, #32]
-	ldr	w9, [sp, #56]                   // 4-byte Folded Reload
+	ldr	w9, [sp, #52]                   // 4-byte Folded Reload
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
 	cmp	w9, w8
-	b.ne	.LBB15_116
-// %bb.111:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_115
+// %bb.110:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
-	tbnz	w8, #3, .LBB15_209
+	tbnz	w8, #3, .LBB15_208
+.LBB15_111:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w28, #0, .LBB15_113
 .LBB15_112:                             //   in Loop: Header=BB15_4 Depth=1
-	tbz	w27, #0, .LBB15_114
+	strb	w21, [x19, #2116]
 .LBB15_113:                             //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x19, #2116]
+	tbz	w23, #0, .LBB15_117
 .LBB15_114:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	tbz	w23, #0, .LBB15_118
-.LBB15_115:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, #1                          // =0x1
-	mov	w28, #1                         // =0x1
-	str	wzr, [x20, #2228]
-	str	w8, [sp, #72]                   // 4-byte Folded Spill
-	b	.LBB15_120
+	str	wzr, [x22, #2228]
+	mov	w27, #1                         // =0x1
+	str	w8, [sp, #68]                   // 4-byte Folded Spill
+	b	.LBB15_119
+.LBB15_115:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w23, #0, .LBB15_117
 .LBB15_116:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	tbz	w23, #0, .LBB15_118
-.LBB15_117:                             //   in Loop: Header=BB15_4 Depth=1
 	strb	w21, [x19, #2116]
-	b	.LBB15_115
-.LBB15_118:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2228]
-	ldr	w9, [x20, #2216]
-	ldr	w10, [x20, #2232]
-	ldr	w12, [x20, #2172]
+	b	.LBB15_114
+.LBB15_117:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2228]
+	ldr	w9, [x22, #2216]
+	ldr	w10, [x22, #2232]
+	ldr	w12, [x22, #2172]
 	add	w11, w8, #1
 	cmp	w11, w9
 	add	w9, w10, #1
 	csinc	w8, wzr, w8, ge
 	cmp	w9, w12
-	str	w9, [x20, #2232]
-	str	w8, [x20, #2228]
-	b.lt	.LBB15_121
-// %bb.119:                             //   in Loop: Header=BB15_4 Depth=1
+	str	w9, [x22, #2232]
+	str	w8, [x22, #2228]
+	b.lt	.LBB15_120
+// %bb.118:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2116]
-	tbnz	w8, #0, .LBB15_121
+	tbnz	w8, #0, .LBB15_120
+.LBB15_119:                             //   in Loop: Header=BB15_4 Depth=1
+	str	wzr, [x22, #2232]
 .LBB15_120:                             //   in Loop: Header=BB15_4 Depth=1
-	str	wzr, [x20, #2232]
-.LBB15_121:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #2
-	b.ge	.LBB15_170
-.LBB15_122:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2281]
-	ldrb	w9, [x20, #2282]
+	b.ge	.LBB15_169
+.LBB15_121:                             //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w8, [x22, #2281]
+	ldrb	w9, [x22, #2282]
 	orr	w8, w9, w8
 	tst	w8, #0xff
-	strb	w8, [x20, #2283]
-	b.ne	.LBB15_132
-// %bb.123:                             //   in Loop: Header=BB15_4 Depth=1
+	strb	w8, [x22, #2283]
+	b.ne	.LBB15_131
+// %bb.122:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2118]
-	tbnz	w8, #0, .LBB15_132
+	tbnz	w8, #0, .LBB15_131
+// %bb.123:                             //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w8, [x22, #2249]
+	cmp	w8, #1
+	b.ne	.LBB15_128
 // %bb.124:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2249]
+	ldrb	w8, [x22, #2276]
 	cmp	w8, #1
-	b.ne	.LBB15_129
+	b.ne	.LBB15_127
 // %bb.125:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2276]
+	ldrb	w8, [x22, #2277]
 	cmp	w8, #1
-	b.ne	.LBB15_128
+	b.ne	.LBB15_127
 // %bb.126:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2277]
-	cmp	w8, #1
-	b.ne	.LBB15_128
-// %bb.127:                             //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x20, #2278]
+	strb	w21, [x22, #2278]
+.LBB15_127:                             //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w8, [x22, #2278]
+	tbnz	w8, #0, .LBB15_129
+	b	.LBB15_131
 .LBB15_128:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2278]
-	tbnz	w8, #0, .LBB15_130
-	b	.LBB15_132
-.LBB15_129:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2184]
+	ldr	w8, [x22, #2184]
 	cmp	w8, #0
-	b.gt	.LBB15_132
-.LBB15_130:                             //   in Loop: Header=BB15_4 Depth=1
+	b.gt	.LBB15_131
+.LBB15_129:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2116]
-	tbnz	w8, #0, .LBB15_132
-// %bb.131:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w8, #0, .LBB15_131
+// %bb.130:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2117]
 	cmp	w8, #1
-	b.ne	.LBB15_212
-.LBB15_132:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_211
+.LBB15_131:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_power_on
 	ldrb	w8, [x19, #2117]
-	tbz	w8, #0, .LBB15_213
-.LBB15_133:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #0, .LBB15_212
+.LBB15_132:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #548]
-	ldr	w24, [x19, #544]
+	ldr	w26, [x19, #544]
 	add	w9, w8, #7
 	cmp	w8, #0
-	csel	w26, w9, w8, lt
-	tbz	w28, #0, .LBB15_135
-// %bb.134:                             //   in Loop: Header=BB15_4 Depth=1
+	csel	w24, w9, w8, lt
+	tbz	w27, #0, .LBB15_134
+// %bb.133:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	x0, x19
 	mov	w1, #1                          // =0x1
 	mov	w2, #10                         // =0xa
 	bl	ebc_lut_update
 	ldr	w8, [x19, #1844]
-	str	w8, [x20, #2180]
-.LBB15_135:                             //   in Loop: Header=BB15_4 Depth=1
+	str	w8, [x22, #2180]
+.LBB15_134:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_get_osd_list_enum_num
-	cbz	w0, .LBB15_145
-// %bb.136:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	w28, w26
+	cbz	w0, .LBB15_144
+// %bb.135:                             //   in Loop: Header=BB15_4 Depth=1
+	mov	w27, w24
 	mov	x25, xzr
 	mov	w22, #-1                        // =0xffffffff
-	mov	w26, #-1                        // =0xffffffff
-	mov	w27, #-1                        // =0xffffffff
+	mov	w24, #-1                        // =0xffffffff
+	mov	w28, #-1                        // =0xffffffff
 	mov	w20, #-1                        // =0xffffffff
-	b	.LBB15_138
-.LBB15_137:                             //   in Loop: Header=BB15_138 Depth=2
+	b	.LBB15_137
+.LBB15_136:                             //   in Loop: Header=BB15_137 Depth=2
 	bl	ebc_get_osd_list_enum_num
-	cbz	w0, .LBB15_142
-.LBB15_138:                             //   Parent Loop BB15_4 Depth=1
+	cbz	w0, .LBB15_141
+.LBB15_137:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
-	cbz	x25, .LBB15_140
-// %bb.139:                             //   in Loop: Header=BB15_138 Depth=2
+	cbz	x25, .LBB15_139
+// %bb.138:                             //   in Loop: Header=BB15_137 Depth=2
 	mov	x0, x25
 	bl	ebc_buf_release
-.LBB15_140:                             //   in Loop: Header=BB15_138 Depth=2
+.LBB15_139:                             //   in Loop: Header=BB15_137 Depth=2
 	bl	ebc_osd_buf_pop_get
 	mov	x25, x0
-	cbz	x0, .LBB15_137
-// %bb.141:                             //   in Loop: Header=BB15_138 Depth=2
+	cbz	x0, .LBB15_136
+// %bb.140:                             //   in Loop: Header=BB15_137 Depth=2
 	ldp	w8, w9, [x25, #40]
 	cmp	w8, w20
 	csel	w11, w8, w20, lt
 	cmp	w20, #0
 	csel	w20, w8, w11, lt
 	ldp	w10, w8, [x25, #48]
-	cmp	w10, w27
-	csel	w11, w10, w27, gt
-	cmp	w27, #0
-	csel	w27, w10, w11, lt
-	cmp	w9, w26
-	csel	w10, w9, w26, lt
-	cmp	w26, #0
-	csel	w26, w9, w10, lt
+	cmp	w10, w28
+	csel	w11, w10, w28, gt
+	cmp	w28, #0
+	csel	w28, w10, w11, lt
+	cmp	w9, w24
+	csel	w10, w9, w24, lt
+	cmp	w24, #0
+	csel	w24, w9, w10, lt
 	cmp	w8, w22
 	csel	w9, w8, w22, gt
 	cmp	w22, #0
 	csel	w22, w8, w9, lt
-	b	.LBB15_137
-.LBB15_142:                             //   in Loop: Header=BB15_4 Depth=1
-	cbz	x25, .LBB15_144
-// %bb.143:                             //   in Loop: Header=BB15_4 Depth=1
-	stp	w20, w26, [x25, #40]
-	stp	w27, w22, [x25, #48]
+	b	.LBB15_136
+.LBB15_141:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	x25, .LBB15_143
+// %bb.142:                             //   in Loop: Header=BB15_4 Depth=1
+	stp	w20, w24, [x25, #40]
+	stp	w28, w22, [x25, #48]
+.LBB15_143:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	mov	w24, w27
+	b	.LBB15_145
 .LBB15_144:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	mov	w26, w28
-	b	.LBB15_146
-.LBB15_145:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	x25, xzr
-.LBB15_146:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_145:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
 	mov	w9, #9                          // =0x9
 	tst	w8, w9
-	b.ne	.LBB15_182
+	b.ne	.LBB15_181
+// %bb.146:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w23, #0, .LBB15_151
 // %bb.147:                             //   in Loop: Header=BB15_4 Depth=1
-	tbz	w23, #0, .LBB15_152
-// %bb.148:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w20, [x19, #536]
 	ldr	x8, [x19, #1800]
 	ldr	x0, [x19, #1368]
@@ -3939,135 +3921,134 @@ ebc_thread:                             // @ebc_thread
 	csel	w22, w9, w20, lt
 	bl	memcpy
 	ldrb	w8, [x19, #1912]
-	tbnz	w8, #3, .LBB15_171
-// %bb.149:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w8, #3, .LBB15_170
+// %bb.148:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	w20, #8
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	b.lt	.LBB15_174
-// %bb.150:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_173
+// %bb.149:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x10, [x19, #1800]
 	asr	w8, w22, #3
 	ldr	x9, [x19, #1296]
 	ldr	x10, [x10, #8]
-.LBB15_151:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_150:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldr	x11, [x10], #8
 	subs	w8, w8, #1
 	and	x11, x11, #0xf8f8f8f8f8f8f8f8
 	str	x11, [x9], #8
-	b.ne	.LBB15_151
-	b	.LBB15_174
-.LBB15_152:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_150
+	b	.LBB15_173
+.LBB15_151:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w12, [x19, #548]
 	ldr	x8, [x19, #1792]
-	mov	w28, w26
+	mov	w27, w24
 	ldr	x9, [x19, #1800]
 	ldr	w10, [x19, #2128]
 	ldr	w13, [x19, #544]
 	add	w11, w12, #7
 	cmp	w12, #0
 	ldr	x20, [x19, #1368]
-	ldr	x26, [x19, #1296]
+	ldr	x24, [x19, #1296]
 	ldr	x22, [x8, #8]
 	csel	w23, w11, w12, lt
-	ldr	x27, [x9, #8]
+	ldr	x28, [x9, #8]
 	cmp	w10, #1
-	str	w12, [sp, #24]                  // 4-byte Folded Spill
-	str	w13, [sp, #52]                  // 4-byte Folded Spill
+	str	w12, [sp, #32]                  // 4-byte Folded Spill
+	str	w13, [sp, #44]                  // 4-byte Folded Spill
 	b.gt	.LBB15_432
-.LBB15_153:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_152:                             //   in Loop: Header=BB15_4 Depth=1
 	asr	w8, w23, #3
 	mul	w23, w8, w13
 	str	x8, [sp, #16]                   // 8-byte Folded Spill
 	cmp	w23, #1
-	b.lt	.LBB15_156
-// %bb.154:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_155
+// %bb.153:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, w23
-.LBB15_155:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_154:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
-	ldr	x9, [x27], #8
+	ldr	x9, [x28], #8
 	subs	w8, w8, #1
 	and	x10, x9, #0xf8f8f8f8f8f8f8f8
 	and	x9, x9, #0x404040404040404
-	str	x10, [x26], #8
+	str	x10, [x24], #8
 	ldr	x10, [x22], #8
 	orr	x9, x10, x9
 	str	x9, [x20], #8
-	b.ne	.LBB15_155
-.LBB15_156:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_154
+.LBB15_155:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #1584]
 	ldrsw	x2, [x19, #536]
 	mov	w1, wzr
 	bl	memset
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	ldrb	w8, [x20, #2249]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	ldrb	w8, [x22, #2249]
 	cmp	w8, #1
-	b.ne	.LBB15_176
+	b.ne	.LBB15_175
+// %bb.156:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2264]
+	mov	w24, w27
+	strb	wzr, [x22, #2249]
+	cbz	w8, .LBB15_290
 // %bb.157:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2264]
-	mov	w26, w28
-	strb	wzr, [x20, #2249]
-	cbz	w8, .LBB15_291
-// %bb.158:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w17, [sp, #52]                  // 4-byte Folded Reload
-	ldr	w16, [sp, #24]                  // 4-byte Folded Reload
+	ldr	w17, [sp, #44]                  // 4-byte Folded Reload
+	ldr	w16, [sp, #32]                  // 4-byte Folded Reload
 	mov	x15, #72340172838076673         // =0x101010101010101
 	ldr	x0, [sp, #16]                   // 8-byte Folded Reload
 	cmp	w17, #1
-	b.lt	.LBB15_177
-// %bb.159:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_176
+// %bb.158:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x8, [x19, #1512]
 	mov	w9, wzr
-	b	.LBB15_162
-.LBB15_160:                             //   in Loop: Header=BB15_162 Depth=2
+	b	.LBB15_161
+.LBB15_159:                             //   in Loop: Header=BB15_161 Depth=2
 	add	x8, x8, x10
-.LBB15_161:                             //   in Loop: Header=BB15_162 Depth=2
+.LBB15_160:                             //   in Loop: Header=BB15_161 Depth=2
 	add	w9, w9, #1
 	cmp	w9, w17
-	b.eq	.LBB15_177
-.LBB15_162:                             //   Parent Loop BB15_4 Depth=1
+	b.eq	.LBB15_176
+.LBB15_161:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Loop Header: Depth=2
-                                        //       Child Loop BB15_166 Depth 3
+                                        //       Child Loop BB15_165 Depth 3
 	cmp	w16, #8
-	b.lt	.LBB15_161
-// %bb.163:                             //   in Loop: Header=BB15_162 Depth=2
+	b.lt	.LBB15_160
+// %bb.162:                             //   in Loop: Header=BB15_161 Depth=2
 	mov	x10, xzr
 	mov	x11, x0
-	b	.LBB15_166
-.LBB15_164:                             //   in Loop: Header=BB15_166 Depth=3
+	b	.LBB15_165
+.LBB15_163:                             //   in Loop: Header=BB15_165 Depth=3
 	sub	w12, w12, w13
-.LBB15_165:                             //   in Loop: Header=BB15_166 Depth=3
+.LBB15_164:                             //   in Loop: Header=BB15_165 Depth=3
 	and	x12, x12, #0xff
 	subs	x11, x11, #1
 	mul	x12, x12, x15
 	str	x12, [x8, x10]
 	add	x10, x10, #8
-	b.eq	.LBB15_160
-.LBB15_166:                             //   Parent Loop BB15_4 Depth=1
-                                        //     Parent Loop BB15_162 Depth=2
+	b.eq	.LBB15_159
+.LBB15_165:                             //   Parent Loop BB15_4 Depth=1
+                                        //     Parent Loop BB15_161 Depth=2
                                         // =>    This Inner Loop Header: Depth=3
 	ldr	x12, [x19, #1224]
-	cbz	x12, .LBB15_169
-// %bb.167:                             //   in Loop: Header=BB15_166 Depth=3
+	cbz	x12, .LBB15_168
+// %bb.166:                             //   in Loop: Header=BB15_165 Depth=3
 	ldr	w13, [x19, #548]
-	ldr	w14, [x20, #2256]
+	ldr	w14, [x22, #2256]
 	asr	w13, w13, #1
 	cmp	w14, #10
 	mul	w13, w9, w13
 	add	x13, x12, w13, sxtw #1
-	ldr	w12, [x20, #2264]
+	ldr	w12, [x22, #2264]
 	ldrh	w13, [x13, x10]
-	b.ne	.LBB15_164
-// %bb.168:                             //   in Loop: Header=BB15_166 Depth=3
-	ldr	w14, [x20, #2252]
+	b.ne	.LBB15_163
+// %bb.167:                             //   in Loop: Header=BB15_165 Depth=3
+	ldr	w14, [x22, #2252]
 	sdiv	w13, w13, w14
-	b	.LBB15_164
-.LBB15_169:                             //   in Loop: Header=BB15_166 Depth=3
+	b	.LBB15_163
+.LBB15_168:                             //   in Loop: Header=BB15_165 Depth=3
 	mov	w12, #-1                        // =0xffffffff
-	b	.LBB15_165
-.LBB15_170:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_164
+.LBB15_169:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2117]
-	cmp	w26, #0
+	cmp	w24, #0
 	adrp	x9, .L.str.116
 	add	x9, x9, :lo12:.L.str.116
 	adrp	x10, .L.str.115
@@ -4086,19 +4067,18 @@ ebc_thread:                             // @ebc_thread
 	adrp	x2, .L.str.121
 	add	x2, x2, :lo12:.L.str.121
 	bl	_dev_info
-	b	.LBB15_122
-.LBB15_171:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_121
+.LBB15_170:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #536]
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
 	mov	w13, #240                       // =0xf0
 	cmp	w8, #1
-	b.lt	.LBB15_174
-// %bb.172:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_173
+// %bb.171:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x9, [x19, #1792]
 	ldr	x8, [x19, #1296]
 	mov	x10, xzr
 	ldr	x9, [x9, #8]
-.LBB15_173:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_172:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldrb	w11, [x9, x10]
 	and	w12, w11, #0xf0
@@ -4108,8 +4088,8 @@ ebc_thread:                             // @ebc_thread
 	add	x10, x10, #1
 	ldr	w11, [x19, #536]
 	cmp	w10, w11
-	b.lt	.LBB15_173
-.LBB15_174:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_172
+.LBB15_173:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #1584]
 	ldrsw	x2, [x19, #536]
 	mov	w1, wzr
@@ -4119,9 +4099,10 @@ ebc_thread:                             // @ebc_thread
 	mov	w1, wzr
 	bl	memset
 	ldr	w8, [x19, #2128]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
 	cmp	w8, #1
-	b.le	.LBB15_182
-// %bb.175:                             //   in Loop: Header=BB15_4 Depth=1
+	b.le	.LBB15_181
+// %bb.174:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #1912]
 	ldr	x0, [x19, #304]
 	adrp	x9, .L.str.174
@@ -4135,25 +4116,25 @@ ebc_thread:                             // @ebc_thread
 	adrp	x2, .L.str.170
 	add	x2, x2, :lo12:.L.str.170
 	bl	_dev_info
-	b	.LBB15_182
-.LBB15_176:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2172]
-	ldr	w9, [x20, #2184]
+	b	.LBB15_181
+.LBB15_175:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2172]
+	ldr	w9, [x22, #2184]
 	ldr	x0, [x19, #1512]
 	ldrsw	x2, [x19, #536]
 	sub	w1, w8, w9
 	bl	memset
-	mov	w26, w28
-.LBB15_177:                             //   in Loop: Header=BB15_4 Depth=1
+	mov	w24, w27
+.LBB15_176:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #1912]
-	tbz	w8, #2, .LBB15_182
-.LBB15_178:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #2, .LBB15_181
+.LBB15_177:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	w23, #1
-	b.lt	.LBB15_181
-// %bb.179:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_180
+// %bb.178:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x8, [x19, #1296]
 	ldr	x9, [x19, #1368]
-.LBB15_180:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_179:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldr	x10, [x9]
 	subs	w23, w23, #1
@@ -4162,11 +4143,11 @@ ebc_thread:                             // @ebc_thread
 	ldr	x10, [x8]
 	and	x10, x10, #0xfbfbfbfbfbfbfbfb
 	str	x10, [x8], #8
-	b.ne	.LBB15_180
-.LBB15_181:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_179
+.LBB15_180:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, #3                          // =0x3
 	str	w8, [x19, #1912]
-.LBB15_182:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_181:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #1912]
 	orr	w8, w8, #0x1
 	str	w8, [x19, #1912]
@@ -4178,27 +4159,27 @@ ebc_thread:                             // @ebc_thread
 	add	w9, w10, #7
 	cmp	w10, #0
 	csel	w9, w9, w10, lt
-	asr	w10, w26, #3
+	asr	w10, w24, #3
 	asr	w9, w9, #3
 	sub	w13, w10, #1
 	add	w15, w9, #1
 	cmp	w15, w10
 	csinc	w10, w13, w9, ge
-	sub	w9, w24, #1
-	cmp	w11, w24
+	sub	w9, w26, #1
+	cmp	w11, w26
 	csel	w11, w11, w9, lt
 	cmp	w14, #15
-	b.hs	.LBB15_203
-// %bb.183:                             //   in Loop: Header=BB15_4 Depth=1
+	b.hs	.LBB15_202
+// %bb.182:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	w10, w13
-	ldrb	w13, [x20, #2279]
+	ldrb	w13, [x22, #2279]
 	ccmp	w8, #0, #0, eq
 	ccmp	w11, w9, #0, eq
-	cset	w24, ne
+	cset	w26, ne
 	csel	w9, w13, wzr, ne
 	cmp	w8, w11
-	b.gt	.LBB15_204
-.LBB15_184:                             //   in Loop: Header=BB15_4 Depth=1
+	b.gt	.LBB15_203
+.LBB15_183:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w13, [x19, #548]
 	asr	w12, w12, #3
 	ldr	x17, [x19, #1512]
@@ -4213,7 +4194,7 @@ ebc_thread:                             // @ebc_thread
 	ldr	x0, [x19, #1368]
 	asr	w15, w13, #3
 	ldr	x1, [x19, #1296]
-	str	w24, [sp, #52]                  // 4-byte Folded Spill
+	str	w26, [sp, #44]                  // 4-byte Folded Spill
 	ldr	x4, [x14, #8]
 	sxtw	x14, w12
 	mul	w13, w15, w8
@@ -4226,8 +4207,8 @@ ebc_thread:                             // @ebc_thread
 	add	x1, x1, x5
 	add	x2, x2, x5
 	add	x3, x3, x5
-	b	.LBB15_186
-.LBB15_185:                             //   in Loop: Header=BB15_186 Depth=2
+	b	.LBB15_185
+.LBB15_184:                             //   in Loop: Header=BB15_185 Depth=2
 	add	w8, w8, #1
 	add	x16, x16, x15
 	add	x17, x17, x15
@@ -4236,106 +4217,106 @@ ebc_thread:                             // @ebc_thread
 	add	x1, x1, x15
 	add	x2, x2, x15
 	add	x3, x3, x15
-	b.gt	.LBB15_205
-.LBB15_186:                             //   Parent Loop BB15_4 Depth=1
+	b.gt	.LBB15_204
+.LBB15_185:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Loop Header: Depth=2
-                                        //       Child Loop BB15_189 Depth 3
-                                        //         Child Loop BB15_192 Depth 4
+                                        //       Child Loop BB15_188 Depth 3
+                                        //         Child Loop BB15_191 Depth 4
 	cmp	w12, w10
-	b.gt	.LBB15_185
-// %bb.187:                             //   in Loop: Header=BB15_186 Depth=2
+	b.gt	.LBB15_184
+// %bb.186:                             //   in Loop: Header=BB15_185 Depth=2
 	mov	x4, x3
 	mov	x5, x2
 	mov	x6, x1
 	mov	x7, x0
 	mov	x22, x17
-	mov	x26, x16
-	mov	x27, x14
-	b	.LBB15_189
-.LBB15_188:                             //   in Loop: Header=BB15_189 Depth=3
-	add	x27, x27, #1
-	add	x26, x26, #8
+	mov	x24, x16
+	mov	x28, x14
+	b	.LBB15_188
+.LBB15_187:                             //   in Loop: Header=BB15_188 Depth=3
+	add	x28, x28, #1
+	add	x24, x24, #8
 	add	x22, x22, #8
 	add	x7, x7, #8
-	cmp	w13, w27
+	cmp	w13, w28
 	add	x6, x6, #8
 	add	x5, x5, #8
 	add	x4, x4, #8
-	b.eq	.LBB15_185
-.LBB15_189:                             //   Parent Loop BB15_4 Depth=1
-                                        //     Parent Loop BB15_186 Depth=2
+	b.eq	.LBB15_184
+.LBB15_188:                             //   Parent Loop BB15_4 Depth=1
+                                        //     Parent Loop BB15_185 Depth=2
                                         // =>    This Loop Header: Depth=3
-                                        //         Child Loop BB15_192 Depth 4
+                                        //         Child Loop BB15_191 Depth 4
 	mov	x30, xzr
-	b	.LBB15_192
-.LBB15_190:                             //   in Loop: Header=BB15_192 Depth=4
+	b	.LBB15_191
+.LBB15_189:                             //   in Loop: Header=BB15_191 Depth=4
 	strb	w20, [x6, x30]
 	strb	wzr, [x22, x30]
-.LBB15_191:                             //   in Loop: Header=BB15_192 Depth=4
+.LBB15_190:                             //   in Loop: Header=BB15_191 Depth=4
 	add	x30, x30, #1
 	cmp	x30, #8
-	b.eq	.LBB15_188
-.LBB15_192:                             //   Parent Loop BB15_4 Depth=1
-                                        //     Parent Loop BB15_186 Depth=2
-                                        //       Parent Loop BB15_189 Depth=3
+	b.eq	.LBB15_187
+.LBB15_191:                             //   Parent Loop BB15_4 Depth=1
+                                        //     Parent Loop BB15_185 Depth=2
+                                        //       Parent Loop BB15_188 Depth=3
                                         // =>      This Inner Loop Header: Depth=4
 	ldrb	w20, [x4, x30]
 	cmp	w20, #255
-	b.ne	.LBB15_196
-// %bb.193:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w28, [x6, x30]
+	b.ne	.LBB15_195
+// %bb.192:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w27, [x6, x30]
 	ldrb	w20, [x7, x30]
-	cmp	w28, w20
-	b.eq	.LBB15_191
-// %bb.194:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w24, [x22, x30]
-	orr	w9, w9, #0x1
-	cbz	w24, .LBB15_190
-// %bb.195:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w24, [x26, x30]
-	cmp	w28, w24
+	cmp	w27, w20
 	b.eq	.LBB15_190
-	b	.LBB15_202
-.LBB15_196:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w28, [x6, x30]
+// %bb.193:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w26, [x22, x30]
+	orr	w9, w9, #0x1
+	cbz	w26, .LBB15_189
+// %bb.194:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w26, [x24, x30]
+	cmp	w27, w26
+	b.eq	.LBB15_189
+	b	.LBB15_201
+.LBB15_195:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w27, [x6, x30]
 	orr	w9, w9, #0x3
-	cmp	w28, w20
-	b.eq	.LBB15_191
-// %bb.197:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w24, [x22, x30]
-	cbz	w24, .LBB15_199
-// %bb.198:                             //   in Loop: Header=BB15_192 Depth=4
-	ldrb	w24, [x26, x30]
-	cmp	w28, w24
-	b.ne	.LBB15_202
-.LBB15_199:                             //   in Loop: Header=BB15_192 Depth=4
+	cmp	w27, w20
+	b.eq	.LBB15_190
+// %bb.196:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w26, [x22, x30]
+	cbz	w26, .LBB15_198
+// %bb.197:                             //   in Loop: Header=BB15_191 Depth=4
+	ldrb	w26, [x24, x30]
+	cmp	w27, w26
+	b.ne	.LBB15_201
+.LBB15_198:                             //   in Loop: Header=BB15_191 Depth=4
 	strb	w20, [x6, x30]
 	strb	wzr, [x22, x30]
 	ldrb	w20, [x6, x30]
 	cmp	w20, #240
-	b.eq	.LBB15_201
-// %bb.200:                             //   in Loop: Header=BB15_192 Depth=4
-	cbnz	w20, .LBB15_191
-.LBB15_201:                             //   in Loop: Header=BB15_192 Depth=4
+	b.eq	.LBB15_200
+// %bb.199:                             //   in Loop: Header=BB15_191 Depth=4
+	cbnz	w20, .LBB15_190
+.LBB15_200:                             //   in Loop: Header=BB15_191 Depth=4
 	strb	w21, [x5, x30]
-	b	.LBB15_191
-.LBB15_202:                             //   in Loop: Header=BB15_192 Depth=4
+	b	.LBB15_190
+.LBB15_201:                             //   in Loop: Header=BB15_191 Depth=4
 	mov	w23, #1                         // =0x1
-	b	.LBB15_191
-.LBB15_203:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w13, [x20, #2279]
-	mov	w24, #1                         // =0x1
+	b	.LBB15_190
+.LBB15_202:                             //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w13, [x22, #2279]
+	mov	w26, #1                         // =0x1
 	mov	w9, w13
 	cmp	w8, w11
-	b.le	.LBB15_184
-.LBB15_204:                             //   in Loop: Header=BB15_4 Depth=1
+	b.le	.LBB15_183
+.LBB15_203:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w23, wzr
-	b	.LBB15_206
+	b	.LBB15_205
+.LBB15_204:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	ldr	w26, [sp, #44]                  // 4-byte Folded Reload
+	ldrb	w13, [x22, #2279]
 .LBB15_205:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
-	ldr	w24, [sp, #52]                  // 4-byte Folded Reload
-	ldrb	w13, [x20, #2279]
-.LBB15_206:                             //   in Loop: Header=BB15_4 Depth=1
 	and	w8, w9, #0xff
 	and	w10, w13, #0x2
 	ldr	w11, [x19, #2128]
@@ -4343,22 +4324,21 @@ ebc_thread:                             // @ebc_thread
 	ccmp	w10, #0, #0, eq
 	csel	w8, wzr, w9, eq
 	cmp	w11, #2
-	strb	w8, [x20, #2279]
-	b.ge	.LBB15_210
-// %bb.207:                             //   in Loop: Header=BB15_4 Depth=1
+	strb	w8, [x22, #2279]
+	b.ge	.LBB15_209
+// %bb.206:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	x0, x25
-	tbz	w23, #0, .LBB15_211
-.LBB15_208:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w23, #0, .LBB15_210
+.LBB15_207:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_add_to_osd_buf_list_head
-	mov	w28, wzr
-	mov	w24, wzr
-	b	.LBB15_214
+	mov	w27, wzr
+	mov	w26, wzr
+	b	.LBB15_213
+.LBB15_208:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2228]
+	cbnz	w8, .LBB15_113
+	b	.LBB15_112
 .LBB15_209:                             //   in Loop: Header=BB15_4 Depth=1
-	ldur	x8, [x29, #-48]                 // 8-byte Folded Reload
-	ldr	w8, [x8, #2228]
-	cbnz	w8, .LBB15_114
-	b	.LBB15_113
-.LBB15_210:                             //   in Loop: Header=BB15_4 Depth=1
 	ldp	w3, w5, [x25, #40]
 	ldp	w4, w6, [x25, #48]
 	ldr	x0, [x19, #304]
@@ -4376,62 +4356,63 @@ ebc_thread:                             // @ebc_thread
 	str	w8, [sp]
 	bl	_dev_info
 	mov	x0, x25
-	tbnz	w23, #0, .LBB15_208
-.LBB15_211:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w23, #0, .LBB15_207
+.LBB15_210:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_buf_release
-	mov	w28, wzr
-	b	.LBB15_214
+	mov	w27, wzr
+	b	.LBB15_213
+.LBB15_211:                             //   in Loop: Header=BB15_4 Depth=1
+	cbnz	w8, .LBB15_132
 .LBB15_212:                             //   in Loop: Header=BB15_4 Depth=1
-	cbnz	w8, .LBB15_133
+	mov	w26, wzr
 .LBB15_213:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	w24, wzr
-.LBB15_214:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2116]
 	mov	w23, #2                         // =0x2
 	cmp	w8, #1
-	b.ne	.LBB15_342
-// %bb.215:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_336
+// %bb.214:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_dsp_buf_pop_get
-	cbz	x0, .LBB15_342
-// %bb.216:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	x0, .LBB15_336
+// %bb.215:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	mov	x25, x0
 	cmp	w8, #2
-	b.ge	.LBB15_290
-.LBB15_217:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ge	.LBB15_289
+.LBB15_216:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #1792]
 	ldr	x8, [x19, #1800]
-	cbz	x0, .LBB15_220
-// %bb.218:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	x0, .LBB15_219
+// %bb.217:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	x0, x8
-	b.eq	.LBB15_220
-// %bb.219:                             //   in Loop: Header=BB15_4 Depth=1
+	b.eq	.LBB15_219
+// %bb.218:                             //   in Loop: Header=BB15_4 Depth=1
 	bl	ebc_buf_release
 	ldr	x8, [x19, #1800]
-.LBB15_220:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_219:                             //   in Loop: Header=BB15_4 Depth=1
 	str	x8, [x19, #1792]
 	str	x25, [x19, #1800]
-	cbnz	x8, .LBB15_222
-// %bb.221:                             //   in Loop: Header=BB15_4 Depth=1
+	cbnz	x8, .LBB15_221
+// %bb.220:                             //   in Loop: Header=BB15_4 Depth=1
 	str	x25, [x19, #1792]
-.LBB15_222:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_221:                             //   in Loop: Header=BB15_4 Depth=1
 	adrp	x8, global_ebc
 	ldr	x8, [x8, :lo12:global_ebc]
 	ldr	w8, [x8, #264]
 	cmp	w8, #230
-	b.ne	.LBB15_227
-// %bb.223:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_226
+// %bb.222:                             //   in Loop: Header=BB15_4 Depth=1
 	str	w23, [x25, #32]
 	mov	w2, #3                          // =0x3
 	mov	w22, #4                         // =0x4
-.LBB15_224:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [sp, #72]                   // 4-byte Folded Reload
+.LBB15_223:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [sp, #68]                   // 4-byte Folded Reload
 	str	w2, [x19, #1836]
-	tbz	w8, #0, .LBB15_237
-// %bb.225:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #0, .LBB15_236
+// %bb.224:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x20, [x29, #-48]                // 8-byte Folded Reload
+	mov	x0, x19
 	ldr	w8, [x20, #2196]
 	ldr	w9, [x20, #2204]
-	mov	x0, x19
 	ldr	w10, [x20, #2208]
 	str	w8, [x20, #2212]
 	str	w9, [x20, #2220]
@@ -4443,18 +4424,18 @@ ebc_thread:                             // @ebc_thread
 	ldr	w8, [x20, #2200]
 	str	w9, [x20, #2172]
 	str	w10, [x20, #2176]
-	tbnz	w8, #31, .LBB15_235
-// %bb.226:                             //   in Loop: Header=BB15_4 Depth=1
-	cbnz	w8, .LBB15_236
-	b	.LBB15_237
-.LBB15_227:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w8, #31, .LBB15_234
+// %bb.225:                             //   in Loop: Header=BB15_4 Depth=1
+	cbnz	w8, .LBB15_235
+	b	.LBB15_236
+.LBB15_226:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [sp, #48]                   // 4-byte Folded Reload
 	ldr	w3, [x25, #32]
 	tst	w8, #0xff
 	cset	w8, ne
 	cmp	w3, #21
-	b.hi	.LBB15_312
-// %bb.228:                             //   in Loop: Header=BB15_4 Depth=1
+	b.hi	.LBB15_306
+// %bb.227:                             //   in Loop: Header=BB15_4 Depth=1
 	ldur	w10, [x29, #-68]                // 4-byte Folded Reload
 	lsl	w9, w21, w3
 	orn	w8, w8, w10
@@ -4462,21 +4443,21 @@ ebc_thread:                             // @ebc_thread
 	movk	w10, #34, lsl #16
 	and	w8, w8, #0x1
 	tst	w9, w10
-	b.ne	.LBB15_231
-// %bb.229:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_230
+// %bb.228:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w10, #36736                     // =0x8f80
 	tst	w9, w10
-	b.eq	.LBB15_270
-.LBB15_230:                             //   in Loop: Header=BB15_4 Depth=1
+	b.eq	.LBB15_269
+.LBB15_229:                             //   in Loop: Header=BB15_4 Depth=1
 	orr	w22, w8, #0x2
-	b	.LBB15_232
-.LBB15_231:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_231
+.LBB15_230:                             //   in Loop: Header=BB15_4 Depth=1
 	orr	w22, w8, #0x4
-.LBB15_232:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_231:                             //   in Loop: Header=BB15_4 Depth=1
 	sub	w8, w3, #2
 	cmp	w8, #19
-	b.hi	.LBB15_307
-// %bb.233:                             //   in Loop: Header=BB15_4 Depth=1
+	b.hi	.LBB15_301
+// %bb.232:                             //   in Loop: Header=BB15_4 Depth=1
 	adrp	x11, .LJTI15_0
 	add	x11, x11, :lo12:.LJTI15_0
 	mov	w2, wzr
@@ -4485,56 +4466,57 @@ ebc_thread:                             // @ebc_thread
 	ldrsw	x10, [x11, x8, lsl #2]
 	add	x9, x9, x10
 	br	x9
-.LBB15_234:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_233:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #8                          // =0x8
-	b	.LBB15_224
-.LBB15_235:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_234:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, w9
+.LBB15_235:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x9, [x29, #-48]                 // 8-byte Folded Reload
+	str	w8, [x9, #2216]
 .LBB15_236:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w8, [x20, #2216]
-.LBB15_237:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w9, [x25, #32]
 	ldr	w8, [x19, #1912]
 	tst	w22, #0xfffffff9
-	str	w9, [sp, #56]                   // 4-byte Folded Spill
+	str	w9, [sp, #52]                   // 4-byte Folded Spill
 	mov	w9, #9                          // =0x9
 	and	w9, w8, w9
-	b.eq	.LBB15_243
+	b.eq	.LBB15_242
+// %bb.237:                             //   in Loop: Header=BB15_4 Depth=1
+	cbnz	w9, .LBB15_245
 // %bb.238:                             //   in Loop: Header=BB15_4 Depth=1
-	cbnz	w9, .LBB15_246
-// %bb.239:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w26, [x19, #536]
+	ldr	w24, [x19, #536]
 	ldr	x9, [x19, #1792]
 	ldr	x0, [x19, #1368]
-	add	w8, w26, #7
-	cmp	w26, #0
-	sxtw	x2, w26
+	add	w8, w24, #7
+	cmp	w24, #0
+	sxtw	x2, w24
 	ldr	x1, [x9, #8]
-	csel	w8, w8, w26, lt
+	csel	w8, w8, w24, lt
 	asr	w23, w8, #3
 	bl	memcpy
-	tbnz	w22, #3, .LBB15_275
+	tbnz	w22, #3, .LBB15_274
+// %bb.239:                             //   in Loop: Header=BB15_4 Depth=1
+	cmp	w24, #8
+	b.lt	.LBB15_277
 // %bb.240:                             //   in Loop: Header=BB15_4 Depth=1
-	cmp	w26, #8
-	b.lt	.LBB15_278
-// %bb.241:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x9, [x19, #1800]
 	ldr	x8, [x19, #1296]
 	mov	w10, w23
 	ldr	x9, [x9, #8]
-.LBB15_242:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_241:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldr	x11, [x9], #8
 	subs	w10, w10, #1
 	and	x11, x11, #0xf8f8f8f8f8f8f8f8
 	str	x11, [x8], #8
-	b.ne	.LBB15_242
-	b	.LBB15_278
-.LBB15_243:                             //   in Loop: Header=BB15_4 Depth=1
-	cbz	w9, .LBB15_246
+	b.ne	.LBB15_241
+	b	.LBB15_277
+.LBB15_242:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	w9, .LBB15_245
+// %bb.243:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w8, #1, .LBB15_281
 // %bb.244:                             //   in Loop: Header=BB15_4 Depth=1
-	tbnz	w8, #1, .LBB15_282
-// %bb.245:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w9, [x19, #2128]
 	tst	w8, #0x4
 	adrp	x8, .L.str.178
@@ -4543,22 +4525,22 @@ ebc_thread:                             // @ebc_thread
 	add	x10, x10, :lo12:.L.str.179
 	csel	x1, x10, x8, eq
 	cmp	w9, #2
-	b.lt	.LBB15_295
-	b	.LBB15_284
-.LBB15_246:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_294
+	b	.LBB15_283
+.LBB15_245:                             //   in Loop: Header=BB15_4 Depth=1
 	and	w8, w22, w8
-	tbnz	w8, #3, .LBB15_281
+	tbnz	w8, #3, .LBB15_280
+// %bb.246:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #0, .LBB15_294
 // %bb.247:                             //   in Loop: Header=BB15_4 Depth=1
-	tbz	w8, #0, .LBB15_295
-// %bb.248:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #548]
 	ldr	w9, [x19, #544]
 	add	w10, w8, #7
 	cmp	w8, #0
 	csel	w11, w10, w8, lt
 	cmp	w9, #1
-	b.lt	.LBB15_292
-// %bb.249:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_291
+// %bb.248:                             //   in Loop: Header=BB15_4 Depth=1
 	asr	w11, w11, #3
 	ldr	x13, [x19, #1800]
 	ldr	x14, [x19, #1816]
@@ -4572,24 +4554,24 @@ ebc_thread:                             // @ebc_thread
 	ldr	x15, [x19, #1368]
 	mov	w10, wzr
 	add	x17, x17, #8
-	b	.LBB15_252
-.LBB15_250:                             //   in Loop: Header=BB15_252 Depth=2
+	b	.LBB15_251
+.LBB15_249:                             //   in Loop: Header=BB15_251 Depth=2
 	add	x14, x14, x17
-.LBB15_251:                             //   in Loop: Header=BB15_252 Depth=2
+.LBB15_250:                             //   in Loop: Header=BB15_251 Depth=2
 	add	w10, w10, #1
 	cmp	w10, w9
-	b.eq	.LBB15_293
-.LBB15_252:                             //   Parent Loop BB15_4 Depth=1
+	b.eq	.LBB15_292
+.LBB15_251:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Loop Header: Depth=2
-                                        //       Child Loop BB15_255 Depth 3
-                                        //         Child Loop BB15_261 Depth 4
+                                        //       Child Loop BB15_254 Depth 3
+                                        //         Child Loop BB15_260 Depth 4
 	cmp	w8, #8
-	b.lt	.LBB15_251
-// %bb.253:                             //   in Loop: Header=BB15_252 Depth=2
+	b.lt	.LBB15_250
+// %bb.252:                             //   in Loop: Header=BB15_251 Depth=2
 	mov	w0, wzr
 	mov	x1, x14
-	b	.LBB15_255
-.LBB15_254:                             //   in Loop: Header=BB15_255 Depth=3
+	b	.LBB15_254
+.LBB15_253:                             //   in Loop: Header=BB15_254 Depth=3
 	add	w0, w0, #1
 	add	x16, x16, #8
 	add	x15, x15, #8
@@ -4597,104 +4579,104 @@ ebc_thread:                             // @ebc_thread
 	add	x1, x1, #8
 	add	x13, x13, #8
 	add	x12, x12, #8
-	b.eq	.LBB15_250
-.LBB15_255:                             //   Parent Loop BB15_4 Depth=1
-                                        //     Parent Loop BB15_252 Depth=2
+	b.eq	.LBB15_249
+.LBB15_254:                             //   Parent Loop BB15_4 Depth=1
+                                        //     Parent Loop BB15_251 Depth=2
                                         // =>    This Loop Header: Depth=3
-                                        //         Child Loop BB15_261 Depth 4
+                                        //         Child Loop BB15_260 Depth 4
 	ldr	x2, [x16]
 	ldr	x3, [x13]
 	cmp	x2, x3
-	b.ne	.LBB15_258
-// %bb.256:                             //   in Loop: Header=BB15_255 Depth=3
-	tbz	w22, #2, .LBB15_254
-// %bb.257:                             //   in Loop: Header=BB15_255 Depth=3
+	b.ne	.LBB15_257
+// %bb.255:                             //   in Loop: Header=BB15_254 Depth=3
+	tbz	w22, #2, .LBB15_253
+// %bb.256:                             //   in Loop: Header=BB15_254 Depth=3
 	ldr	x2, [x15]
 	orr	x2, x2, #0x404040404040404
 	str	x2, [x15]
-	b	.LBB15_254
-.LBB15_258:                             //   in Loop: Header=BB15_255 Depth=3
+	b	.LBB15_253
+.LBB15_257:                             //   in Loop: Header=BB15_254 Depth=3
 	mov	x2, xzr
-	b	.LBB15_261
-.LBB15_259:                             //   in Loop: Header=BB15_261 Depth=4
+	b	.LBB15_260
+.LBB15_258:                             //   in Loop: Header=BB15_260 Depth=4
 	strb	wzr, [x12, x2]
-.LBB15_260:                             //   in Loop: Header=BB15_261 Depth=4
+.LBB15_259:                             //   in Loop: Header=BB15_260 Depth=4
 	add	x2, x2, #1
 	cmp	x2, #8
-	b.eq	.LBB15_254
-.LBB15_261:                             //   Parent Loop BB15_4 Depth=1
-                                        //     Parent Loop BB15_252 Depth=2
-                                        //       Parent Loop BB15_255 Depth=3
+	b.eq	.LBB15_253
+.LBB15_260:                             //   Parent Loop BB15_4 Depth=1
+                                        //     Parent Loop BB15_251 Depth=2
+                                        //       Parent Loop BB15_254 Depth=3
                                         // =>      This Inner Loop Header: Depth=4
 	ldrb	w4, [x16, x2]
 	ldrb	w3, [x13, x2]
 	cmp	w4, w3
-	b.ne	.LBB15_264
-// %bb.262:                             //   in Loop: Header=BB15_261 Depth=4
-	tbz	w22, #2, .LBB15_260
-// %bb.263:                             //   in Loop: Header=BB15_261 Depth=4
+	b.ne	.LBB15_263
+// %bb.261:                             //   in Loop: Header=BB15_260 Depth=4
+	tbz	w22, #2, .LBB15_259
+// %bb.262:                             //   in Loop: Header=BB15_260 Depth=4
 	ldrb	w3, [x15, x2]
 	orr	w3, w3, #0x4
 	strb	w3, [x15, x2]
-	b	.LBB15_260
-.LBB15_264:                             //   in Loop: Header=BB15_261 Depth=4
+	b	.LBB15_259
+.LBB15_263:                             //   in Loop: Header=BB15_260 Depth=4
 	ldrb	w5, [x1, x2]
 	cmp	w5, #255
-	b.ne	.LBB15_260
-// %bb.265:                             //   in Loop: Header=BB15_261 Depth=4
+	b.ne	.LBB15_259
+// %bb.264:                             //   in Loop: Header=BB15_260 Depth=4
 	ldrb	w5, [x12, x2]
-	cbz	w5, .LBB15_267
-// %bb.266:                             //   in Loop: Header=BB15_261 Depth=4
+	cbz	w5, .LBB15_266
+// %bb.265:                             //   in Loop: Header=BB15_260 Depth=4
 	ldrb	w5, [x15, x2]
 	cmp	w4, w5
-	b.ne	.LBB15_269
-.LBB15_267:                             //   in Loop: Header=BB15_261 Depth=4
+	b.ne	.LBB15_268
+.LBB15_266:                             //   in Loop: Header=BB15_260 Depth=4
 	strb	w3, [x16, x2]
-	tbz	w3, #2, .LBB15_259
-// %bb.268:                             //   in Loop: Header=BB15_261 Depth=4
+	tbz	w3, #2, .LBB15_258
+// %bb.267:                             //   in Loop: Header=BB15_260 Depth=4
 	and	w3, w3, #0xfffffffb
 	strb	w3, [x16, x2]
 	ldrb	w3, [x15, x2]
 	orr	w3, w3, #0x4
 	strb	w3, [x15, x2]
-	b	.LBB15_259
-.LBB15_269:                             //   in Loop: Header=BB15_261 Depth=4
+	b	.LBB15_258
+.LBB15_268:                             //   in Loop: Header=BB15_260 Depth=4
 	mov	w23, #1                         // =0x1
-	b	.LBB15_260
-.LBB15_270:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_259
+.LBB15_269:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w10, #28672                     // =0x7000
 	movk	w10, #1, lsl #16
 	tst	w9, w10
-	b.eq	.LBB15_312
+	b.eq	.LBB15_306
+// %bb.270:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w9, [sp, #40]                   // 4-byte Folded Reload
+	tst	w9, #0xff
+	b.eq	.LBB15_229
 // %bb.271:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w9, [sp, #44]                   // 4-byte Folded Reload
+	ldr	w9, [sp, #72]                   // 4-byte Folded Reload
 	tst	w9, #0xff
-	b.eq	.LBB15_230
+	b.ne	.LBB15_229
 // %bb.272:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w9, [sp, #60]                   // 4-byte Folded Reload
-	tst	w9, #0xff
-	b.ne	.LBB15_230
-// %bb.273:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [sp, #48]                   // 4-byte Folded Reload
 	tst	w8, #0xff
 	b.eq	.LBB15_429
-// %bb.274:                             //   in Loop: Header=BB15_4 Depth=1
+// %bb.273:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, #14                         // =0xe
 	mov	w2, #1                          // =0x1
 	mov	w22, #9                         // =0x9
 	str	w8, [x25, #32]
-	b	.LBB15_224
-.LBB15_275:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_274:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #536]
 	mov	w13, #240                       // =0xf0
 	cmp	w8, #1
-	b.lt	.LBB15_278
-// %bb.276:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_277
+// %bb.275:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x9, [x19, #1792]
 	ldr	x8, [x19, #1296]
 	mov	x10, xzr
 	ldr	x9, [x9, #8]
-.LBB15_277:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_276:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldrb	w11, [x9, x10]
 	and	w12, w11, #0xf0
@@ -4704,8 +4686,8 @@ ebc_thread:                             // @ebc_thread
 	add	x10, x10, #1
 	ldr	w11, [x19, #536]
 	cmp	w10, w11
-	b.lt	.LBB15_277
-.LBB15_278:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_276
+.LBB15_277:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #1584]
 	ldrsw	x2, [x19, #536]
 	mov	w1, wzr
@@ -4714,45 +4696,45 @@ ebc_thread:                             // @ebc_thread
 	ldrsw	x2, [x19, #536]
 	mov	w1, wzr
 	bl	memset
-	tbnz	w22, #2, .LBB15_285
-// %bb.279:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w22, #2, .LBB15_284
+// %bb.278:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #2
 	b.ge	.LBB15_435
-// %bb.280:                             //   in Loop: Header=BB15_4 Depth=1
+// %bb.279:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w23, #2                         // =0x2
-	tbz	w22, #3, .LBB15_295
-.LBB15_281:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w22, #3, .LBB15_294
+.LBB15_280:                             //   in Loop: Header=BB15_4 Depth=1
 	add	x0, x19, #304
 	bl	fast_update_to_auto_image
-	b	.LBB15_295
-.LBB15_282:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_294
+.LBB15_281:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #1
-	b.le	.LBB15_295
-// %bb.283:                             //   in Loop: Header=BB15_4 Depth=1
+	b.le	.LBB15_294
+// %bb.282:                             //   in Loop: Header=BB15_4 Depth=1
 	adrp	x1, .L.str.177
 	add	x1, x1, :lo12:.L.str.177
-.LBB15_284:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_283:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x2, .L.str.170
 	add	x2, x2, :lo12:.L.str.170
 	bl	_dev_info
-	b	.LBB15_295
-.LBB15_285:                             //   in Loop: Header=BB15_4 Depth=1
-	cmp	w26, #8
-	b.lt	.LBB15_326
-// %bb.286:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_294
+.LBB15_284:                             //   in Loop: Header=BB15_4 Depth=1
+	cmp	w24, #8
+	b.lt	.LBB15_320
+// %bb.285:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x11, [x19, #1368]
 	subs	w8, w23, #1
-	b.eq	.LBB15_323
-// %bb.287:                             //   in Loop: Header=BB15_4 Depth=1
+	b.eq	.LBB15_317
+// %bb.286:                             //   in Loop: Header=BB15_4 Depth=1
 	add	x10, x8, #1
 	and	x9, x10, #0x1fffffffe
 	add	x8, x11, x9, lsl #3
 	add	x11, x11, #8
 	mov	x12, x9
-.LBB15_288:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_287:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldp	x13, x14, [x11, #-8]
 	subs	x12, x12, #2
@@ -4760,113 +4742,92 @@ ebc_thread:                             // @ebc_thread
 	orr	x14, x14, #0x404040404040404
 	stp	x13, x14, [x11, #-8]
 	add	x11, x11, #16
-	b.ne	.LBB15_288
-// %bb.289:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_287
+// %bb.288:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	x10, x9
-	b.ne	.LBB15_324
-	b	.LBB15_326
-.LBB15_290:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_318
+	b	.LBB15_320
+.LBB15_289:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.125
 	add	x1, x1, :lo12:.L.str.125
 	adrp	x2, .L.str.121
 	add	x2, x2, :lo12:.L.str.121
 	bl	_dev_info
-	b	.LBB15_217
-.LBB15_291:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_216
+.LBB15_290:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #1512]
 	ldrsw	x2, [x19, #536]
 	mov	w1, wzr
 	bl	memset
 	ldrb	w8, [x19, #1912]
-	tbnz	w8, #2, .LBB15_178
-	b	.LBB15_182
-.LBB15_292:                             //   in Loop: Header=BB15_4 Depth=1
+	tbnz	w8, #2, .LBB15_177
+	b	.LBB15_181
+.LBB15_291:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w23, wzr
-.LBB15_293:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_292:                             //   in Loop: Header=BB15_4 Depth=1
 	and	w8, w22, #0xfffffffb
 	ldr	w9, [x19, #2128]
 	tst	w22, #0x4
 	orr	w8, w8, #0x2
-	csel	w26, w22, w8, eq
+	csel	w24, w22, w8, eq
 	cmp	w9, #1
 	b.gt	.LBB15_434
-.LBB15_294:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_293:                             //   in Loop: Header=BB15_4 Depth=1
 	and	w8, w23, #0x1
-	mov	w22, w26
+	mov	w22, w24
 	mov	w23, #2                         // =0x2
 	strb	w8, [x19, #2118]
-.LBB15_295:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_294:                             //   in Loop: Header=BB15_4 Depth=1
 	str	w22, [x19, #1912]
-	tbz	w22, #3, .LBB15_297
-// %bb.296:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w21, [x20, #2236]
-.LBB15_297:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	w8, #9                          // =0x9
-	tst	w22, w8
-	mov	w8, wzr
-	b.ne	.LBB15_301
-// %bb.298:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w9, [sp, #60]                   // 4-byte Folded Reload
-	tst	w9, #0xff
-	b.ne	.LBB15_301
-// %bb.299:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x19, #264]
-	cmp	w8, #230
-	b.ne	.LBB15_304
-// %bb.300:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	w8, wzr
-.LBB15_301:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w8, [x20, #2168]
-	tbz	w22, #3, .LBB15_328
-.LBB15_302:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w22, #3, .LBB15_296
+// %bb.295:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x8, [x29, #-48]                 // 8-byte Folded Reload
+	str	w21, [x8, #2236]
+.LBB15_296:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w22, #3, .LBB15_322
+// %bb.297:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
 	cmp	w8, #1
-	b.lt	.LBB15_329
-// %bb.303:                             //   in Loop: Header=BB15_4 Depth=1
+	b.lt	.LBB15_323
+// %bb.298:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	ldr	w3, [x25, #32]
 	adrp	x1, .L.str.126
 	add	x1, x1, :lo12:.L.str.126
-	ldr	w4, [x20, #2172]
-	ldr	w5, [x20, #2176]
+	ldr	w4, [x22, #2172]
+	ldr	w5, [x22, #2176]
 	adrp	x2, .L.str.127
 	add	x2, x2, :lo12:.L.str.127
 	bl	_dev_info
-	b	.LBB15_329
-.LBB15_304:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2164]
-	cmp	w8, #1
-	cset	w8, eq
-	str	w8, [x20, #2168]
-	tbnz	w22, #3, .LBB15_302
-	b	.LBB15_328
-.LBB15_305:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_323
+.LBB15_299:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #7                          // =0x7
-	b	.LBB15_224
-.LBB15_306:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_300:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #1                          // =0x1
-	b	.LBB15_224
-.LBB15_307:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_301:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #3                          // =0x3
-	b	.LBB15_224
-.LBB15_308:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_302:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #5                          // =0x5
-	b	.LBB15_224
-.LBB15_309:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_303:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #6                          // =0x6
-	b	.LBB15_224
-.LBB15_310:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	x23, x0
+	b	.LBB15_223
+.LBB15_304:                             //   in Loop: Header=BB15_4 Depth=1
+	mov	x20, x0
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.149
 	add	x1, x1, :lo12:.L.str.149
 	adrp	x2, .L.str.150
 	add	x2, x2, :lo12:.L.str.150
 	bl	_dev_info
-	mov	x0, x23
+	mov	x0, x20
 	b	.LBB15_15
-.LBB15_311:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_305:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.153
 	add	x1, x1, :lo12:.L.str.153
@@ -4876,40 +4837,41 @@ ebc_thread:                             // @ebc_thread
 	bl	_dev_info
 	ldr	w8, [x19, #184]
 	b	.LBB15_25
-.LBB15_312:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_306:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
-	tbz	w8, #31, .LBB15_440
-.LBB15_313:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #31, .LBB15_441
+.LBB15_307:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w22, #4                         // =0x4
 	mov	w2, #5                          // =0x5
 	str	w22, [x25, #32]
-	b	.LBB15_224
-.LBB15_314:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_308:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
-	tbz	w8, #31, .LBB15_441
-.LBB15_315:                             //   in Loop: Header=BB15_4 Depth=1
+	tbz	w8, #31, .LBB15_442
+.LBB15_309:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w6, #4                          // =0x4
-	b	.LBB15_83
-.LBB15_316:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_82
+.LBB15_310:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #2                          // =0x2
-	b	.LBB15_224
-.LBB15_317:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_311:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #4                          // =0x4
-	b	.LBB15_224
-.LBB15_318:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_312:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #14                         // =0xe
-	b	.LBB15_224
-.LBB15_319:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2248]
+	b	.LBB15_223
+.LBB15_313:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x8, [x29, #-48]                 // 8-byte Folded Reload
 	mov	w9, #15                         // =0xf
+	ldrb	w8, [x8, #2248]
 	cmp	w8, #0
 	mov	w8, #3                          // =0x3
 	csel	w2, w9, w8, ne
-	b	.LBB15_224
-.LBB15_320:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_314:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w2, #13                         // =0xd
-	b	.LBB15_224
-.LBB15_321:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_223
+.LBB15_315:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.151
 	add	x1, x1, :lo12:.L.str.151
@@ -4917,8 +4879,7 @@ ebc_thread:                             // @ebc_thread
 	mov	w20, #-12                       // =0xfffffff4
 	bl	_dev_err
 	b	.LBB15_34
-.LBB15_322:                             //   in Loop: Header=BB15_4 Depth=1
-	mov	x23, x0
+.LBB15_316:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.152
 	add	x1, x1, :lo12:.L.str.152
@@ -4926,118 +4887,141 @@ ebc_thread:                             // @ebc_thread
 	add	x2, x2, :lo12:.L.str.150
 	mov	w3, w20
 	bl	_dev_info
-	mov	x0, x23
+	ldr	x0, [sp, #32]                   // 8-byte Folded Reload
 	b	.LBB15_35
-.LBB15_323:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_317:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w9, wzr
 	mov	x8, x11
-.LBB15_324:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_318:                             //   in Loop: Header=BB15_4 Depth=1
 	sub	w9, w23, w9
-.LBB15_325:                             //   Parent Loop BB15_4 Depth=1
+.LBB15_319:                             //   Parent Loop BB15_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
 	ldr	x10, [x8]
 	subs	w9, w9, #1
 	orr	x10, x10, #0x404040404040404
 	str	x10, [x8], #8
-	b.ne	.LBB15_325
-.LBB15_326:                             //   in Loop: Header=BB15_4 Depth=1
+	b.ne	.LBB15_319
+.LBB15_320:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
+	mov	w23, #2                         // =0x2
 	cmp	w8, #2
 	b.ge	.LBB15_436
-.LBB15_327:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_321:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w8, #3                          // =0x3
-	mov	w23, #2                         // =0x2
-	str	wzr, [x20, #2168]
 	str	w8, [x19, #1912]
-.LBB15_328:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_322:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
 	cmp	w8, #1
 	b.ge	.LBB15_428
-.LBB15_329:                             //   in Loop: Header=BB15_4 Depth=1
+.LBB15_323:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w9, [x19, #2148]
-	ldrb	w8, [x20, #2261]
+	ldrb	w8, [x22, #2261]
 	cmp	w9, #1
-	strb	w8, [x20, #2249]
-	b.ne	.LBB15_340
-// %bb.330:                             //   in Loop: Header=BB15_4 Depth=1
+	strb	w8, [x22, #2249]
+	b.ne	.LBB15_334
+// %bb.324:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w9, [x19, #1912]
-	tbnz	w9, #0, .LBB15_340
-// %bb.331:                             //   in Loop: Header=BB15_4 Depth=1
-	cbz	w8, .LBB15_341
-// %bb.332:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w25, [x20, #2272]
-	ldr	w26, [x20, #2268]
-	mov	w8, wzr
+	tbnz	w9, #0, .LBB15_334
+// %bb.325:                             //   in Loop: Header=BB15_4 Depth=1
+	cbz	w8, .LBB15_335
+// %bb.326:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w24, [x22, #2272]
+	ldr	w25, [x22, #2268]
+	mov	x8, x22
+	str	wzr, [x22, #2264]
+	mov	w9, wzr
+	str	w24, [x22, #2256]
 	ldr	x22, [x19, #1224]
-	str	wzr, [x20, #2264]
-	str	w25, [x20, #2256]
-	str	w26, [x20, #2252]
-	strh	wzr, [x20, #2276]
-	strb	wzr, [x20, #2278]
+	str	w25, [x8, #2252]
+	strh	wzr, [x8, #2276]
+	strb	wzr, [x8, #2278]
 	cbz	x22, .LBB15_433
-// %bb.333:                             //   in Loop: Header=BB15_4 Depth=1
+// %bb.327:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w23, [x19, #548]
 	cmp	w23, #1
 	b.lt	.LBB15_427
-// %bb.334:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w27, [x19, #544]
-	cmp	w27, #1
+// %bb.328:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w28, [x19, #544]
+	cmp	w28, #1
 	b.lt	.LBB15_427
-// %bb.335:                             //   in Loop: Header=BB15_4 Depth=1
-	cmp	w26, #1
+// %bb.329:                             //   in Loop: Header=BB15_4 Depth=1
+	cmp	w25, #1
 	b.lt	.LBB15_427
-// %bb.336:                             //   in Loop: Header=BB15_4 Depth=1
+// %bb.330:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
 	cmp	w8, #1
 	b.ge	.LBB15_438
-// %bb.337:                             //   in Loop: Header=BB15_4 Depth=1
-	cmp	w25, #10
+// %bb.331:                             //   in Loop: Header=BB15_4 Depth=1
+	cmp	w24, #10
 	b.eq	.LBB15_439
-.LBB15_338:                             //   in Loop: Header=BB15_4 Depth=1
-	and	x8, x27, #0xffff
+.LBB15_332:                             //   in Loop: Header=BB15_4 Depth=1
+	and	x8, x28, #0xffff
 	cbz	w8, .LBB15_439
-// %bb.339:                             //   in Loop: Header=BB15_4 Depth=1
-	mul	w9, w26, w26
+// %bb.333:                             //   in Loop: Header=BB15_4 Depth=1
+	mul	w9, w25, w25
 	ubfx	w10, w23, #1, #16
-	ubfx	x11, x27, #1, #16
+	ubfx	x11, x28, #1, #16
 	mov	x13, xzr
 	lsl	w12, w9, #2
 	b	.LBB15_351
-.LBB15_340:                             //   in Loop: Header=BB15_4 Depth=1
-	strb	wzr, [x20, #2249]
+.LBB15_334:                             //   in Loop: Header=BB15_4 Depth=1
+	strb	wzr, [x22, #2249]
+.LBB15_335:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x22, #2172]
+	str	wzr, [sp, #68]                  // 4-byte Folded Spill
+	str	w8, [x22, #2184]
+.LBB15_336:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w8, [x19, #1912]
+	mov	w9, #9                          // =0x9
+	tst	w8, w9
+	b.ne	.LBB15_341
+// %bb.337:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w9, [sp, #72]                   // 4-byte Folded Reload
+	tst	w9, #0xff
+	b.ne	.LBB15_341
+// %bb.338:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w9, [x19, #264]
+	cmp	w9, #230
+	b.eq	.LBB15_341
+// %bb.339:                             //   in Loop: Header=BB15_4 Depth=1
+	ldrb	w9, [x22, #2280]
+	cbnz	w9, .LBB15_341
+// %bb.340:                             //   in Loop: Header=BB15_4 Depth=1
+	ldr	w9, [x22, #2164]
+	cmp	w9, #1
+	b.eq	.LBB15_342
 .LBB15_341:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2172]
-	str	wzr, [sp, #72]                  // 4-byte Folded Spill
-	str	w8, [x20, #2184]
+	mov	w9, wzr
 .LBB15_342:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x19, #1912]
+	str	w9, [x22, #2168]
 	tbz	w8, #3, .LBB15_382
 // %bb.343:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2281]
-	ldrb	w9, [x20, #2282]
+	ldrb	w8, [x22, #2281]
+	ldrb	w9, [x22, #2282]
 	orr	w8, w9, w8
 	tst	w8, #0xff
-	strb	w8, [x20, #2283]
+	strb	w8, [x22, #2283]
 	b.ne	.LBB15_382
 // %bb.344:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2118]
 	tbnz	w8, #0, .LBB15_382
 // %bb.345:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2249]
+	ldrb	w8, [x22, #2249]
 	cmp	w8, #1
 	b.ne	.LBB15_377
 // %bb.346:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2276]
+	ldrb	w8, [x22, #2276]
 	cmp	w8, #1
 	b.ne	.LBB15_349
 // %bb.347:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2277]
+	ldrb	w8, [x22, #2277]
 	cmp	w8, #1
 	b.ne	.LBB15_349
 // %bb.348:                             //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x20, #2278]
+	strb	w21, [x22, #2278]
 .LBB15_349:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2278]
+	ldrb	w8, [x22, #2278]
 	tbnz	w8, #0, .LBB15_378
 	b	.LBB15_382
 .LBB15_350:                             //   in Loop: Header=BB15_351 Depth=2
@@ -5049,10 +5033,10 @@ ebc_thread:                             // @ebc_thread
                                         //       Child Loop BB15_356 Depth 3
 	cbz	w10, .LBB15_350
 // %bb.352:                             //   in Loop: Header=BB15_351 Depth=2
-	sub	w15, w27, w13
+	sub	w15, w28, w13
 	subs	x1, x13, x11
 	mov	w14, wzr
-	sdiv	w15, w15, w26
+	sdiv	w15, w15, w25
 	mul	x16, x1, x1
 	asr	x0, x1, #63
 	cinc	w17, w21, lt
@@ -5081,16 +5065,16 @@ ebc_thread:                             // @ebc_thread
                                         //     Parent Loop BB15_351 Depth=2
                                         // =>    This Inner Loop Header: Depth=3
 	lsl	w2, w14, #1
-	cmp	w25, #4
+	cmp	w24, #4
 	b.gt	.LBB15_361
 // %bb.357:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #2
+	cmp	w24, #2
 	b.gt	.LBB15_365
 // %bb.358:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #1
+	cmp	w24, #1
 	b.eq	.LBB15_371
 // %bb.359:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #2
+	cmp	w24, #2
 	b.ne	.LBB15_375
 // %bb.360:                             //   in Loop: Header=BB15_356 Depth=3
 	and	w2, w2, #0xffff
@@ -5099,13 +5083,13 @@ ebc_thread:                             // @ebc_thread
 	add	w2, w2, w1
 	b	.LBB15_373
 .LBB15_361:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #7
+	cmp	w24, #7
 	b.gt	.LBB15_368
 // %bb.362:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #5
+	cmp	w24, #5
 	b.eq	.LBB15_353
 // %bb.363:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #7
+	cmp	w24, #7
 	b.ne	.LBB15_375
 // %bb.364:                             //   in Loop: Header=BB15_356 Depth=3
 	mov	w2, #65535                      // =0xffff
@@ -5113,10 +5097,10 @@ ebc_thread:                             // @ebc_thread
 	csel	w2, w15, w2, lt
 	b	.LBB15_355
 .LBB15_365:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #3
+	cmp	w24, #3
 	b.eq	.LBB15_372
 // %bb.366:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #4
+	cmp	w24, #4
 	b.ne	.LBB15_375
 // %bb.367:                             //   in Loop: Header=BB15_356 Depth=3
 	and	w2, w2, #0xffff
@@ -5126,13 +5110,13 @@ ebc_thread:                             // @ebc_thread
 	csel	w2, w2, w1, lo
 	b	.LBB15_376
 .LBB15_368:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #8
+	cmp	w24, #8
 	b.eq	.LBB15_374
 // %bb.369:                             //   in Loop: Header=BB15_356 Depth=3
-	cmp	w25, #9
+	cmp	w24, #9
 	b.ne	.LBB15_375
 // %bb.370:                             //   in Loop: Header=BB15_356 Depth=3
-	udiv	w2, w13, w26
+	udiv	w2, w13, w25
 	b	.LBB15_355
 .LBB15_371:                             //   in Loop: Header=BB15_356 Depth=3
 	and	w2, w2, #0xffff
@@ -5150,22 +5134,22 @@ ebc_thread:                             // @ebc_thread
 	cmp	w2, w1
 	csel	w2, w2, w1, hi
 .LBB15_373:                             //   in Loop: Header=BB15_356 Depth=3
-	udiv	w2, w2, w26
+	udiv	w2, w2, w25
 	b	.LBB15_354
 .LBB15_374:                             //   in Loop: Header=BB15_356 Depth=3
 	sub	w2, w23, w2, uxth
 	mov	w3, #65535                      // =0xffff
-	sdiv	w2, w2, w26
+	sdiv	w2, w2, w25
 	cmp	w2, w3
 	csel	w2, w2, w3, lt
 	b	.LBB15_355
 .LBB15_375:                             //   in Loop: Header=BB15_356 Depth=3
 	and	w2, w2, #0xffff
 .LBB15_376:                             //   in Loop: Header=BB15_356 Depth=3
-	udiv	w2, w2, w26
+	udiv	w2, w2, w25
 	b	.LBB15_355
 .LBB15_377:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2184]
+	ldr	w8, [x22, #2184]
 	cmp	w8, #0
 	b.gt	.LBB15_382
 .LBB15_378:                             //   in Loop: Header=BB15_4 Depth=1
@@ -5175,7 +5159,7 @@ ebc_thread:                             // @ebc_thread
 	ldrb	w8, [x19, #2117]
 	tbnz	w8, #0, .LBB15_382
 // %bb.380:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2236]
+	ldr	w8, [x22, #2236]
 	cmp	w8, #1
 	b.ne	.LBB15_383
 // %bb.381:                             //   in Loop: Header=BB15_4 Depth=1
@@ -5185,7 +5169,7 @@ ebc_thread:                             // @ebc_thread
 	mov	w3, #3                          // =0x3
 	bl	queue_delayed_work_on
 .LBB15_382:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2236]
+	ldr	w8, [x22, #2236]
 .LBB15_383:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	w8, #2
 	b.ne	.LBB15_402
@@ -5257,13 +5241,13 @@ ebc_thread:                             // @ebc_thread
 .LBB15_397:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w11, wzr
 .LBB15_398:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2282]
-	ldrb	w9, [x20, #2281]
-	str	wzr, [x20, #2236]
+	ldrb	w8, [x22, #2282]
+	ldrb	w9, [x22, #2281]
+	str	wzr, [x22, #2236]
 	orr	w10, w8, w11
 	orr	w12, w9, w11
-	strb	w10, [x20, #2282]
-	strb	w12, [x20, #2281]
+	strb	w10, [x22, #2282]
+	strb	w12, [x22, #2281]
 	cbz	w11, .LBB15_401
 // %bb.399:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	w8, [x19, #2128]
@@ -5291,35 +5275,35 @@ ebc_thread:                             // @ebc_thread
 	adrp	x8, ebc_assist_task
 	ldr	x0, [x8, :lo12:ebc_assist_task]
 	bl	wake_up_process
-	ldrb	w8, [x20, #2281]
-	ldrb	w9, [x20, #2282]
+	ldrb	w8, [x22, #2281]
+	ldrb	w9, [x22, #2282]
 	orr	w8, w9, w8
 	tst	w8, #0xff
-	strb	w8, [x20, #2283]
+	strb	w8, [x22, #2283]
 	b.ne	.LBB15_412
 // %bb.403:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrb	w8, [x19, #2118]
 	tbnz	w8, #0, .LBB15_412
 // %bb.404:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2249]
+	ldrb	w8, [x22, #2249]
 	cmp	w8, #1
 	b.ne	.LBB15_409
 // %bb.405:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2276]
+	ldrb	w8, [x22, #2276]
 	cmp	w8, #1
 	b.ne	.LBB15_408
 // %bb.406:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2277]
+	ldrb	w8, [x22, #2277]
 	cmp	w8, #1
 	b.ne	.LBB15_408
 // %bb.407:                             //   in Loop: Header=BB15_4 Depth=1
-	strb	w21, [x20, #2278]
+	strb	w21, [x22, #2278]
 .LBB15_408:                             //   in Loop: Header=BB15_4 Depth=1
-	ldrb	w8, [x20, #2278]
+	ldrb	w8, [x22, #2278]
 	tbnz	w8, #0, .LBB15_410
 	b	.LBB15_412
 .LBB15_409:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2184]
+	ldr	w8, [x22, #2184]
 	cmp	w8, #0
 	b.gt	.LBB15_412
 .LBB15_410:                             //   in Loop: Header=BB15_4 Depth=1
@@ -5329,7 +5313,7 @@ ebc_thread:                             // @ebc_thread
 	ldrb	w8, [x19, #2117]
 	tbz	w8, #0, .LBB15_421
 .LBB15_412:                             //   in Loop: Header=BB15_4 Depth=1
-	ldr	w8, [x20, #2168]
+	ldr	w8, [x22, #2168]
 	cbz	w8, .LBB15_416
 // %bb.413:                             //   in Loop: Header=BB15_4 Depth=1
 	cmp	w8, #1
@@ -5360,7 +5344,7 @@ ebc_thread:                             // @ebc_thread
 	b.eq	.LBB15_1
 // %bb.419:                             //   in Loop: Header=BB15_4 Depth=1
 	ldrsw	x8, [x19, #184]
-	ldr	x9, [sp, #64]                   // 8-byte Folded Reload
+	ldr	x9, [sp, #56]                   // 8-byte Folded Reload
 	add	x1, x19, #304
 	mov	w2, #2                          // =0x2
 	ldr	x0, [x9, x8, lsl #3]
@@ -5411,25 +5395,24 @@ ebc_thread:                             // @ebc_thread
 	bl	_dev_info
 	b	.LBB15_417
 .LBB15_427:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w8, [sp, #72]                   // 4-byte Folded Spill
-	mov	w23, #2                         // =0x2
-	b	.LBB15_342
+	str	w9, [sp, #68]                   // 4-byte Folded Spill
+	b	.LBB15_440
 .LBB15_428:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	ldr	w3, [x25, #32]
 	adrp	x1, .L.str.128
 	add	x1, x1, :lo12:.L.str.128
-	ldr	w4, [x20, #2172]
+	ldr	w4, [x22, #2172]
 	adrp	x2, .L.str.127
 	add	x2, x2, :lo12:.L.str.127
 	bl	_dev_info
-	b	.LBB15_329
+	b	.LBB15_323
 .LBB15_429:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w22, #9                         // =0x9
-	b	.LBB15_232
+	b	.LBB15_231
 .LBB15_430:                             //   in Loop: Header=BB15_4 Depth=1
 	mov	w20, #9                         // =0x9
-	b	.LBB15_96
+	b	.LBB15_95
 .LBB15_431:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x2, .L.str.155
@@ -5443,11 +5426,12 @@ ebc_thread:                             // @ebc_thread
 	adrp	x2, .L.str.170
 	add	x2, x2, :lo12:.L.str.170
 	bl	_dev_info
-	ldr	w13, [sp, #52]                  // 4-byte Folded Reload
-	b	.LBB15_153
+	ldr	w13, [sp, #44]                  // 4-byte Folded Reload
+	b	.LBB15_152
 .LBB15_433:                             //   in Loop: Header=BB15_4 Depth=1
-	str	w8, [sp, #72]                   // 4-byte Folded Spill
-	b	.LBB15_342
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	str	w9, [sp, #68]                   // 4-byte Folded Spill
+	b	.LBB15_336
 .LBB15_434:                             //   in Loop: Header=BB15_4 Depth=1
 	tst	w22, #0x4
 	adrp	x8, .L.str.173
@@ -5467,7 +5451,7 @@ ebc_thread:                             // @ebc_thread
 	adrp	x2, .L.str.155
 	add	x2, x2, :lo12:.L.str.155
 	bl	_dev_info
-	b	.LBB15_294
+	b	.LBB15_293
 .LBB15_435:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	tst	w22, #0x2
@@ -5482,8 +5466,8 @@ ebc_thread:                             // @ebc_thread
 	add	x2, x2, :lo12:.L.str.170
 	bl	_dev_info
 	mov	w23, #2                         // =0x2
-	tbnz	w22, #3, .LBB15_281
-	b	.LBB15_295
+	tbnz	w22, #3, .LBB15_280
+	b	.LBB15_294
 .LBB15_436:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.171
@@ -5491,7 +5475,7 @@ ebc_thread:                             // @ebc_thread
 	adrp	x2, .L.str.170
 	add	x2, x2, :lo12:.L.str.170
 	bl	_dev_info
-	b	.LBB15_327
+	b	.LBB15_321
 .LBB15_437:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.129
@@ -5506,24 +5490,26 @@ ebc_thread:                             // @ebc_thread
 	add	x1, x1, :lo12:.L.str.182
 	adrp	x2, .L.str.183
 	add	x2, x2, :lo12:.L.str.183
-	mov	w3, w25
-	mov	w4, w26
+	mov	w3, w24
+	mov	w4, w25
 	bl	_dev_info
-	cmp	w25, #10
-	b.ne	.LBB15_338
+	cmp	w24, #10
+	b.ne	.LBB15_332
 .LBB15_439:                             //   in Loop: Header=BB15_4 Depth=1
-	str	wzr, [sp, #72]                  // 4-byte Folded Spill
-	mov	w23, #2                         // =0x2
-	b	.LBB15_342
+	str	wzr, [sp, #68]                  // 4-byte Folded Spill
 .LBB15_440:                             //   in Loop: Header=BB15_4 Depth=1
+	ldur	x22, [x29, #-48]                // 8-byte Folded Reload
+	mov	w23, #2                         // =0x2
+	b	.LBB15_336
+.LBB15_441:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x0, [x19, #304]
 	adrp	x1, .L.str.158
 	add	x1, x1, :lo12:.L.str.158
 	adrp	x2, .L.str.121
 	add	x2, x2, :lo12:.L.str.121
 	bl	_dev_info
-	b	.LBB15_313
-.LBB15_441:                             //   in Loop: Header=BB15_4 Depth=1
+	b	.LBB15_307
+.LBB15_442:                             //   in Loop: Header=BB15_4 Depth=1
 	ldr	x8, [x19, #304]
 	mov	x20, x0
 	adrp	x1, .L.str.158
@@ -5534,32 +5520,32 @@ ebc_thread:                             // @ebc_thread
 	mov	w3, w6
 	bl	_dev_info
 	mov	x0, x20
-	b	.LBB15_315
+	b	.LBB15_309
 .Lfunc_end15:
 	.size	ebc_thread, .Lfunc_end15-ebc_thread
 	.section	.rodata,"a",@progbits
 	.p2align	2, 0x0
 .LJTI15_0:
-	.word	.LBB15_307-.Ltmp27
-	.word	.LBB15_317-.Ltmp27
-	.word	.LBB15_308-.Ltmp27
-	.word	.LBB15_309-.Ltmp27
-	.word	.LBB15_234-.Ltmp27
-	.word	.LBB15_318-.Ltmp27
-	.word	.LBB15_320-.Ltmp27
-	.word	.LBB15_308-.Ltmp27
-	.word	.LBB15_309-.Ltmp27
-	.word	.LBB15_234-.Ltmp27
-	.word	.LBB15_305-.Ltmp27
-	.word	.LBB15_305-.Ltmp27
-	.word	.LBB15_306-.Ltmp27
-	.word	.LBB15_316-.Ltmp27
-	.word	.LBB15_306-.Ltmp27
-	.word	.LBB15_224-.Ltmp27
-	.word	.LBB15_307-.Ltmp27
-	.word	.LBB15_307-.Ltmp27
-	.word	.LBB15_307-.Ltmp27
-	.word	.LBB15_319-.Ltmp27
+	.word	.LBB15_301-.Ltmp27
+	.word	.LBB15_311-.Ltmp27
+	.word	.LBB15_302-.Ltmp27
+	.word	.LBB15_303-.Ltmp27
+	.word	.LBB15_233-.Ltmp27
+	.word	.LBB15_312-.Ltmp27
+	.word	.LBB15_314-.Ltmp27
+	.word	.LBB15_302-.Ltmp27
+	.word	.LBB15_303-.Ltmp27
+	.word	.LBB15_233-.Ltmp27
+	.word	.LBB15_299-.Ltmp27
+	.word	.LBB15_299-.Ltmp27
+	.word	.LBB15_300-.Ltmp27
+	.word	.LBB15_310-.Ltmp27
+	.word	.LBB15_300-.Ltmp27
+	.word	.LBB15_223-.Ltmp27
+	.word	.LBB15_301-.Ltmp27
+	.word	.LBB15_301-.Ltmp27
+	.word	.LBB15_301-.Ltmp27
+	.word	.LBB15_313-.Ltmp27
                                         // -- End function
 	.text
 	.p2align	2                               // -- Begin function ebc_delay_power_off
@@ -5685,7 +5671,7 @@ get_auto_data:                          // @get_auto_data
 	sub	sp, sp, #208
 	stp	x29, x30, [sp, #112]            // 16-byte Folded Spill
 	add	x29, sp, #112
-	add	x14, x1, #4, lsl #12            // =16384
+	add	x11, x1, #4, lsl #12            // =16384
 	stp	x28, x27, [sp, #128]            // 16-byte Folded Spill
 	stp	x26, x25, [sp, #144]            // 16-byte Folded Spill
 	stp	x24, x23, [sp, #160]            // 16-byte Folded Spill
@@ -5696,140 +5682,107 @@ get_auto_data:                          // @get_auto_data
 	ldr	x8, [x8, #1608]
 	stur	x8, [x29, #-8]
 	adrp	x8, global_ebc
-	ldr	x8, [x8, :lo12:global_ebc]
-	ldr	x23, [x1, #992]
-	ldr	x24, [x1, #1064]
-	ldr	x25, [x1, #1208]
-	ldr	x26, [x1, #1280]
-	str	w2, [sp, #20]                   // 4-byte Folded Spill
-	ldr	w9, [x8, #272]
-	stp	x14, x1, [sp]                   // 16-byte Folded Spill
-	cbz	w9, .LBB18_3
+	ldr	x23, [x8, :lo12:global_ebc]
+	str	w2, [sp, #24]                   // 4-byte Folded Spill
+	stp	x11, x1, [sp, #8]               // 16-byte Folded Spill
+	ldr	w8, [x23, #272]
+	cbz	w8, .LBB18_3
 // %bb.1:
-	ldr	w9, [x14, #1868]
-	ldr	w10, [x14, #1876]
+	ldr	w8, [x11, #1868]
+	ldr	w9, [x11, #1876]
 	cmp	w2, #2
-	ldp	w12, w22, [x8, #188]
-	ldr	w11, [x14, #1872]
+	ldp	w12, w19, [x23, #188]
+	stp	w8, w9, [x29, #-20]
+	ldr	x8, [x1, #1560]
+	ldr	x9, [x1, #1568]
+	ldr	w10, [x11, #1872]
+	ldr	x25, [x1, #992]
+	ldr	x26, [x1, #1064]
+	stp	x8, x9, [x29, #-48]
+	mov	x9, #2048                       // =0x800
+	ldr	x27, [x1, #1208]
+	movk	x9, #6160, lsl #16
+	stur	w10, [x29, #-12]
+	add	w10, w19, w19, lsr #31
+	movk	x9, #10272, lsl #32
+	stur	x8, [x29, #-32]
+	ldr	x8, [x23, #120]
+	movk	x9, #14384, lsl #48
+	lsr	x23, x12, #3
+	asr	w28, w10, #1
+	str	x9, [sp, #56]
+	mov	x9, #3076                       // =0xc04
+	ldr	x22, [x1, #1280]
+	movk	x9, #7188, lsl #16
+	ldr	w20, [x8, #120]
+	str	x12, [sp, #32]                  // 8-byte Folded Spill
+	movk	x9, #11300, lsl #32
+	movk	x9, #15412, lsl #48
+	str	x9, [sp, #48]
+	b.ne	.LBB18_9
+// %bb.2:
+	mov	w19, w28
+	mov	w28, wzr
+	b	.LBB18_10
+.LBB18_3:
+	ldr	x16, [x23, #120]
+	ldr	x24, [x1, #992]
+	ldr	x25, [x1, #1064]
+	ldr	x26, [x1, #1208]
+	ldr	x27, [x1, #1280]
+	ldr	w8, [x16, #116]
+	cbz	w8, .LBB18_31
+// %bb.4:
+	ldp	w13, w0, [x23, #188]
+	ldr	w9, [x11, #1868]
+	ldr	w10, [x11, #1876]
+	cmp	w2, #2
+	ldr	w12, [x11, #1872]
 	stp	w9, w10, [x29, #-20]
 	ldr	x9, [x1, #1560]
 	ldr	x10, [x1, #1568]
-	ldr	x8, [x8, #120]
-	stur	w11, [x29, #-12]
-	mov	x11, #2048                      // =0x800
-	lsr	x19, x12, #3
+	stur	w12, [x29, #-12]
+	add	w12, w0, w0, lsr #31
 	stp	x9, x10, [x29, #-48]
-	add	w10, w22, w22, lsr #31
-	movk	x11, #6160, lsl #16
-	stur	x9, [x29, #-32]
-	mov	x9, #3076                       // =0xc04
-	movk	x11, #10272, lsl #32
-	movk	x9, #7188, lsl #16
-	asr	w28, w10, #1
-	ldr	w20, [x8, #120]
-	movk	x9, #11300, lsl #32
-	movk	x11, #14384, lsl #48
-	str	x12, [sp, #32]                  // 8-byte Folded Spill
-	movk	x9, #15412, lsl #48
-	stp	x9, x11, [sp, #48]
-	b.ne	.LBB18_8
-// %bb.2:
-	mov	w22, w28
-	mov	w28, wzr
-	b	.LBB18_9
-.LBB18_3:
-	mov	x9, #256                        // =0x100
-	mov	x13, #1543                      // =0x607
-	ldr	x12, [x8, #120]
-	movk	x9, #770, lsl #16
-	movk	x13, #1029, lsl #16
-	ldr	w10, [x14, #1868]
-	movk	x9, #1284, lsl #32
-	movk	x13, #515, lsl #32
-	ldr	w11, [x14, #1876]
-	movk	x9, #1798, lsl #48
-	movk	x13, #1, lsl #48
-	add	x15, sp, #48
-	stp	x13, x9, [sp, #48]
-	ldr	w9, [x12, #116]
-	ldr	x13, [x1, #1560]
-	stp	w10, w11, [x29, #-20]
-	add	x10, sp, #56
-	ldr	x11, [x1, #1568]
-	cmp	w9, #0
-	ldr	w14, [x14, #1872]
-	stur	x13, [x29, #-32]
-	csel	x10, x10, x15, eq
-	stp	x13, x11, [x29, #-48]
-	ldr	w12, [x12, #120]
-	ldrb	w13, [x10, #2]
-	stur	w14, [x29, #-12]
-	ldrb	w14, [x10]
-	ldrb	w11, [x10, #1]
-	ldrb	w15, [x10, #3]
-	ldrb	w16, [x10, #4]
-	lsl	w13, w13, #1
-	lsl	w14, w14, #1
-	ldrb	w17, [x10, #5]
-	lsl	w11, w11, #1
-	str	w12, [sp, #24]                  // 4-byte Folded Spill
-	cmp	w2, #2
-	strb	w13, [x10, #2]
-	ldp	w13, w1, [x8, #188]
-	strb	w14, [x10]
-	lsl	w14, w15, #1
-	lsl	w15, w16, #1
-	ldrb	w16, [x10, #6]
-	strb	w11, [x10, #1]
-	lsl	w11, w17, #1
-	strb	w14, [x10, #3]
-	ldrb	w14, [x10, #7]
-	add	w12, w1, w1, lsr #31
-	lsl	w16, w16, #1
-	strb	w15, [x10, #4]
-	ldr	w15, [x8, #260]
-	strb	w11, [x10, #5]
-	lsl	w11, w14, #1
-	lsr	w14, w13, #3
-	strb	w16, [x10, #6]
-	asr	w16, w12, #1
+	lsr	w10, w13, #3
+	asr	w12, w12, #1
 	str	w13, [sp, #32]                  // 4-byte Folded Spill
-	strb	w11, [x10, #7]
-	b.ne	.LBB18_30
-// %bb.4:
-	mov	w1, w16
-	mov	w16, wzr
-	cmp	w16, w1
-	b.lt	.LBB18_31
-.LBB18_5:
-	mov	w17, wzr
+	stur	x9, [x29, #-32]
+	b.ne	.LBB18_33
+// %bb.5:
+	mov	w0, w12
+	mov	w12, wzr
+	cmp	w12, w0
+	b.lt	.LBB18_34
 .LBB18_6:
-	ldr	w10, [sp, #20]                  // 4-byte Folded Reload
+	mov	w13, wzr
+.LBB18_7:
+	ldr	w10, [sp, #24]                  // 4-byte Folded Reload
 	cmp	w10, #2
-	b.ne	.LBB18_63
-// %bb.7:
-	ldr	x8, [sp]                        // 8-byte Folded Reload
-	strb	w17, [x8, #1978]
-	b	.LBB18_64
-.LBB18_8:
-	mul	w8, w28, w19
+	b.ne	.LBB18_66
+// %bb.8:
+	ldr	x8, [sp, #8]                    // 8-byte Folded Reload
+	strb	w13, [x8, #1978]
+	b	.LBB18_67
+.LBB18_9:
+	mul	w8, w28, w23
 	sbfiz	x8, x8, #3, #32
-	add	x23, x23, x8
-	add	x24, x24, x8
 	add	x25, x25, x8
 	add	x26, x26, x8
-.LBB18_9:
+	add	x27, x27, x8
+	add	x22, x22, x8
+.LBB18_10:
 	mul	w8, w28, w20
-	subs	w9, w22, w28
+	subs	w9, w19, w28
 	mov	w1, wzr
 	mul	w2, w9, w20
 	ldr	x9, [sp, #40]                   // 8-byte Folded Reload
 	add	x0, x9, x8
 	bl	memset
-	cmp	w22, w28
+	cmp	w19, w28
 	mov	w8, wzr
-	b.le	.LBB18_25
-// %bb.10:
+	b.le	.LBB18_26
+// %bb.11:
 	mov	w8, wzr
 	mov	x9, xzr
 	adrp	x11, _8_8bit_mask
@@ -5839,14 +5792,14 @@ get_auto_data:                          // @get_auto_data
 	sub	x14, x29, #48
 	sub	x15, x29, #20
 	mov	w16, #1                         // =0x1
-	b	.LBB18_12
-.LBB18_11:                              //   in Loop: Header=BB18_12 Depth=1
+	b	.LBB18_13
+.LBB18_12:                              //   in Loop: Header=BB18_13 Depth=1
 	add	w28, w28, #1
-	cmp	w28, w22
-	b.eq	.LBB18_25
-.LBB18_12:                              // =>This Loop Header: Depth=1
-                                        //     Child Loop BB18_17 Depth 2
-                                        //       Child Loop BB18_21 Depth 3
+	cmp	w28, w19
+	b.eq	.LBB18_26
+.LBB18_13:                              // =>This Loop Header: Depth=1
+                                        //     Child Loop BB18_18 Depth 2
+                                        //       Child Loop BB18_22 Depth 3
 	mul	w17, w28, w20
 	ldr	x10, [sp, #40]                  // 8-byte Folded Reload
 	tst	w28, #0x1
@@ -5857,55 +5810,55 @@ get_auto_data:                          // @get_auto_data
 	ldr	x10, [sp, #32]                  // 8-byte Folded Reload
 	csel	x9, x0, x9, eq
 	cmp	w10, #8
-	b.lo	.LBB18_11
-// %bb.13:                              //   in Loop: Header=BB18_12 Depth=1
+	b.lo	.LBB18_12
+// %bb.14:                              //   in Loop: Header=BB18_13 Depth=1
 	mov	x0, xzr
-	b	.LBB18_17
-.LBB18_14:                              //   in Loop: Header=BB18_17 Depth=2
-	str	x3, [x24]
-.LBB18_15:                              //   in Loop: Header=BB18_17 Depth=2
+	b	.LBB18_18
+.LBB18_15:                              //   in Loop: Header=BB18_18 Depth=2
+	str	x3, [x26]
+.LBB18_16:                              //   in Loop: Header=BB18_18 Depth=2
 	ldr	w10, [x9, x0, lsl #2]
 	orr	w10, w10, w1
 	str	w10, [x9, x0, lsl #2]
-.LBB18_16:                              //   in Loop: Header=BB18_17 Depth=2
+.LBB18_17:                              //   in Loop: Header=BB18_18 Depth=2
 	add	x0, x0, #1
-	add	x23, x23, #8
-	add	x24, x24, #8
-	cmp	x0, x19
 	add	x25, x25, #8
 	add	x26, x26, #8
-	b.eq	.LBB18_11
-.LBB18_17:                              //   Parent Loop BB18_12 Depth=1
+	cmp	x0, x23
+	add	x27, x27, #8
+	add	x22, x22, #8
+	b.eq	.LBB18_12
+.LBB18_18:                              //   Parent Loop BB18_13 Depth=1
                                         // =>  This Loop Header: Depth=2
-                                        //       Child Loop BB18_21 Depth 3
-	ldr	x2, [x23]
-	ldr	x3, [x24]
+                                        //       Child Loop BB18_22 Depth 3
+	ldr	x2, [x25]
+	ldr	x3, [x26]
 	cmp	x2, x3
-	b.eq	.LBB18_16
-// %bb.18:                              //   in Loop: Header=BB18_17 Depth=2
+	b.eq	.LBB18_17
+// %bb.19:                              //   in Loop: Header=BB18_18 Depth=2
 	mov	x4, xzr
 	mov	w6, wzr
 	mov	w1, wzr
 	eor	x5, x3, x2
-	b	.LBB18_21
-.LBB18_19:                              //   in Loop: Header=BB18_21 Depth=3
+	b	.LBB18_22
+.LBB18_20:                              //   in Loop: Header=BB18_22 Depth=3
 	lsl	w10, w16, w30
 	and	w10, w10, #0xff
 	orr	w8, w8, w10
-.LBB18_20:                              //   in Loop: Header=BB18_21 Depth=3
+.LBB18_21:                              //   in Loop: Header=BB18_22 Depth=3
 	add	x4, x4, #1
 	cmp	x4, #8
-	b.eq	.LBB18_24
-.LBB18_21:                              //   Parent Loop BB18_12 Depth=1
-                                        //     Parent Loop BB18_17 Depth=2
+	b.eq	.LBB18_25
+.LBB18_22:                              //   Parent Loop BB18_13 Depth=1
+                                        //     Parent Loop BB18_18 Depth=2
                                         // =>    This Inner Loop Header: Depth=3
 	ldr	x7, [x11, x4, lsl #3]
 	tst	x7, x5
-	b.eq	.LBB18_20
-// %bb.22:                              //   in Loop: Header=BB18_21 Depth=3
+	b.eq	.LBB18_21
+// %bb.23:                              //   in Loop: Header=BB18_22 Depth=3
 	ldr	w30, [x13, x4, lsl #2]
-	ldrb	w21, [x26, x4]
-	ldrb	w12, [x25, x4]
+	ldrb	w21, [x22, x4]
+	ldrb	w12, [x27, x4]
 	lsr	x10, x2, x30
 	ldr	x21, [x14, x21, lsl #3]
 	lsr	x30, x3, x30
@@ -5915,44 +5868,44 @@ get_auto_data:                          // @get_auto_data
 	bfi	x10, x30, #5, #5
 	ldrb	w10, [x21, x10]
 	ldrb	w21, [x17, x4]
-	strb	w12, [x25, x4]
-	ldrb	w30, [x26, x4]
+	strb	w12, [x27, x4]
+	ldrb	w30, [x22, x4]
 	lsl	w10, w10, w21
-	ldr	w27, [x15, x30, lsl #2]
+	ldr	w24, [x15, x30, lsl #2]
 	orr	w1, w10, w1
-	cmp	w27, w12, uxtb
-	b.gt	.LBB18_19
-// %bb.23:                              //   in Loop: Header=BB18_21 Depth=3
+	cmp	w24, w12, uxtb
+	b.gt	.LBB18_20
+// %bb.24:                              //   in Loop: Header=BB18_22 Depth=3
 	bic	x10, x3, x7
 	and	x12, x7, x2
-	strb	wzr, [x25, x4]
+	strb	wzr, [x27, x4]
 	cmp	x4, #7
-	strb	wzr, [x26, x4]
+	strb	wzr, [x22, x4]
 	add	x4, x4, #1
 	orr	x3, x10, x12
 	mov	w6, #1                          // =0x1
-	b.ne	.LBB18_21
-	b	.LBB18_14
-.LBB18_24:                              //   in Loop: Header=BB18_17 Depth=2
-	tbnz	w6, #0, .LBB18_14
+	b.ne	.LBB18_22
 	b	.LBB18_15
-.LBB18_25:
-	ldr	w11, [sp, #20]                  // 4-byte Folded Reload
-	ldr	x10, [sp, #8]                   // 8-byte Folded Reload
+.LBB18_25:                              //   in Loop: Header=BB18_18 Depth=2
+	tbnz	w6, #0, .LBB18_15
+	b	.LBB18_16
+.LBB18_26:
+	ldr	w11, [sp, #24]                  // 4-byte Folded Reload
+	ldr	x10, [sp, #16]                  // 8-byte Folded Reload
 	cmp	w11, #2
-	b.ne	.LBB18_27
-// %bb.26:
-	ldr	x9, [sp]                        // 8-byte Folded Reload
+	b.ne	.LBB18_28
+// %bb.27:
+	ldr	x9, [sp, #8]                    // 8-byte Folded Reload
 	strb	w8, [x9, #1978]
-	b	.LBB18_28
-.LBB18_27:
-	ldr	x9, [sp]                        // 8-byte Folded Reload
-	strb	w8, [x9, #1977]
+	b	.LBB18_29
 .LBB18_28:
+	ldr	x9, [sp, #8]                    // 8-byte Folded Reload
+	strb	w8, [x9, #1977]
+.LBB18_29:
 	ldr	w9, [x10, #1824]
 	cmp	w9, #2
-	b.lt	.LBB18_65
-// %bb.29:
+	b.lt	.LBB18_92
+// %bb.30:
 	ldr	x0, [x10]
 	adrp	x9, .L.str.114
 	add	x9, x9, :lo12:.L.str.114
@@ -5974,249 +5927,261 @@ get_auto_data:                          // @get_auto_data
 	add	x8, x8, :lo12:.L.str.116
 	csel	x3, x8, x9, eq
 	bl	_dev_info
-	b	.LBB18_65
-.LBB18_30:
-	mul	w11, w16, w14
-	sbfiz	x11, x11, #3, #32
-	add	x23, x23, x11
-	add	x24, x24, x11
-	add	x25, x25, x11
-	add	x26, x26, x11
-	cmp	w16, w1
-	b.ge	.LBB18_5
+	b	.LBB18_92
 .LBB18_31:
-	mov	w17, wzr
-	adrp	x0, _8_8bit_mask
-	add	x0, x0, :lo12:_8_8bit_mask
-	adrp	x2, .L__const.get_normal_panel_auto_data.offset
-	add	x2, x2, :lo12:.L__const.get_normal_panel_auto_data.offset
-	sub	x3, x29, #48
-	sub	x4, x29, #20
-	mov	w5, #1                          // =0x1
-	str	w1, [sp, #28]                   // 4-byte Folded Spill
-	b	.LBB18_33
-.LBB18_32:                              //   in Loop: Header=BB18_33 Depth=1
-	ldr	w1, [sp, #28]                   // 4-byte Folded Reload
-	add	w16, w16, #1
-	cmp	w16, w1
-	b.eq	.LBB18_6
-.LBB18_33:                              // =>This Loop Header: Depth=1
-                                        //     Child Loop BB18_40 Depth 2
-                                        //       Child Loop BB18_47 Depth 3
-	ldr	w11, [x8, #268]
-	mov	w12, w16
-	cbz	w11, .LBB18_35
-// %bb.34:                              //   in Loop: Header=BB18_33 Depth=1
-	ldr	w11, [x8, #192]
-	mvn	w12, w16
-	add	w12, w11, w12
-.LBB18_35:                              //   in Loop: Header=BB18_33 Depth=1
-	ldr	w11, [sp, #32]                  // 4-byte Folded Reload
-	cmp	w11, #8
-	b.lo	.LBB18_32
-// %bb.36:                              //   in Loop: Header=BB18_33 Depth=1
-	ldr	x11, [x8, #120]
-	ldr	w13, [sp, #24]                  // 4-byte Folded Reload
-	mov	w6, wzr
-	ldr	w11, [x11, #104]
-	mul	w12, w12, w13
-	ldr	x13, [sp, #40]                  // 8-byte Folded Reload
-	mul	w11, w11, w9
-	add	x12, x13, x12
-	add	x7, x12, x11
-	b	.LBB18_40
-.LBB18_37:                              //   in Loop: Header=BB18_40 Depth=2
-	strh	wzr, [x7]
-.LBB18_38:                              //   in Loop: Header=BB18_40 Depth=2
-	mov	w12, #2                         // =0x2
-.LBB18_39:                              //   in Loop: Header=BB18_40 Depth=2
-	add	w6, w6, #1
-	add	x7, x7, x12
-	add	x23, x23, #8
-	cmp	w6, w14
+	ldp	w12, w20, [x23, #188]
+	ldr	w8, [x11, #1868]
+	ldr	w9, [x11, #1876]
+	cmp	w2, #2
+	ldr	w10, [x11, #1872]
+	stp	w8, w9, [x29, #-20]
+	ldr	x8, [x1, #1560]
+	ldr	x9, [x1, #1568]
+	stur	w10, [x29, #-12]
+	add	w10, w20, w20, lsr #31
+	lsr	x19, x12, #3
+	stp	x8, x9, [x29, #-48]
+	ldr	w9, [x16, #120]
+	asr	w22, w10, #1
+	str	x12, [sp, #32]                  // 8-byte Folded Spill
+	str	w9, [sp, #28]                   // 4-byte Folded Spill
+	stur	x8, [x29, #-32]
+	b.ne	.LBB18_69
+// %bb.32:
+	mov	w20, w22
+	mov	w22, wzr
+	b	.LBB18_70
+.LBB18_33:
+	mul	w9, w12, w10
+	sbfiz	x9, x9, #3, #32
+	add	x24, x24, x9
+	add	x25, x25, x9
+	add	x26, x26, x9
+	add	x27, x27, x9
+	cmp	w12, w0
+	b.ge	.LBB18_6
+.LBB18_34:
+	ldr	w14, [x23, #260]
+	ldr	w9, [x16, #120]
+	mov	w13, wzr
+	adrp	x15, _8_8bit_mask
+	add	x15, x15, :lo12:_8_8bit_mask
+	adrp	x17, .L__const.get_normal_panel_auto_data.offset
+	add	x17, x17, :lo12:.L__const.get_normal_panel_auto_data.offset
+	adrp	x1, .L__const.get_normal_panel_soft_tcon_auto_data.shift_table
+	add	x1, x1, :lo12:.L__const.get_normal_panel_soft_tcon_auto_data.shift_table
+	sub	x2, x29, #48
+	sub	x3, x29, #20
+	mov	w4, #1                          // =0x1
+	str	w9, [sp, #4]                    // 4-byte Folded Spill
+	str	w0, [sp, #28]                   // 4-byte Folded Spill
+	b	.LBB18_36
+.LBB18_35:                              //   in Loop: Header=BB18_36 Depth=1
+	ldr	w0, [sp, #28]                   // 4-byte Folded Reload
+	add	w12, w12, #1
+	cmp	w12, w0
+	b.eq	.LBB18_7
+.LBB18_36:                              // =>This Loop Header: Depth=1
+                                        //     Child Loop BB18_42 Depth 2
+                                        //       Child Loop BB18_49 Depth 3
+	ldr	w9, [x23, #268]
+	mov	w16, w12
+	cbz	w9, .LBB18_38
+// %bb.37:                              //   in Loop: Header=BB18_36 Depth=1
+	ldr	w9, [x23, #192]
+	mvn	w16, w12
+	add	w16, w9, w16
+.LBB18_38:                              //   in Loop: Header=BB18_36 Depth=1
+	ldr	w9, [sp, #32]                   // 4-byte Folded Reload
+	cmp	w9, #8
+	b.lo	.LBB18_35
+// %bb.39:                              //   in Loop: Header=BB18_36 Depth=1
+	ldr	x9, [x23, #120]
+	ldr	w11, [sp, #4]                   // 4-byte Folded Reload
+	mov	w5, wzr
+	ldr	w9, [x9, #104]
+	mul	w16, w16, w11
+	ldr	x11, [sp, #40]                  // 8-byte Folded Reload
+	mul	w9, w9, w8
+	add	x16, x11, x16
+	add	x6, x16, x9
+	b	.LBB18_42
+.LBB18_40:                              //   in Loop: Header=BB18_42 Depth=2
+	ldrb	w9, [x6, #1]
+	ldrb	w11, [x6, #3]
+	mov	w16, #4                         // =0x4
+	lsl	w9, w9, #8
+	orr	w9, w9, w7, lsr #8
+	bfi	w7, w11, #8, #8
+	strh	w9, [x6]
+	strh	w7, [x6, #2]
+.LBB18_41:                              //   in Loop: Header=BB18_42 Depth=2
+	add	w5, w5, #1
+	add	x6, x6, x16
 	add	x24, x24, #8
+	cmp	w5, w10
 	add	x25, x25, #8
 	add	x26, x26, #8
-	b.eq	.LBB18_32
-.LBB18_40:                              //   Parent Loop BB18_33 Depth=1
+	add	x27, x27, #8
+	b.eq	.LBB18_35
+.LBB18_42:                              //   Parent Loop BB18_36 Depth=1
                                         // =>  This Loop Header: Depth=2
-                                        //       Child Loop BB18_47 Depth 3
-	ldr	x20, [x23]
-	ldr	x22, [x24]
-	cmp	x20, x22
-	b.ne	.LBB18_44
-// %bb.41:                              //   in Loop: Header=BB18_40 Depth=2
-	cmp	w9, #4
-	b.eq	.LBB18_55
-// %bb.42:                              //   in Loop: Header=BB18_40 Depth=2
-	cmp	w9, #2
-	b.ne	.LBB18_37
-// %bb.43:                              //   in Loop: Header=BB18_40 Depth=2
-	ldrb	w11, [x7, #1]
-	ldrb	w12, [x7, #3]
-	lsl	w11, w11, #8
-	lsl	w12, w12, #8
-	strh	w11, [x7]
-	strh	w12, [x7, #2]
-	mov	w12, #4                         // =0x4
-	b	.LBB18_39
-.LBB18_44:                              //   in Loop: Header=BB18_40 Depth=2
-	mov	x27, xzr
-	mov	w30, wzr
-	mov	w19, wzr
-	eor	x28, x22, x20
-	b	.LBB18_47
-.LBB18_45:                              //   in Loop: Header=BB18_47 Depth=3
-	lsl	w11, w5, w11
-	orr	w17, w17, w11
-.LBB18_46:                              //   in Loop: Header=BB18_47 Depth=3
-	add	x27, x27, #1
-	cmp	x27, #8
-	b.eq	.LBB18_50
-.LBB18_47:                              //   Parent Loop BB18_33 Depth=1
-                                        //     Parent Loop BB18_40 Depth=2
-                                        // =>    This Inner Loop Header: Depth=3
-	ldr	x12, [x0, x27, lsl #3]
-	tst	x12, x28
-	b.eq	.LBB18_46
-// %bb.48:                              //   in Loop: Header=BB18_47 Depth=3
-	ldr	w11, [x2, x27, lsl #2]
-	ldrb	w21, [x26, x27]
-	ldrb	w1, [x25, x27]
-	lsr	x13, x20, x11
-	ldr	x21, [x3, x21, lsl #3]
-	lsr	x11, x22, x11
-	and	x13, x13, #0x1f
-	add	x21, x21, x1, lsl #10
-	add	w1, w1, #1
-	bfi	x13, x11, #5, #5
-	ldrb	w13, [x21, x13]
-	ldrb	w21, [x10, x27]
-	strb	w1, [x25, x27]
-	ldrb	w11, [x26, x27]
-	lsl	w13, w13, w21
-	ldr	w21, [x4, x11, lsl #2]
-	and	w13, w13, #0xffff
-	cmp	w21, w1, uxtb
-	orr	w19, w19, w13
-	b.gt	.LBB18_45
-// %bb.49:                              //   in Loop: Header=BB18_47 Depth=3
-	bic	x11, x22, x12
-	and	x12, x12, x20
-	strb	wzr, [x25, x27]
-	cmp	x27, #7
-	strb	wzr, [x26, x27]
-	add	x27, x27, #1
-	orr	x22, x11, x12
-	mov	w30, #1                         // =0x1
-	b.ne	.LBB18_47
-	b	.LBB18_51
-.LBB18_50:                              //   in Loop: Header=BB18_40 Depth=2
-	tbz	w30, #0, .LBB18_52
-.LBB18_51:                              //   in Loop: Header=BB18_40 Depth=2
-	str	x22, [x24]
-.LBB18_52:                              //   in Loop: Header=BB18_40 Depth=2
-	cmp	w9, #4
+                                        //       Child Loop BB18_49 Depth 3
+	ldr	x19, [x24]
+	ldr	x20, [x25]
+	cmp	x19, x20
+	b.ne	.LBB18_46
+// %bb.43:                              //   in Loop: Header=BB18_42 Depth=2
+	cmp	w8, #4
 	b.eq	.LBB18_57
-// %bb.53:                              //   in Loop: Header=BB18_40 Depth=2
-	cmp	w9, #2
-	b.ne	.LBB18_60
-// %bb.54:                              //   in Loop: Header=BB18_40 Depth=2
-	ldrb	w11, [x7, #1]
-	ldrb	w12, [x7, #3]
+// %bb.44:                              //   in Loop: Header=BB18_42 Depth=2
+	cmp	w8, #2
+	b.ne	.LBB18_62
+// %bb.45:                              //   in Loop: Header=BB18_42 Depth=2
+	ldrb	w9, [x6, #1]
+	ldrb	w11, [x6, #3]
+	mov	w16, #4                         // =0x4
+	lsl	w9, w9, #8
 	lsl	w11, w11, #8
-	orr	w11, w11, w19, lsr #8
-	bfi	w19, w12, #8, #8
-	mov	w12, #4                         // =0x4
-	strh	w11, [x7]
-	strh	w19, [x7, #2]
-	b	.LBB18_39
-.LBB18_55:                              //   in Loop: Header=BB18_40 Depth=2
-	cbz	w15, .LBB18_61
-// %bb.56:                              //   in Loop: Header=BB18_40 Depth=2
-	ldr	x11, [x8, #120]
-	mov	w13, #255                       // =0xff
-	ldp	w11, w12, [x11, #96]
-	lsl	w12, w13, w12
-	lsl	w11, w13, w11
-	ldr	w13, [x7]
-	orr	w11, w11, w12
-	bic	w11, w13, w11
-	b	.LBB18_59
-.LBB18_57:                              //   in Loop: Header=BB18_40 Depth=2
-	cbz	w15, .LBB18_62
-// %bb.58:                              //   in Loop: Header=BB18_40 Depth=2
-	ldr	x11, [x8, #120]
-	mov	w1, #255                        // =0xff
-	ldr	w12, [x7]
-	and	w13, w19, #0xff00
+	strh	w9, [x6]
+	strh	w11, [x6, #2]
+	b	.LBB18_41
+.LBB18_46:                              //   in Loop: Header=BB18_42 Depth=2
+	mov	x22, xzr
+	mov	w30, wzr
+	mov	w7, wzr
+	eor	x28, x20, x19
+	b	.LBB18_49
+.LBB18_47:                              //   in Loop: Header=BB18_49 Depth=3
+	lsl	w9, w4, w9
+	orr	w13, w13, w9
+.LBB18_48:                              //   in Loop: Header=BB18_49 Depth=3
+	add	x22, x22, #1
+	cmp	x22, #8
+	b.eq	.LBB18_52
+.LBB18_49:                              //   Parent Loop BB18_36 Depth=1
+                                        //     Parent Loop BB18_42 Depth=2
+                                        // =>    This Inner Loop Header: Depth=3
+	ldr	x16, [x15, x22, lsl #3]
+	tst	x16, x28
+	b.eq	.LBB18_48
+// %bb.50:                              //   in Loop: Header=BB18_49 Depth=3
+	ldr	w9, [x17, x22, lsl #2]
+	ldrb	w21, [x27, x22]
+	ldrb	w0, [x26, x22]
+	lsr	x11, x19, x9
+	ldr	x21, [x2, x21, lsl #3]
+	lsr	x9, x20, x9
+	and	x11, x11, #0x1f
+	add	x21, x21, x0, lsl #10
+	add	w0, w0, #1
+	bfi	x11, x9, #5, #5
+	ldrb	w11, [x21, x11]
+	ldrb	w21, [x1, x22]
+	strb	w0, [x26, x22]
+	ldrb	w9, [x27, x22]
+	lsl	w11, w11, w21
+	ldr	w21, [x3, x9, lsl #2]
+	and	w11, w11, #0xffff
+	cmp	w21, w0, uxtb
+	orr	w7, w7, w11
+	b.gt	.LBB18_47
+// %bb.51:                              //   in Loop: Header=BB18_49 Depth=3
+	bic	x9, x20, x16
+	and	x11, x16, x19
+	strb	wzr, [x26, x22]
+	cmp	x22, #7
+	strb	wzr, [x27, x22]
+	add	x22, x22, #1
+	orr	x20, x9, x11
+	mov	w30, #1                         // =0x1
+	b.ne	.LBB18_49
+	b	.LBB18_53
+.LBB18_52:                              //   in Loop: Header=BB18_42 Depth=2
+	tbz	w30, #0, .LBB18_54
+.LBB18_53:                              //   in Loop: Header=BB18_42 Depth=2
+	str	x20, [x25]
+.LBB18_54:                              //   in Loop: Header=BB18_42 Depth=2
+	cmp	w8, #4
+	b.eq	.LBB18_59
+// %bb.55:                              //   in Loop: Header=BB18_42 Depth=2
+	cmp	w8, #2
+	b.eq	.LBB18_40
+// %bb.56:                              //   in Loop: Header=BB18_42 Depth=2
+	strh	w7, [x6]
+	b	.LBB18_63
+.LBB18_57:                              //   in Loop: Header=BB18_42 Depth=2
+	cbz	w14, .LBB18_64
+// %bb.58:                              //   in Loop: Header=BB18_42 Depth=2
+	ldr	x9, [x23, #120]
+	mov	w16, #255                       // =0xff
+	ldp	w9, w11, [x9, #96]
+	lsl	w11, w16, w11
+	lsl	w9, w16, w9
+	ldr	w16, [x6]
+	orr	w9, w9, w11
+	bic	w9, w16, w9
+	b	.LBB18_61
+.LBB18_59:                              //   in Loop: Header=BB18_42 Depth=2
+	cbz	w14, .LBB18_65
+// %bb.60:                              //   in Loop: Header=BB18_42 Depth=2
+	ldr	x9, [x23, #120]
+	mov	w0, #255                        // =0xff
+	ldr	w11, [x6]
+	and	w16, w7, #0xff00
+	ldr	w9, [x9, #100]
+	lsl	w9, w0, w9
+	bic	w9, w11, w9
+	str	w9, [x6]
+	ldr	x11, [x23, #120]
 	ldr	w11, [x11, #100]
-	lsl	w11, w1, w11
-	bic	w11, w12, w11
-	str	w11, [x7]
-	ldr	x12, [x8, #120]
-	ldr	w12, [x12, #100]
-	sub	w12, w12, #8
-	lsl	w12, w13, w12
-	and	w13, w19, #0xff
-	orr	w11, w12, w11
-	str	w11, [x7]
-	ldr	x12, [x8, #120]
-	ldr	w12, [x12, #96]
-	lsl	w12, w1, w12
-	bic	w11, w11, w12
-	str	w11, [x7]
-	ldr	x12, [x8, #120]
-	ldr	w12, [x12, #96]
-	lsl	w12, w13, w12
-	orr	w11, w12, w11
-.LBB18_59:                              //   in Loop: Header=BB18_40 Depth=2
-	str	w11, [x7]
-	mov	w12, #4                         // =0x4
-	b	.LBB18_39
-.LBB18_60:                              //   in Loop: Header=BB18_40 Depth=2
-	strh	w19, [x7]
-	b	.LBB18_38
-.LBB18_61:                              //   in Loop: Header=BB18_40 Depth=2
-	ldp	w11, w12, [x7]
+	sub	w11, w11, #8
+	lsl	w11, w16, w11
+	and	w16, w7, #0xff
+	orr	w9, w11, w9
+	str	w9, [x6]
+	ldr	x11, [x23, #120]
+	ldr	w11, [x11, #96]
+	lsl	w11, w0, w11
+	bic	w9, w9, w11
+	str	w9, [x6]
+	ldr	x11, [x23, #120]
+	ldr	w11, [x11, #96]
+	lsl	w11, w16, w11
+	orr	w9, w11, w9
+.LBB18_61:                              //   in Loop: Header=BB18_42 Depth=2
+	str	w9, [x6]
+	mov	w16, #4                         // =0x4
+	b	.LBB18_41
+.LBB18_62:                              //   in Loop: Header=BB18_42 Depth=2
+	strh	wzr, [x6]
+.LBB18_63:                              //   in Loop: Header=BB18_42 Depth=2
+	mov	w16, #2                         // =0x2
+	b	.LBB18_41
+.LBB18_64:                              //   in Loop: Header=BB18_42 Depth=2
+	ldp	w9, w11, [x6]
+	mov	w16, #8                         // =0x8
+	and	w9, w9, #0xffffff00
 	and	w11, w11, #0xffffff00
-	and	w12, w12, #0xffffff00
-	stp	w11, w12, [x7]
-	mov	w12, #8                         // =0x8
-	b	.LBB18_39
-.LBB18_62:                              //   in Loop: Header=BB18_40 Depth=2
-	ldr	w11, [x7]
-	strb	w19, [x7, #4]
-	mov	w12, #8                         // =0x8
-	and	w11, w11, #0xffffff00
-	orr	w11, w11, w19, lsr #8
-	str	w11, [x7]
-	b	.LBB18_39
-.LBB18_63:
-	ldr	x8, [sp]                        // 8-byte Folded Reload
-	strb	w17, [x8, #1977]
-.LBB18_64:
-	ldr	x11, [sp, #8]                   // 8-byte Folded Reload
+	stp	w9, w11, [x6]
+	b	.LBB18_41
+.LBB18_65:                              //   in Loop: Header=BB18_42 Depth=2
+	ldr	w9, [x6]
+	strb	w7, [x6, #4]
+	mov	w16, #8                         // =0x8
+	and	w9, w9, #0xffffff00
+	orr	w9, w9, w7, lsr #8
+	str	w9, [x6]
+	b	.LBB18_41
+.LBB18_66:
+	ldr	x8, [sp, #8]                    // 8-byte Folded Reload
+	strb	w13, [x8, #1977]
+.LBB18_67:
+	ldr	x11, [sp, #16]                  // 8-byte Folded Reload
 	ldr	w8, [x11, #1824]
 	cmp	w8, #2
-	b.ge	.LBB18_67
-.LBB18_65:
-	mrs	x8, SP_EL0
-	ldr	x8, [x8, #1608]
-	ldur	x9, [x29, #-8]
-	cmp	x8, x9
-	b.ne	.LBB18_68
-// %bb.66:
-	ldp	x20, x19, [sp, #192]            // 16-byte Folded Reload
-	ldp	x22, x21, [sp, #176]            // 16-byte Folded Reload
-	ldp	x24, x23, [sp, #160]            // 16-byte Folded Reload
-	ldp	x26, x25, [sp, #144]            // 16-byte Folded Reload
-	ldp	x28, x27, [sp, #128]            // 16-byte Folded Reload
-	ldp	x29, x30, [sp, #112]            // 16-byte Folded Reload
-	add	sp, sp, #208
-	ldr	x30, [x18, #-8]!
-	ret
-.LBB18_67:
+	b.lt	.LBB18_92
+// %bb.68:
 	adrp	x8, .L.str.114
 	add	x8, x8, :lo12:.L.str.114
 	adrp	x9, .L.str.113
@@ -6232,10 +6197,189 @@ get_auto_data:                          // @get_auto_data
 	adrp	x1, .L.str.117
 	add	x1, x1, :lo12:.L.str.117
 	csel	x2, x9, x8, eq
-	and	w3, w17, #0xff
+	and	w3, w13, #0xff
+	b	.LBB18_95
+.LBB18_69:
+	mul	w8, w22, w19
+	sbfiz	x8, x8, #3, #32
+	add	x24, x24, x8
+	add	x25, x25, x8
+	add	x26, x26, x8
+	add	x27, x27, x8
+.LBB18_70:
+	ldr	w10, [sp, #28]                  // 4-byte Folded Reload
+	subs	w9, w20, w22
+	mov	w1, wzr
+	mul	w8, w22, w10
+	mul	w2, w9, w10
+	ldr	x9, [sp, #40]                   // 8-byte Folded Reload
+	add	x0, x9, x8
+	bl	memset
+	cmp	w20, w22
+	mov	w8, wzr
+	b.le	.LBB18_88
+// %bb.71:
+	mov	w8, wzr
+	adrp	x9, _8_8bit_mask
+	add	x9, x9, :lo12:_8_8bit_mask
+	adrp	x10, .L__const.get_normal_panel_auto_data.offset
+	add	x10, x10, :lo12:.L__const.get_normal_panel_auto_data.offset
+	adrp	x11, .L__const.get_normal_panel_auto_data.shift_table
+	add	x11, x11, :lo12:.L__const.get_normal_panel_auto_data.shift_table
+	sub	x12, x29, #48
+	sub	x13, x29, #20
+	mov	w14, #1                         // =0x1
+	b	.LBB18_73
+.LBB18_72:                              //   in Loop: Header=BB18_73 Depth=1
+	add	w22, w22, #1
+	cmp	w22, w20
+	b.eq	.LBB18_88
+.LBB18_73:                              // =>This Loop Header: Depth=1
+                                        //     Child Loop BB18_80 Depth 2
+                                        //       Child Loop BB18_84 Depth 3
+	ldr	w15, [x23, #268]
+	mov	w16, w22
+	cbz	w15, .LBB18_75
+// %bb.74:                              //   in Loop: Header=BB18_73 Depth=1
+	ldr	w15, [x23, #192]
+	mvn	w16, w22
+	add	w16, w15, w16
+.LBB18_75:                              //   in Loop: Header=BB18_73 Depth=1
+	ldr	x15, [sp, #32]                  // 8-byte Folded Reload
+	cmp	w15, #8
+	b.lo	.LBB18_72
+// %bb.76:                              //   in Loop: Header=BB18_73 Depth=1
+	ldr	w17, [sp, #28]                  // 4-byte Folded Reload
+	mov	x15, xzr
+	mul	w16, w16, w17
+	ldr	x17, [sp, #40]                  // 8-byte Folded Reload
+	add	x16, x17, x16
+	b	.LBB18_80
+.LBB18_77:                              //   in Loop: Header=BB18_80 Depth=2
+	str	x1, [x25]
+.LBB18_78:                              //   in Loop: Header=BB18_80 Depth=2
+	strh	w17, [x16, x15, lsl #1]
+.LBB18_79:                              //   in Loop: Header=BB18_80 Depth=2
+	add	x15, x15, #1
+	add	x24, x24, #8
+	add	x25, x25, #8
+	cmp	x15, x19
+	add	x26, x26, #8
+	add	x27, x27, #8
+	b.eq	.LBB18_72
+.LBB18_80:                              //   Parent Loop BB18_73 Depth=1
+                                        // =>  This Loop Header: Depth=2
+                                        //       Child Loop BB18_84 Depth 3
+	ldr	x0, [x24]
+	ldr	x1, [x25]
+	cmp	x0, x1
+	b.eq	.LBB18_79
+// %bb.81:                              //   in Loop: Header=BB18_80 Depth=2
+	mov	x2, xzr
+	mov	w4, wzr
+	mov	w17, wzr
+	eor	x3, x1, x0
+	b	.LBB18_84
+.LBB18_82:                              //   in Loop: Header=BB18_84 Depth=3
+	lsl	w5, w14, w6
+	orr	w8, w8, w5
+.LBB18_83:                              //   in Loop: Header=BB18_84 Depth=3
+	add	x2, x2, #1
+	cmp	x2, #8
+	b.eq	.LBB18_87
+.LBB18_84:                              //   Parent Loop BB18_73 Depth=1
+                                        //     Parent Loop BB18_80 Depth=2
+                                        // =>    This Inner Loop Header: Depth=3
+	ldr	x5, [x9, x2, lsl #3]
+	tst	x5, x3
+	b.eq	.LBB18_83
+// %bb.85:                              //   in Loop: Header=BB18_84 Depth=3
+	ldr	w6, [x10, x2, lsl #2]
+	ldrb	w7, [x27, x2]
+	ldrb	w30, [x26, x2]
+	lsr	x21, x0, x6
+	ldr	x7, [x12, x7, lsl #3]
+	lsr	x6, x1, x6
+	and	x21, x21, #0x1f
+	add	x7, x7, x30, lsl #10
+	add	w30, w30, #1
+	bfi	x21, x6, #5, #5
+	ldrb	w7, [x7, x21]
+	ldrb	w21, [x11, x2]
+	strb	w30, [x26, x2]
+	ldrb	w6, [x27, x2]
+	lsl	w7, w7, w21
+	ldr	w28, [x13, x6, lsl #2]
+	orr	w17, w17, w7
+	cmp	w28, w30, uxtb
+	b.gt	.LBB18_82
+// %bb.86:                              //   in Loop: Header=BB18_84 Depth=3
+	bic	x1, x1, x5
+	and	x4, x5, x0
+	strb	wzr, [x26, x2]
+	cmp	x2, #7
+	strb	wzr, [x27, x2]
+	add	x2, x2, #1
+	orr	x1, x1, x4
+	mov	w4, #1                          // =0x1
+	b.ne	.LBB18_84
+	b	.LBB18_77
+.LBB18_87:                              //   in Loop: Header=BB18_80 Depth=2
+	tbnz	w4, #0, .LBB18_77
+	b	.LBB18_78
+.LBB18_88:
+	ldr	w11, [sp, #24]                  // 4-byte Folded Reload
+	ldr	x12, [sp, #16]                  // 8-byte Folded Reload
+	cmp	w11, #2
+	b.ne	.LBB18_90
+// %bb.89:
+	ldr	x9, [sp, #8]                    // 8-byte Folded Reload
+	strb	w8, [x9, #1978]
+	b	.LBB18_91
+.LBB18_90:
+	ldr	x9, [sp, #8]                    // 8-byte Folded Reload
+	strb	w8, [x9, #1977]
+.LBB18_91:
+	ldr	w9, [x12, #1824]
+	cmp	w9, #2
+	b.ge	.LBB18_94
+.LBB18_92:
+	mrs	x8, SP_EL0
+	ldr	x8, [x8, #1608]
+	ldur	x9, [x29, #-8]
+	cmp	x8, x9
+	b.ne	.LBB18_96
+// %bb.93:
+	ldp	x20, x19, [sp, #192]            // 16-byte Folded Reload
+	ldp	x22, x21, [sp, #176]            // 16-byte Folded Reload
+	ldp	x24, x23, [sp, #160]            // 16-byte Folded Reload
+	ldp	x26, x25, [sp, #144]            // 16-byte Folded Reload
+	ldp	x28, x27, [sp, #128]            // 16-byte Folded Reload
+	ldp	x29, x30, [sp, #112]            // 16-byte Folded Reload
+	add	sp, sp, #208
+	ldr	x30, [x18, #-8]!
+	ret
+.LBB18_94:
+	adrp	x9, .L.str.114
+	add	x9, x9, :lo12:.L.str.114
+	adrp	x10, .L.str.113
+	add	x10, x10, :lo12:.L.str.113
+	cmp	w11, #2
+	ldr	x0, [x12]
+	ldp	w4, w5, [x29, #-20]
+	csel	x9, x10, x9, eq
+	cmp	w11, #3
+	ldur	w6, [x29, #-12]
+	adrp	x10, .L.str.112
+	add	x10, x10, :lo12:.L.str.112
+	adrp	x1, .L.str.117
+	add	x1, x1, :lo12:.L.str.117
+	csel	x2, x10, x9, eq
+	and	w3, w8, #0xff
+.LBB18_95:
 	bl	_dev_info
-	b	.LBB18_65
-.LBB18_68:
+	b	.LBB18_92
+.LBB18_96:
 	bl	__stack_chk_fail
 .Lfunc_end18:
 	.size	get_auto_data, .Lfunc_end18-get_auto_data
@@ -6245,468 +6389,683 @@ get_auto_data:                          // @get_auto_data
 get_full_or_part_data:                  // @get_full_or_part_data
 // %bb.0:
 	str	x30, [x18], #8
-	sub	sp, sp, #256
+	sub	sp, sp, #208
 	adrp	x8, global_ebc
-	stp	x22, x21, [sp, #224]            // 16-byte Folded Spill
-	add	x22, x1, #4, lsl #12            // =16384
-	ldr	x8, [x8, :lo12:global_ebc]
-	stp	x20, x19, [sp, #240]            // 16-byte Folded Spill
-	mov	x20, x1
-	stp	x29, x30, [sp, #160]            // 16-byte Folded Spill
-	add	x29, sp, #160
-	ldr	w9, [x8, #272]
-	stp	x28, x27, [sp, #176]            // 16-byte Folded Spill
-	stp	x26, x25, [sp, #192]            // 16-byte Folded Spill
-	stp	x24, x23, [sp, #208]            // 16-byte Folded Spill
-	cbz	w9, .LBB19_14
+	stp	x24, x23, [sp, #160]            // 16-byte Folded Spill
+	add	x23, x1, #4, lsl #12            // =16384
+	ldr	x24, [x8, :lo12:global_ebc]
+	stp	x20, x19, [sp, #192]            // 16-byte Folded Spill
+	mov	x19, x1
+	stp	x29, x30, [sp, #112]            // 16-byte Folded Spill
+	add	x29, sp, #112
+	ldr	w8, [x24, #272]
+	stp	x28, x27, [sp, #128]            // 16-byte Folded Spill
+	stp	x26, x25, [sp, #144]            // 16-byte Folded Spill
+	stp	x22, x21, [sp, #176]            // 16-byte Folded Spill
+	str	w2, [sp, #4]                    // 4-byte Folded Spill
+	cbz	w8, .LBB19_25
 // %bb.1:
-	ldp	w25, w9, [x8, #188]
-	ldr	x11, [x8, #120]
+	ldp	w10, w8, [x24, #188]
+	ldr	x11, [x19, #1488]
+	ldr	x12, [x19, #1496]
 	cmp	w2, #2
-	mov	w27, w2
-	ldr	w24, [x22, #1868]
-	ldr	w12, [x22, #1880]
-	ldrb	w26, [x22, #1945]
-	add	w10, w9, w9, lsr #31
-	ldr	w11, [x11, #120]
+	ldr	x13, [x24, #120]
+	ldr	w26, [x23, #1868]
 	mov	w1, wzr
-	sub	w21, w24, w12
-	asr	w10, w10, #1
-	csel	w19, w10, w9, eq
-	csel	w23, wzr, w10, eq
-	mul	w9, w23, w11
-	subs	w10, w19, w23
-	mul	w2, w10, w11
-	add	x0, x0, x9
+	add	w9, w8, w8, lsr #31
+	str	x10, [sp, #24]                  // 8-byte Folded Spill
+	lsr	x10, x10, #3
+	ldr	x11, [x11, #8]
+	ldr	x12, [x12, #8]
+	ldr	w13, [x13, #120]
+	asr	w9, w9, #1
+	str	x10, [sp, #8]                   // 8-byte Folded Spill
+	ldr	x24, [x19, #1560]
+	ldrb	w25, [x23, #1945]
+	str	x0, [sp, #32]                   // 8-byte Folded Spill
+	mul	w10, w9, w10
+	csel	w27, w9, w8, eq
+	csel	w28, wzr, w9, eq
+	str	w13, [sp, #20]                  // 4-byte Folded Spill
+	sbfiz	x10, x10, #3, #32
+	add	x8, x11, x10
+	add	x9, x12, x10
+	ldr	w10, [x23, #1880]
+	csel	x20, x11, x8, eq
+	csel	x21, x12, x9, eq
+	mul	w8, w28, w13
+	subs	w9, w27, w28
+	sub	w22, w26, w10
+	mul	w2, w9, w13
+	add	x0, x0, x8
 	bl	memset
-	cmp	w19, w23
-	b.le	.LBB19_20
+	cmp	w27, w28
+	str	w27, [sp, #16]                  // 4-byte Folded Spill
+	b.le	.LBB19_31
 // %bb.2:
-	and	x9, x25, #0xfffffff8
+	lsl	w9, w22, #10
+	mov	x12, xzr
 	mov	w8, #1                          // =0x1
-	mov	w14, w27
+	mov	w6, w22
+	add	x0, x24, w9, sxtw
 	b	.LBB19_4
 .LBB19_3:                               //   in Loop: Header=BB19_4 Depth=1
-	add	w23, w23, #1
-	cmp	w23, w19
-	b.eq	.LBB19_21
+	ldr	w9, [sp, #16]                   // 4-byte Folded Reload
+	add	w28, w28, #1
+	ldr	x12, [sp, #48]                  // 8-byte Folded Reload
+	cmp	w28, w9
+	b.eq	.LBB19_32
 .LBB19_4:                               // =>This Loop Header: Depth=1
-                                        //     Child Loop BB19_9 Depth 2
-	cmp	w25, #8
+                                        //     Child Loop BB19_8 Depth 2
+	ldr	w9, [sp, #20]                   // 4-byte Folded Reload
+	ldr	x11, [sp, #32]                  // 8-byte Folded Reload
+	mul	w10, w28, w9
+	ands	w9, w28, #0x1
+	add	x10, x11, x10
+	csel	x12, x10, x12, eq
+	ldr	x10, [sp, #24]                  // 8-byte Folded Reload
+	str	x12, [sp, #48]                  // 8-byte Folded Spill
+	cmp	w10, #8
 	b.lo	.LBB19_3
 // %bb.5:                               //   in Loop: Header=BB19_4 Depth=1
-	mov	x10, xzr
-	b	.LBB19_9
-.LBB19_6:                               //   in Loop: Header=BB19_9 Depth=2
-	ldr	w12, [x22, #1960]
-	sub	w21, w12, w11
-	cmp	w21, w24
-	cset	w11, ge
-.LBB19_7:                               //   in Loop: Header=BB19_9 Depth=2
-	and	w8, w11, w8
-.LBB19_8:                               //   in Loop: Header=BB19_9 Depth=2
-	add	x10, x10, #8
-	cmp	x9, x10
+	cmp	w9, #0
+	lsl	w30, w9, #1
+	mov	w9, #192                        // =0xc0
+	mov	w10, #48                        // =0x30
+	ldr	x17, [sp, #8]                   // 8-byte Folded Reload
+	mov	w7, wzr
+	csel	w9, w10, w9, eq
+	mov	w10, #768                       // =0x300
+	stur	w9, [x29, #-4]                  // 4-byte Folded Spill
+	mov	w9, #3072                       // =0xc00
+	csel	w9, w10, w9, eq
+	mov	w10, #12288                     // =0x3000
+	stur	w9, [x29, #-16]                 // 4-byte Folded Spill
+	mov	w9, #49152                      // =0xc000
+	csel	w9, w10, w9, eq
+	mov	w10, #196608                    // =0x30000
+	stur	w9, [x29, #-24]                 // 4-byte Folded Spill
+	mov	w9, #786432                     // =0xc0000
+	csel	w13, w10, w9, eq
+	mov	w9, #12582912                   // =0xc00000
+	mov	w10, #3145728                   // =0x300000
+	csel	w14, w10, w9, eq
+	mov	w9, #3                          // =0x3
+	mov	w10, #50331648                  // =0x3000000
+	lsl	w15, w9, w30
+	mov	w9, #201326592                  // =0xc000000
+	csel	w16, w10, w9, eq
+	mov	w9, #-1073741824                // =0xc0000000
+	mov	w10, #805306368                 // =0x30000000
+	csel	w9, w10, w9, eq
+	mov	w10, #4                         // =0x4
+	str	w9, [sp, #44]                   // 4-byte Folded Spill
+	mov	w9, #6                          // =0x6
+	csel	w11, w10, w9, eq
+	mov	w9, #10                         // =0xa
+	mov	w10, #8                         // =0x8
+	csel	w9, w10, w9, eq
+	mov	w10, #12                        // =0xc
+	stp	w9, w11, [x29, #-32]            // 8-byte Folded Spill
+	mov	w9, #14                         // =0xe
+	csel	w11, w10, w9, eq
+	mov	w9, #18                         // =0x12
+	mov	w10, #16                        // =0x10
+	csel	w9, w10, w9, eq
+	mov	w10, #20                        // =0x14
+	stp	w9, w11, [x29, #-40]            // 8-byte Folded Spill
+	mov	w9, #22                         // =0x16
+	csel	w11, w10, w9, eq
+	mov	w9, #26                         // =0x1a
+	mov	w10, #24                        // =0x18
+	csel	w9, w10, w9, eq
+	mov	w10, #28                        // =0x1c
+	stp	w9, w11, [x29, #-48]            // 8-byte Folded Spill
+	mov	w9, #30                         // =0x1e
+	csel	w9, w10, w9, eq
+	stur	w9, [x29, #-52]                 // 4-byte Folded Spill
+	mov	x9, x12
+	b	.LBB19_8
+.LBB19_6:                               //   in Loop: Header=BB19_8 Depth=2
+	cmp	w26, #0
+	mov	w22, #-1                        // =0xffffffff
+	cset	w1, lt
+	and	w8, w1, w8
+.LBB19_7:                               //   in Loop: Header=BB19_8 Depth=2
+	add	x21, x21, #8
+	subs	x17, x17, #1
+	add	x20, x20, #8
+	add	w7, w7, #8
+	add	x9, x9, #4
 	b.eq	.LBB19_3
-.LBB19_9:                               //   Parent Loop BB19_4 Depth=1
+.LBB19_8:                               //   Parent Loop BB19_4 Depth=1
                                         // =>  This Inner Loop Header: Depth=2
-	cbz	w26, .LBB19_8
-// %bb.10:                              //   in Loop: Header=BB19_9 Depth=2
-	ldr	x11, [x20, #920]
-	cbz	x11, .LBB19_13
-// %bb.11:                              //   in Loop: Header=BB19_9 Depth=2
-	ldr	w12, [x20, #244]
-	ldr	w13, [x22, #1952]
-	asr	w12, w12, #1
-	cmp	w13, #10
-	mul	w12, w12, w23
-	add	x11, x11, w12, sxtw #1
-	asr	w12, w10, #1
-	ldrh	w11, [x11, w12, sxtw #1]
-	b.ne	.LBB19_6
-// %bb.12:                              //   in Loop: Header=BB19_9 Depth=2
-	ldr	w12, [x22, #1948]
-	sdiv	w11, w11, w12
-	b	.LBB19_6
-.LBB19_13:                              //   in Loop: Header=BB19_9 Depth=2
-	cmp	w24, #0
-	mov	w21, #-1                        // =0xffffffff
-	cset	w11, lt
+	ldr	x1, [x21]
+	ldr	x2, [x20]
+	cbz	w25, .LBB19_16
+// %bb.9:                               //   in Loop: Header=BB19_8 Depth=2
+	ldr	x3, [x19, #920]
+	cbz	x3, .LBB19_6
+// %bb.10:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	w22, [x19, #244]
+	ldr	w4, [x23, #1952]
+	asr	w22, w22, #1
+	cmp	w4, #10
+	mul	w22, w22, w28
+	add	x3, x3, w22, sxtw #1
+	asr	w22, w7, #1
+	ldrh	w3, [x3, w22, sxtw #1]
+	b.ne	.LBB19_12
+// %bb.11:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	w4, [x23, #1948]
+	sdiv	w3, w3, w4
+.LBB19_12:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	w4, [x23, #1960]
+	sub	w22, w4, w3
+	cmp	w22, w26
+	cset	w3, ge
+	cmp	w22, w6
+	and	w8, w3, w8
+	b.eq	.LBB19_16
+// %bb.13:                              //   in Loop: Header=BB19_8 Depth=2
+	tbnz	w22, #31, .LBB19_16
+// %bb.14:                              //   in Loop: Header=BB19_8 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_16
+// %bb.15:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	x0, [x19, #1560]
+	lsl	w3, w22, #10
+	mov	w6, w22
+	add	x0, x0, w3, sxtw
+.LBB19_16:                              //   in Loop: Header=BB19_8 Depth=2
+	tbnz	w22, #31, .LBB19_7
+// %bb.17:                              //   in Loop: Header=BB19_8 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_7
+// %bb.18:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	w3, [x19, #1608]
+	cmp	w3, #8
+	b.eq	.LBB19_20
+// %bb.19:                              //   in Loop: Header=BB19_8 Depth=2
+	cmp	w3, #2
+	b.ne	.LBB19_7
+.LBB19_20:                              //   in Loop: Header=BB19_8 Depth=2
+	and	x3, x2, #0xf8f8f8f8f8f8f8f8
+	cmp	x3, x1
+	b.eq	.LBB19_7
+// %bb.21:                              //   in Loop: Header=BB19_8 Depth=2
+	eor	x3, x3, x1
+	ldur	w10, [x29, #-4]                 // 4-byte Folded Reload
+	tst	x3, #0xff
+	csel	w4, wzr, w15, eq
+	tst	x3, #0xff00
+	csel	w5, wzr, w10, eq
+	ldur	w10, [x29, #-16]                // 4-byte Folded Reload
+	tst	x3, #0xff0000
+	orr	w4, w4, w5
+	csel	w24, wzr, w10, eq
+	ldur	w10, [x29, #-24]                // 4-byte Folded Reload
+	tst	x3, #0xff000000
+	csel	w27, wzr, w10, eq
+	tst	x3, #0xff00000000
+	lsr	x10, x3, #56
+	csel	w5, wzr, w13, eq
+	tst	x3, #0xff0000000000
+	orr	w24, w24, w27
+	csel	w27, wzr, w14, eq
+	tst	x3, #0xff000000000000
+	orr	w3, w4, w24
+	orr	w5, w5, w27
+	csel	w27, wzr, w16, eq
+	orr	w4, w5, w27
+	orr	w3, w3, w4
+	cbnz	x10, .LBB19_23
+// %bb.22:                              //   in Loop: Header=BB19_8 Depth=2
+	cbnz	w3, .LBB19_24
 	b	.LBB19_7
-.LBB19_14:
-	ldr	w10, [x22, #1868]
-	ldr	w11, [x22, #1880]
-	ldr	x9, [x20, #1496]
-	ldp	w14, w24, [x8, #188]
-	sub	w3, w10, w11
-	ldr	x11, [x20, #1560]
-	stur	x0, [x29, #-64]                 // 8-byte Folded Spill
-	lsl	w15, w3, #10
-	str	w2, [sp, #8]                    // 4-byte Folded Spill
-	ldr	x0, [x8, #120]
-	ldr	x12, [x9, #8]
-	add	w16, w24, w24, lsr #31
-	ldr	x9, [x20, #1488]
-	add	x2, x11, w15, sxtw
-	ldr	w11, [x8, #260]
-	ldr	w17, [x8, #264]
-	ldr	x13, [x9, #8]
-	asr	w16, w16, #1
-	ldrb	w9, [x22, #1945]
-	stur	w11, [x29, #-4]                 // 4-byte Folded Spill
-	cmp	w17, #230
-	ldp	w1, w11, [x0, #116]
-	stur	w14, [x29, #-20]                // 4-byte Folded Spill
-	stur	w11, [x29, #-68]                // 4-byte Folded Spill
-	b.ne	.LBB19_26
-// %bb.15:
-	ldr	w11, [sp, #8]                   // 4-byte Folded Reload
-	lsr	w15, w14, #2
-	cmp	w11, #2
-	b.ne	.LBB19_31
-// %bb.16:
-	mov	w24, w16
-	mov	w16, wzr
-	cmp	w16, w24
-	b.lt	.LBB19_32
-.LBB19_17:
-	mov	w0, #1                          // =0x1
-.LBB19_18:
-	ldr	w11, [sp, #8]                   // 4-byte Folded Reload
-	and	w8, w0, #0x1
-	cmp	w11, #2
-	b.ne	.LBB19_66
-// %bb.19:
-	strb	w8, [x22, #1973]
-	b	.LBB19_67
-.LBB19_20:
+.LBB19_23:                              //   in Loop: Header=BB19_8 Depth=2
+	ldr	w10, [sp, #44]                  // 4-byte Folded Reload
+	orr	w3, w3, w10
+.LBB19_24:                              //   in Loop: Header=BB19_8 Depth=2
+	lsr	x4, x2, #6
+	lsr	x5, x2, #14
+	lsr	x24, x2, #22
+	lsr	x27, x2, #30
+	lsl	x10, x2, #2
+	lsr	x11, x2, #38
+	and	x4, x4, #0x3e0
+	and	x5, x5, #0x3e0
+	and	x24, x24, #0x3e0
+	and	x27, x27, #0x3e0
+	lsr	x12, x2, #46
+	lsr	x2, x2, #54
+	bfxil	x4, x1, #11, #5
+	bfxil	x5, x1, #19, #5
+	bfxil	x24, x1, #27, #5
+	bfxil	x27, x1, #35, #5
+	and	x10, x10, #0x3e0
+	and	x11, x11, #0x3e0
+	and	x12, x12, #0x3e0
+	and	x2, x2, #0x3e0
+	bfxil	x10, x1, #3, #5
+	bfxil	x11, x1, #43, #5
+	bfxil	x12, x1, #51, #5
+	bfxil	x2, x1, #59, #5
+	ldrb	w1, [x0, x4]
+	ldrb	w4, [x0, x5]
+	ldrb	w5, [x0, x24]
+	ldrb	w24, [x0, x27]
+	ldur	w27, [x29, #-28]                // 4-byte Folded Reload
+	ldrb	w11, [x0, x11]
+	ldrb	w12, [x0, x12]
+	ldrb	w10, [x0, x10]
+	ldrb	w2, [x0, x2]
+	lsl	w1, w1, w27
+	ldur	w27, [x29, #-32]                // 4-byte Folded Reload
+	lsl	w10, w10, w30
+	lsl	w4, w4, w27
+	ldur	w27, [x29, #-36]                // 4-byte Folded Reload
+	orr	w10, w1, w10
+	lsl	w5, w5, w27
+	ldur	w27, [x29, #-40]                // 4-byte Folded Reload
+	lsl	w24, w24, w27
+	ldur	w27, [x29, #-44]                // 4-byte Folded Reload
+	orr	w1, w4, w5
+	orr	w10, w10, w1
+	lsl	w11, w11, w27
+	ldur	w27, [x29, #-48]                // 4-byte Folded Reload
+	lsl	w12, w12, w27
+	orr	w11, w24, w11
+	orr	w11, w11, w12
+	ldur	w12, [x29, #-52]                // 4-byte Folded Reload
+	orr	w10, w10, w11
+	ldr	w11, [x9]
+	lsl	w12, w2, w12
+	orr	w10, w10, w12
+	and	w10, w10, w3
+	orr	w10, w10, w11
+	str	w10, [x9]
+	b	.LBB19_7
+.LBB19_25:
+	ldr	w8, [x24, #264]
+	cmp	w8, #230
+	b.ne	.LBB19_37
+// %bb.26:
+	ldp	w8, w12, [x24, #188]
+	ldr	x9, [x19, #1496]
+	ldr	x10, [x19, #1488]
+	cmp	w2, #2
+	ldr	w11, [x23, #1868]
+	ldr	w15, [x23, #1880]
+	add	w14, w12, w12, lsr #31
+	ldr	x9, [x9, #8]
+	ldr	x10, [x10, #8]
+	stur	w8, [x29, #-4]                  // 4-byte Folded Spill
+	lsr	w8, w8, #2
+	sub	w3, w11, w15
+	asr	w14, w14, #1
+	b.ne	.LBB19_43
+// %bb.27:
+	mov	w12, w14
+	mov	w14, wzr
+	cmp	w14, w12
+	b.lt	.LBB19_44
+.LBB19_28:
+	mov	w1, #1                          // =0x1
+.LBB19_29:
+	ldr	w8, [sp, #4]                    // 4-byte Folded Reload
+	cmp	w8, #2
+	and	w8, w1, #0x1
+	b.ne	.LBB19_78
+// %bb.30:
+	strb	w8, [x23, #1973]
+	b	.LBB19_79
+.LBB19_31:
 	mov	w8, #1                          // =0x1
-	mov	w14, w27
-.LBB19_21:
-	cmp	w14, #2
+.LBB19_32:
+	ldr	w9, [sp, #4]                    // 4-byte Folded Reload
 	and	w8, w8, #0x1
-	b.ne	.LBB19_23
-// %bb.22:
-	strb	w8, [x22, #1973]
-	b	.LBB19_24
-.LBB19_23:
-	strb	w8, [x22, #1972]
-.LBB19_24:
-	ldr	w9, [x20, #1824]
 	cmp	w9, #2
-	b.lt	.LBB19_127
-// %bb.25:
+	b.ne	.LBB19_34
+// %bb.33:
+	strb	w8, [x23, #1973]
+	b	.LBB19_35
+.LBB19_34:
+	strb	w8, [x23, #1972]
+.LBB19_35:
+	ldr	w9, [x19, #1824]
+	cmp	w9, #2
+	b.lt	.LBB19_112
+// %bb.36:
+	ldr	w11, [sp, #4]                   // 4-byte Folded Reload
 	adrp	x9, .L.str.114
 	add	x9, x9, :lo12:.L.str.114
 	adrp	x10, .L.str.113
 	add	x10, x10, :lo12:.L.str.113
-	cmp	w14, #2
-	ldr	x0, [x20]
-	csel	x9, x10, x9, eq
-	cmp	w14, #3
-	adrp	x10, .L.str.112
-	add	x10, x10, :lo12:.L.str.112
+	ldr	x0, [x19]
+	cmp	w11, #2
 	adrp	x1, .L.str.118
 	add	x1, x1, :lo12:.L.str.118
-	csel	x2, x10, x9, eq
-	adrp	x9, .L.str.116
-	add	x9, x9, :lo12:.L.str.116
-	cmp	w8, #0
-	adrp	x8, .L.str.115
-	add	x8, x8, :lo12:.L.str.115
-	csel	x4, x8, x9, ne
-	mov	w3, w21
-	bl	_dev_info
-	b	.LBB19_127
-.LBB19_26:
-	ldr	w11, [sp, #8]                   // 4-byte Folded Reload
-	lsr	w15, w14, #3
-	cmp	w11, #2
-	b.ne	.LBB19_69
-// %bb.27:
-	mov	w24, w16
-	mov	w16, wzr
-	cmp	w16, w24
-	b.lt	.LBB19_70
-.LBB19_28:
-	mov	w27, #1                         // =0x1
-.LBB19_29:
-	ldr	w12, [sp, #8]                   // 4-byte Folded Reload
-	and	w8, w27, #0x1
-	cmp	w12, #2
-	b.ne	.LBB19_125
-// %bb.30:
-	strb	w8, [x22, #1973]
-	b	.LBB19_126
-.LBB19_31:
-	mul	w11, w16, w15
-	sbfiz	x11, x11, #2, #32
-	add	x12, x12, x11
-	add	x13, x13, x11
-	cmp	w16, w24
-	b.ge	.LBB19_17
-.LBB19_32:
-	cmp	w1, #0
-	mov	w11, #12                        // =0xc
-	mov	w0, #8                          // =0x8
-	mov	w6, #4                          // =0x4
-	csel	w4, wzr, w11, eq
-	csel	w7, w11, wzr, eq
-	csel	w5, w6, w0, eq
-	csel	w6, w0, w6, eq
-	mov	w0, #1                          // =0x1
-	mov	w19, #255                       // =0xff
-	mov	w21, w3
-	stur	w15, [x29, #-16]                // 4-byte Folded Spill
-	b	.LBB19_34
-.LBB19_33:                              //   in Loop: Header=BB19_34 Depth=1
-	add	w16, w16, #1
-	ldur	w14, [x29, #-20]                // 4-byte Folded Reload
-	mov	w24, w15
-	cmp	w16, w15
-	b.eq	.LBB19_18
-.LBB19_34:                              // =>This Loop Header: Depth=1
-                                        //     Child Loop BB19_40 Depth 2
-	ldr	w23, [x8, #268]
-	mov	w11, w16
-	cbz	w23, .LBB19_36
-// %bb.35:                              //   in Loop: Header=BB19_34 Depth=1
-	ldr	w11, [x8, #192]
-	mvn	w23, w16
-	add	w11, w11, w23
-.LBB19_36:                              //   in Loop: Header=BB19_34 Depth=1
-	mov	w15, w24
-	cmp	w14, #4
-	b.lo	.LBB19_33
-// %bb.37:                              //   in Loop: Header=BB19_34 Depth=1
-	ldr	x24, [x8, #120]
-	ldur	w14, [x29, #-68]                // 4-byte Folded Reload
-	mov	w23, wzr
-	ldur	w25, [x29, #-16]                // 4-byte Folded Reload
-	ldr	w24, [x24, #104]
-	mul	w11, w11, w14
-	ldur	x14, [x29, #-64]                // 8-byte Folded Reload
-	mul	w24, w24, w1
-	add	x11, x14, x11
-	add	x24, x11, x24
-	b	.LBB19_40
-.LBB19_38:                              //   in Loop: Header=BB19_40 Depth=2
-	ldrb	w11, [x24, #1]
-	ldrb	w17, [x24, #3]
-	mov	w26, #4                         // =0x4
-	lsl	w11, w11, #8
-	lsl	w17, w17, #8
-	strh	w11, [x24]
-	strh	w17, [x24, #2]
-.LBB19_39:                              //   in Loop: Header=BB19_40 Depth=2
-	subs	w25, w25, #1
-	add	x24, x24, x26
-	add	w23, w23, #8
-	b.eq	.LBB19_33
-.LBB19_40:                              //   Parent Loop BB19_34 Depth=1
-                                        // =>  This Inner Loop Header: Depth=2
-	ldr	w26, [x12]
-	ldr	w27, [x13]
-	cbz	w9, .LBB19_48
-// %bb.41:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	x11, [x20, #920]
-	cbz	x11, .LBB19_53
-// %bb.42:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	w3, [x20, #244]
-	ldr	w28, [x22, #1952]
-	asr	w3, w3, #1
-	cmp	w28, #10
-	mul	w3, w3, w16
-	add	x11, x11, w3, sxtw #1
-	asr	w3, w23, #1
-	ldrh	w11, [x11, w3, sxtw #1]
-	b.ne	.LBB19_44
-// %bb.43:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	w3, [x22, #1948]
-	sdiv	w11, w11, w3
-.LBB19_44:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	w3, [x22, #1960]
-	sub	w3, w3, w11
-	cmp	w3, w10
-	cset	w11, ge
-	cmp	w3, w21
-	and	w0, w11, w0
-	b.eq	.LBB19_48
-// %bb.45:                              //   in Loop: Header=BB19_40 Depth=2
-	tbnz	w3, #31, .LBB19_48
-// %bb.46:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w3, w10
-	b.ge	.LBB19_48
-// %bb.47:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	x11, [x20, #1560]
-	lsl	w2, w3, #10
-	mov	w21, w3
-	add	x2, x11, w2, sxtw
-.LBB19_48:                              //   in Loop: Header=BB19_40 Depth=2
-	tbnz	w3, #31, .LBB19_54
-// %bb.49:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w3, w10
-	b.ge	.LBB19_54
-// %bb.50:                              //   in Loop: Header=BB19_40 Depth=2
-	lsl	x11, x27, #2
-	lsr	x28, x27, #6
-	cmp	w1, #4
-	and	x11, x11, #0x3e0
-	and	x30, x28, #0x3e0
-	bfxil	x11, x26, #3, #5
-	bfxil	x30, x26, #11, #5
-	ldrb	w28, [x2, x11]
-	ldrb	w30, [x2, x30]
-	b.eq	.LBB19_59
-// %bb.51:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w1, #2
-	b.ne	.LBB19_62
-// %bb.52:                              //   in Loop: Header=BB19_40 Depth=2
-	lsr	x11, x27, #14
-	ubfx	x27, x27, #22, #10
-	lsl	w30, w30, #8
-	and	x11, x11, #0x3e0
-	and	w27, w27, #0x3e0
-	orr	w28, w30, w28, lsl #12
-	bfxil	x11, x26, #19, #5
-	orr	w26, w27, w26, lsr #27
-	ldrb	w11, [x2, x11]
-	ldrb	w26, [x2, w26, uxtw]
-	lsl	w11, w11, #4
-	orr	w27, w28, w11
-	orr	w11, w26, w11
-	mov	w26, #4                         // =0x4
-	lsr	w27, w27, #8
-	strb	w11, [x24, #2]
-	strb	w27, [x24]
-	b	.LBB19_39
-.LBB19_53:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w10, #0
-	mov	w3, #-1                         // =0xffffffff
-	cset	w11, lt
-	and	w0, w11, w0
-.LBB19_54:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w1, #2
-	b.eq	.LBB19_38
-// %bb.55:                              //   in Loop: Header=BB19_40 Depth=2
-	cmp	w1, #4
-	b.ne	.LBB19_58
-// %bb.56:                              //   in Loop: Header=BB19_40 Depth=2
-	ldur	w11, [x29, #-4]                 // 4-byte Folded Reload
-	cbz	w11, .LBB19_64
-// %bb.57:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	x11, [x8, #120]
-	ldr	w26, [x24]
-	ldp	w11, w17, [x11, #96]
-	lsl	w17, w19, w17
-	lsl	w11, w19, w11
-	orr	w11, w11, w17
-	bic	w11, w26, w11
-	b	.LBB19_61
-.LBB19_58:                              //   in Loop: Header=BB19_40 Depth=2
-	strh	wzr, [x24]
-	b	.LBB19_63
-.LBB19_59:                              //   in Loop: Header=BB19_40 Depth=2
-	lsr	x11, x27, #14
-	ubfx	x27, x27, #22, #10
-	ldur	w14, [x29, #-4]                 // 4-byte Folded Reload
-	and	x11, x11, #0x3e0
-	and	w27, w27, #0x3e0
-	bfxil	x11, x26, #19, #5
-	orr	w27, w27, w26, lsr #27
-	ldrb	w17, [x2, x11]
-	lsl	w11, w28, #12
-	lsl	w28, w30, #8
-	ldrb	w27, [x2, w27, uxtw]
-	lsl	w26, w17, #4
-	cbz	w14, .LBB19_65
-// %bb.60:                              //   in Loop: Header=BB19_40 Depth=2
-	ldr	x17, [x8, #120]
-	ldr	w30, [x24]
-	orr	w28, w26, w28
-	orr	w11, w28, w11
-	orr	w26, w27, w26
-	ldr	w17, [x17, #100]
-	and	w11, w11, #0xff00
-	and	w26, w26, #0xff
-	lsl	w17, w19, w17
-	bic	w17, w30, w17
-	str	w17, [x24]
-	ldr	x30, [x8, #120]
-	ldr	w30, [x30, #100]
-	sub	w28, w30, #8
-	lsl	w11, w11, w28
-	orr	w11, w11, w17
-	str	w11, [x24]
-	ldr	x17, [x8, #120]
-	ldr	w17, [x17, #96]
-	lsl	w17, w19, w17
-	bic	w11, w11, w17
-	str	w11, [x24]
-	ldr	x17, [x8, #120]
-	ldr	w17, [x17, #96]
-	lsl	w17, w26, w17
-	orr	w11, w17, w11
-.LBB19_61:                              //   in Loop: Header=BB19_40 Depth=2
-	str	w11, [x24]
-	mov	w26, #4                         // =0x4
-	b	.LBB19_39
-.LBB19_62:                              //   in Loop: Header=BB19_40 Depth=2
-	ubfx	x11, x27, #14, #18
-	ubfx	x17, x27, #22, #10
-	lsl	w27, w30, w5
-	and	w11, w11, #0x3e0
-	and	w17, w17, #0x3e0
-	bfxil	w11, w26, #19, #5
-	orr	w17, w17, w26, lsr #27
-	lsl	w26, w28, w4
-	ldrb	w11, [x2, w11, uxtw]
-	ldrb	w17, [x2, w17, uxtw]
-	orr	w26, w27, w26
-	lsl	w11, w11, w6
-	lsl	w17, w17, w7
-	orr	w11, w11, w17
-	orr	w11, w26, w11
-	strh	w11, [x24]
-.LBB19_63:                              //   in Loop: Header=BB19_40 Depth=2
-	mov	w26, #2                         // =0x2
-	b	.LBB19_39
-.LBB19_64:                              //   in Loop: Header=BB19_40 Depth=2
-	ldp	w11, w17, [x24]
-	mov	w26, #8                         // =0x8
-	and	w11, w11, #0xffffff00
-	and	w17, w17, #0xffffff00
-	stp	w11, w17, [x24]
-	b	.LBB19_39
-.LBB19_65:                              //   in Loop: Header=BB19_40 Depth=2
-	and	w11, w11, #0xf000
-	orr	w17, w28, w26
-	orr	w11, w11, w17
-	orr	w17, w27, w26
-	mov	w26, #8                         // =0x8
-	lsr	w11, w11, #8
-	strb	w17, [x24, #4]
-	strb	w11, [x24]
-	b	.LBB19_39
-.LBB19_66:
-	strb	w8, [x22, #1972]
-.LBB19_67:
-	ldr	w9, [x20, #1824]
-	cmp	w9, #2
-	b.lt	.LBB19_127
-// %bb.68:
-	adrp	x9, .L.str.114
-	add	x9, x9, :lo12:.L.str.114
-	adrp	x10, .L.str.113
-	add	x10, x10, :lo12:.L.str.113
-	cmp	w11, #2
-	ldr	x0, [x20]
 	csel	x9, x10, x9, eq
 	cmp	w11, #3
 	adrp	x10, .L.str.112
 	add	x10, x10, :lo12:.L.str.112
+	mov	w3, w22
+	b	.LBB19_81
+.LBB19_37:
+	ldr	w26, [x23, #1868]
+	ldr	w8, [x23, #1880]
+	ldr	x15, [x24, #120]
+	ldr	x9, [x19, #1496]
+	ldr	x11, [x19, #1488]
+	ldr	x12, [x19, #1560]
+	sub	w22, w26, w8
+	ldr	w10, [x15, #116]
+	ldrb	w25, [x23, #1945]
+	lsl	w13, w22, #10
+	ldr	x8, [x9, #8]
+	ldr	x9, [x11, #8]
+	add	x27, x12, w13, sxtw
+	cbz	w10, .LBB19_82
+// %bb.38:
+	ldp	w11, w14, [x24, #188]
+	ldr	w12, [sp, #4]                   // 4-byte Folded Reload
+	add	w13, w14, w14, lsr #31
+	lsr	w17, w11, #3
+	cmp	w12, #2
+	asr	w13, w13, #1
+	b.ne	.LBB19_113
+// %bb.39:
+	mov	w14, w13
+	mov	w13, wzr
+	cmp	w13, w14
+	b.lt	.LBB19_114
+.LBB19_40:
+	mov	w15, #1                         // =0x1
+.LBB19_41:
+	ldr	w8, [sp, #4]                    // 4-byte Folded Reload
+	cmp	w8, #2
+	and	w8, w15, #0x1
+	b.ne	.LBB19_110
+.LBB19_42:
+	strb	w8, [x23, #1973]
+	b	.LBB19_111
+.LBB19_43:
+	mul	w15, w14, w8
+	sbfiz	x15, x15, #2, #32
+	add	x9, x9, x15
+	add	x10, x10, x15
+	cmp	w14, w12
+	b.ge	.LBB19_28
+.LBB19_44:
+	ldr	x15, [x24, #120]
+	stur	w8, [x29, #-16]                 // 4-byte Folded Spill
+	mov	w7, #12                         // =0xc
+	ldr	x1, [x19, #1560]
+	str	x0, [sp, #32]                   // 8-byte Folded Spill
+	mov	w5, #8                          // =0x8
+	ldp	w16, w8, [x15, #116]
+	lsl	w15, w3, #10
+	ldrb	w17, [x23, #1945]
+	ldr	w0, [x24, #260]
+	mov	w20, #4                         // =0x4
+	mov	w21, w3
+	cmp	w16, #0
+	add	x6, x1, w15, sxtw
+	mov	w1, #1                          // =0x1
+	csel	w2, wzr, w7, eq
+	csel	w4, w20, w5, eq
+	csel	w5, w5, w20, eq
+	csel	w7, w7, wzr, eq
+	mov	w20, #255                       // =0xff
+	stur	w8, [x29, #-24]                 // 4-byte Folded Spill
+	b	.LBB19_46
+.LBB19_45:                              //   in Loop: Header=BB19_46 Depth=1
+	add	w14, w14, #1
+	cmp	w14, w12
+	b.eq	.LBB19_29
+.LBB19_46:                              // =>This Loop Header: Depth=1
+                                        //     Child Loop BB19_52 Depth 2
+	ldr	w22, [x24, #268]
+	mov	w15, w14
+	cbz	w22, .LBB19_48
+// %bb.47:                              //   in Loop: Header=BB19_46 Depth=1
+	ldr	w15, [x24, #192]
+	mvn	w22, w14
+	add	w15, w15, w22
+.LBB19_48:                              //   in Loop: Header=BB19_46 Depth=1
+	ldur	w8, [x29, #-4]                  // 4-byte Folded Reload
+	cmp	w8, #4
+	b.lo	.LBB19_45
+// %bb.49:                              //   in Loop: Header=BB19_46 Depth=1
+	ldr	x25, [x24, #120]
+	ldur	w8, [x29, #-24]                 // 4-byte Folded Reload
+	mov	w22, wzr
+	ldur	w26, [x29, #-16]                // 4-byte Folded Reload
+	ldr	w25, [x25, #104]
+	mul	w15, w15, w8
+	ldr	x8, [sp, #32]                   // 8-byte Folded Reload
+	mul	w25, w25, w16
+	add	x15, x8, x15
+	add	x25, x15, x25
+	b	.LBB19_52
+.LBB19_50:                              //   in Loop: Header=BB19_52 Depth=2
+	ldrb	w8, [x25, #1]
+	ldrb	w13, [x25, #3]
+	mov	w27, #4                         // =0x4
+	lsl	w8, w8, #8
+	lsl	w13, w13, #8
+	strh	w8, [x25]
+	strh	w13, [x25, #2]
+.LBB19_51:                              //   in Loop: Header=BB19_52 Depth=2
+	subs	w26, w26, #1
+	add	x25, x25, x27
+	add	w22, w22, #8
+	b.eq	.LBB19_45
+.LBB19_52:                              //   Parent Loop BB19_46 Depth=1
+                                        // =>  This Inner Loop Header: Depth=2
+	ldr	w27, [x9]
+	ldr	w28, [x10]
+	cbz	w17, .LBB19_60
+// %bb.53:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	x15, [x19, #920]
+	cbz	x15, .LBB19_65
+// %bb.54:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	w3, [x19, #244]
+	ldr	w30, [x23, #1952]
+	asr	w3, w3, #1
+	cmp	w30, #10
+	mul	w3, w3, w14
+	add	x15, x15, w3, sxtw #1
+	asr	w3, w22, #1
+	ldrh	w15, [x15, w3, sxtw #1]
+	b.ne	.LBB19_56
+// %bb.55:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	w3, [x23, #1948]
+	sdiv	w15, w15, w3
+.LBB19_56:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	w3, [x23, #1960]
+	sub	w3, w3, w15
+	cmp	w3, w11
+	cset	w15, ge
+	cmp	w3, w21
+	and	w1, w15, w1
+	b.eq	.LBB19_60
+// %bb.57:                              //   in Loop: Header=BB19_52 Depth=2
+	tbnz	w3, #31, .LBB19_60
+// %bb.58:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w3, w11
+	b.ge	.LBB19_60
+// %bb.59:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	x15, [x19, #1560]
+	lsl	w6, w3, #10
+	mov	w21, w3
+	add	x6, x15, w6, sxtw
+.LBB19_60:                              //   in Loop: Header=BB19_52 Depth=2
+	tbnz	w3, #31, .LBB19_66
+// %bb.61:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w3, w11
+	b.ge	.LBB19_66
+// %bb.62:                              //   in Loop: Header=BB19_52 Depth=2
+	lsl	x15, x28, #2
+	lsr	x30, x28, #6
+	cmp	w16, #4
+	and	x15, x15, #0x3e0
+	and	x13, x30, #0x3e0
+	bfxil	x15, x27, #3, #5
+	bfxil	x13, x27, #11, #5
+	ldrb	w30, [x6, x15]
+	ldrb	w15, [x6, x13]
+	b.eq	.LBB19_71
+// %bb.63:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w16, #2
+	b.ne	.LBB19_74
+// %bb.64:                              //   in Loop: Header=BB19_52 Depth=2
+	lsr	x13, x28, #14
+	ubfx	x28, x28, #22, #10
+	lsl	w15, w15, #8
+	and	x13, x13, #0x3e0
+	and	w28, w28, #0x3e0
+	orr	w15, w15, w30, lsl #12
+	bfxil	x13, x27, #19, #5
+	orr	w27, w28, w27, lsr #27
+	ldrb	w13, [x6, x13]
+	ldrb	w27, [x6, w27, uxtw]
+	lsl	w13, w13, #4
+	orr	w15, w15, w13
+	orr	w13, w27, w13
+	mov	w27, #4                         // =0x4
+	lsr	w15, w15, #8
+	strb	w13, [x25, #2]
+	strb	w15, [x25]
+	b	.LBB19_51
+.LBB19_65:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w11, #0
+	mov	w3, #-1                         // =0xffffffff
+	cset	w15, lt
+	and	w1, w15, w1
+.LBB19_66:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w16, #2
+	b.eq	.LBB19_50
+// %bb.67:                              //   in Loop: Header=BB19_52 Depth=2
+	cmp	w16, #4
+	b.ne	.LBB19_70
+// %bb.68:                              //   in Loop: Header=BB19_52 Depth=2
+	cbz	w0, .LBB19_76
+// %bb.69:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	x8, [x24, #120]
+	ldr	w15, [x25]
+	ldp	w8, w13, [x8, #96]
+	lsl	w13, w20, w13
+	lsl	w8, w20, w8
+	orr	w8, w8, w13
+	bic	w8, w15, w8
+	b	.LBB19_73
+.LBB19_70:                              //   in Loop: Header=BB19_52 Depth=2
+	strh	wzr, [x25]
+	b	.LBB19_75
+.LBB19_71:                              //   in Loop: Header=BB19_52 Depth=2
+	lsr	x13, x28, #14
+	ubfx	x28, x28, #22, #10
+	and	x13, x13, #0x3e0
+	and	w28, w28, #0x3e0
+	bfxil	x13, x27, #19, #5
+	orr	w27, w28, w27, lsr #27
+	lsl	w28, w30, #12
+	lsl	w30, w15, #8
+	ldrb	w13, [x6, x13]
+	ldrb	w27, [x6, w27, uxtw]
+	lsl	w15, w13, #4
+	cbz	w0, .LBB19_77
+// %bb.72:                              //   in Loop: Header=BB19_52 Depth=2
+	ldr	x13, [x24, #120]
+	ldr	w8, [x25]
+	orr	w30, w15, w30
+	orr	w28, w30, w28
+	orr	w15, w27, w15
+	ldr	w13, [x13, #100]
+	and	w28, w28, #0xff00
+	and	w15, w15, #0xff
+	lsl	w13, w20, w13
+	bic	w8, w8, w13
+	str	w8, [x25]
+	ldr	x13, [x24, #120]
+	ldr	w13, [x13, #100]
+	sub	w13, w13, #8
+	lsl	w13, w28, w13
+	orr	w8, w13, w8
+	str	w8, [x25]
+	ldr	x13, [x24, #120]
+	ldr	w13, [x13, #96]
+	lsl	w13, w20, w13
+	bic	w8, w8, w13
+	str	w8, [x25]
+	ldr	x13, [x24, #120]
+	ldr	w13, [x13, #96]
+	lsl	w13, w15, w13
+	orr	w8, w13, w8
+.LBB19_73:                              //   in Loop: Header=BB19_52 Depth=2
+	str	w8, [x25]
+	mov	w27, #4                         // =0x4
+	b	.LBB19_51
+.LBB19_74:                              //   in Loop: Header=BB19_52 Depth=2
+	ubfx	x8, x28, #14, #18
+	ubfx	x13, x28, #22, #10
+	lsl	w15, w15, w4
+	and	w8, w8, #0x3e0
+	and	w13, w13, #0x3e0
+	bfxil	w8, w27, #19, #5
+	orr	w13, w13, w27, lsr #27
+	lsl	w27, w30, w2
+	ldrb	w8, [x6, w8, uxtw]
+	ldrb	w13, [x6, w13, uxtw]
+	orr	w15, w15, w27
+	lsl	w8, w8, w5
+	lsl	w13, w13, w7
+	orr	w8, w8, w13
+	orr	w8, w15, w8
+	strh	w8, [x25]
+.LBB19_75:                              //   in Loop: Header=BB19_52 Depth=2
+	mov	w27, #2                         // =0x2
+	b	.LBB19_51
+.LBB19_76:                              //   in Loop: Header=BB19_52 Depth=2
+	ldp	w8, w13, [x25]
+	mov	w27, #8                         // =0x8
+	and	w8, w8, #0xffffff00
+	and	w13, w13, #0xffffff00
+	stp	w8, w13, [x25]
+	b	.LBB19_51
+.LBB19_77:                              //   in Loop: Header=BB19_52 Depth=2
+	and	w13, w28, #0xf000
+	orr	w28, w30, w15
+	orr	w15, w27, w15
+	orr	w13, w13, w28
+	strb	w15, [x25, #4]
+	mov	w27, #8                         // =0x8
+	lsr	w13, w13, #8
+	strb	w13, [x25]
+	b	.LBB19_51
+.LBB19_78:
+	strb	w8, [x23, #1972]
+.LBB19_79:
+	ldr	w9, [x19, #1824]
+	cmp	w9, #2
+	b.lt	.LBB19_112
+// %bb.80:
+	ldr	w11, [sp, #4]                   // 4-byte Folded Reload
+	adrp	x9, .L.str.114
+	add	x9, x9, :lo12:.L.str.114
+	adrp	x10, .L.str.113
+	add	x10, x10, :lo12:.L.str.113
+	ldr	x0, [x19]
+	cmp	w11, #2
 	adrp	x1, .L.str.118
 	add	x1, x1, :lo12:.L.str.118
+	csel	x9, x10, x9, eq
+	cmp	w11, #3
+	adrp	x10, .L.str.112
+	add	x10, x10, :lo12:.L.str.112
+.LBB19_81:
 	csel	x2, x10, x9, eq
 	adrp	x9, .L.str.116
 	add	x9, x9, :lo12:.L.str.116
@@ -6715,471 +7074,528 @@ get_full_or_part_data:                  // @get_full_or_part_data
 	add	x8, x8, :lo12:.L.str.115
 	csel	x4, x8, x9, ne
 	bl	_dev_info
-	b	.LBB19_127
-.LBB19_69:
-	mul	w11, w16, w15
-	sbfiz	x11, x11, #3, #32
-	add	x12, x12, x11
-	add	x13, x13, x11
-	cmp	w16, w24
-	b.ge	.LBB19_28
-.LBB19_70:
-	cmp	w1, #0
-	mov	w17, #6                         // =0x6
-	str	w15, [sp, #12]                  // 4-byte Folded Spill
-	mov	w0, #5                          // =0x5
-	mov	w4, #2                          // =0x2
-	csinc	x15, x17, xzr, ne
-	str	x15, [sp, #64]                  // 8-byte Folded Spill
-	csel	x15, x4, x0, eq
-	mov	w6, #3                          // =0x3
-	str	x15, [sp, #56]                  // 8-byte Folded Spill
-	cinc	x15, x6, ne
-	mov	w11, #7                         // =0x7
-	str	x15, [sp, #48]                  // 8-byte Folded Spill
-	cinc	x15, x6, eq
-	csel	x5, xzr, x11, eq
-	str	x15, [sp, #40]                  // 8-byte Folded Spill
-	csel	x15, x0, x4, eq
-	mov	w0, #14                         // =0xe
-	csel	x11, x11, xzr, eq
-	mov	w6, #12                         // =0xc
-	str	x15, [sp, #32]                  // 8-byte Folded Spill
-	str	x11, [sp, #80]                  // 8-byte Folded Spill
-	csel	w11, wzr, w0, eq
-	csinc	x15, x17, xzr, eq
-	stur	w11, [x29, #-24]                // 4-byte Folded Spill
-	csel	w11, w4, w6, eq
-	mov	w7, #4                          // =0x4
-	stur	w11, [x29, #-28]                // 4-byte Folded Spill
-	mov	w11, #10                        // =0xa
-	mov	w19, #8                         // =0x8
-	str	x15, [sp, #24]                  // 8-byte Folded Spill
-	csel	w15, w7, w11, eq
-	csel	w11, w11, w7, eq
-	stur	w15, [x29, #-32]                // 4-byte Folded Spill
-	csel	w15, w17, w19, eq
-	mov	w27, #1                         // =0x1
-	stur	w15, [x29, #-36]                // 4-byte Folded Spill
-	csel	w15, w19, w17, eq
-	stp	w11, w15, [x29, #-44]           // 8-byte Folded Spill
-	csel	w11, w6, w4, eq
-	mov	w4, w3
-	stur	w11, [x29, #-48]                // 4-byte Folded Spill
-	csel	w11, w0, wzr, eq
-	stur	w11, [x29, #-52]                // 4-byte Folded Spill
-	lsl	x11, x5, #2
-	stur	x8, [x29, #-16]                 // 8-byte Folded Spill
-	str	x11, [sp, #16]                  // 8-byte Folded Spill
-	str	w24, [sp, #76]                  // 4-byte Folded Spill
-	b	.LBB19_72
-.LBB19_71:                              //   in Loop: Header=BB19_72 Depth=1
-	ldr	w24, [sp, #76]                  // 4-byte Folded Reload
-	add	w16, w16, #1
-	ldur	w14, [x29, #-20]                // 4-byte Folded Reload
-	cmp	w16, w24
-	b.eq	.LBB19_29
-.LBB19_72:                              // =>This Loop Header: Depth=1
-                                        //     Child Loop BB19_78 Depth 2
-	ldr	w17, [x8, #268]
-	mov	w11, w16
-	cbz	w17, .LBB19_74
-// %bb.73:                              //   in Loop: Header=BB19_72 Depth=1
-	ldr	w11, [x8, #192]
-	mvn	w17, w16
-	add	w11, w11, w17
-.LBB19_74:                              //   in Loop: Header=BB19_72 Depth=1
-	cmp	w14, #8
-	b.lo	.LBB19_71
-// %bb.75:                              //   in Loop: Header=BB19_72 Depth=1
-	ldr	x17, [x8, #120]
-	ldur	w14, [x29, #-68]                // 4-byte Folded Reload
-	mov	w21, wzr
-	ldr	w25, [sp, #12]                  // 4-byte Folded Reload
-	ldr	w17, [x17, #104]
-	mul	w11, w11, w14
-	ldur	x14, [x29, #-64]                // 8-byte Folded Reload
-	mul	w17, w17, w1
-	add	x11, x14, x11
-	add	x0, x11, x17
-	b	.LBB19_78
-.LBB19_76:                              //   in Loop: Header=BB19_78 Depth=2
-	mov	w26, #2                         // =0x2
-	strh	wzr, [x0]
-.LBB19_77:                              //   in Loop: Header=BB19_78 Depth=2
-	add	x0, x0, x26
-	subs	w25, w25, #1
-	add	x12, x12, #8
-	add	x13, x13, #8
-	add	w21, w21, #8
-	b.eq	.LBB19_71
-.LBB19_78:                              //   Parent Loop BB19_72 Depth=1
-                                        // =>  This Inner Loop Header: Depth=2
-	ldr	x26, [x12]
-	ldr	x28, [x13]
-	cbz	w9, .LBB19_86
-// %bb.79:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [x20, #920]
-	cbz	x11, .LBB19_100
-// %bb.80:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	w17, [x20, #244]
-	ldr	w3, [x22, #1952]
-	asr	w17, w17, #1
-	cmp	w3, #10
-	mul	w17, w17, w16
-	add	x11, x11, w17, sxtw #1
-	asr	w17, w21, #1
-	ldrh	w11, [x11, w17, sxtw #1]
-	b.ne	.LBB19_82
-// %bb.81:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	w17, [x22, #1948]
-	sdiv	w11, w11, w17
-.LBB19_82:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	w17, [x22, #1960]
-	sub	w3, w17, w11
-	cmp	w3, w10
-	cset	w11, ge
-	cmp	w3, w4
-	and	w27, w11, w27
-	b.eq	.LBB19_86
-// %bb.83:                              //   in Loop: Header=BB19_78 Depth=2
-	tbnz	w3, #31, .LBB19_86
-// %bb.84:                              //   in Loop: Header=BB19_78 Depth=2
-	cmp	w3, w10
-	b.ge	.LBB19_86
-// %bb.85:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [x20, #1560]
-	lsl	w17, w3, #10
-	mov	w4, w3
-	add	x2, x11, w17, sxtw
-.LBB19_86:                              //   in Loop: Header=BB19_78 Depth=2
-	tbnz	w3, #31, .LBB19_101
-// %bb.87:                              //   in Loop: Header=BB19_78 Depth=2
-	cmp	w3, w10
-	b.ge	.LBB19_101
-// %bb.88:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	w11, [x20, #1608]
-	cmp	w11, #8
-	b.eq	.LBB19_90
-// %bb.89:                              //   in Loop: Header=BB19_78 Depth=2
-	cmp	w11, #2
-	b.ne	.LBB19_104
-.LBB19_90:                              //   in Loop: Header=BB19_78 Depth=2
-	and	x11, x28, #0xf8f8f8f8f8f8f8f8
-	cmp	x11, x26
-	b.eq	.LBB19_101
-// %bb.91:                              //   in Loop: Header=BB19_78 Depth=2
-	eor	x19, x11, x26
-	tst	x19, #0xff
-	b.eq	.LBB19_105
-// %bb.92:                              //   in Loop: Header=BB19_78 Depth=2
-	mov	w30, #65535                     // =0xffff
-	tst	x19, #0xff00
-	b.eq	.LBB19_106
-.LBB19_93:                              //   in Loop: Header=BB19_78 Depth=2
-	tst	x19, #0xff0000
-	b.eq	.LBB19_107
-.LBB19_94:                              //   in Loop: Header=BB19_78 Depth=2
-	tst	x19, #0xff000000
-	b.eq	.LBB19_108
-.LBB19_95:                              //   in Loop: Header=BB19_78 Depth=2
-	tst	x19, #0xff00000000
+	b	.LBB19_112
+.LBB19_82:
+	ldp	w12, w10, [x24, #188]
+	ldr	w13, [sp, #4]                   // 4-byte Folded Reload
+	str	x0, [sp, #32]                   // 8-byte Folded Spill
+	mov	w1, wzr
+	add	w11, w10, w10, lsr #31
+	stur	x12, [x29, #-16]                // 8-byte Folded Spill
+	lsr	x12, x12, #3
+	cmp	w13, #2
+	ldr	w13, [x15, #120]
+	asr	w11, w11, #1
+	stur	x12, [x29, #-24]                // 8-byte Folded Spill
+	stur	w13, [x29, #-28]                // 4-byte Folded Spill
+	mul	w12, w11, w12
+	csel	w14, w11, w10, eq
+	csel	w28, wzr, w11, eq
+	stur	w14, [x29, #-4]                 // 4-byte Folded Spill
+	sbfiz	x12, x12, #3, #32
+	add	x10, x8, x12
+	add	x11, x9, x12
+	csel	x20, x8, x10, eq
+	csel	x21, x9, x11, eq
+	mul	w8, w28, w13
+	subs	w9, w14, w28
+	mul	w2, w9, w13
+	add	x0, x0, x8
+	bl	memset
+	ldur	w30, [x29, #-4]                 // 4-byte Folded Reload
+	mov	w8, #1                          // =0x1
+	cmp	w30, w28
+	b.le	.LBB19_109
+// %bb.83:
+	ldp	x6, x5, [x29, #-24]             // 16-byte Folded Reload
+	mov	w9, #3                          // =0x3
+	ldr	x4, [sp, #32]                   // 8-byte Folded Reload
+	ldur	w7, [x29, #-28]                 // 4-byte Folded Reload
+	mov	w10, w22
+	b	.LBB19_85
+.LBB19_84:                              //   in Loop: Header=BB19_85 Depth=1
+	add	w28, w28, #1
+	cmp	w28, w30
 	b.eq	.LBB19_109
-.LBB19_96:                              //   in Loop: Header=BB19_78 Depth=2
-	tst	x19, #0xff0000000000
-	b.eq	.LBB19_110
-.LBB19_97:                              //   in Loop: Header=BB19_78 Depth=2
-	tst	x19, #0xff000000000000
-	b.eq	.LBB19_111
-.LBB19_98:                              //   in Loop: Header=BB19_78 Depth=2
-	lsr	x11, x19, #56
-	cbnz	x11, .LBB19_112
-.LBB19_99:                              //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #80]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	cbnz	w30, .LBB19_113
-	b	.LBB19_119
-.LBB19_100:                             //   in Loop: Header=BB19_78 Depth=2
-	cmp	w10, #0
-	mov	w3, #-1                         // =0xffffffff
-	cset	w11, lt
-	and	w27, w11, w27
-.LBB19_101:                             //   in Loop: Header=BB19_78 Depth=2
-	cmp	w1, #4
-	b.eq	.LBB19_120
-.LBB19_102:                             //   in Loop: Header=BB19_78 Depth=2
-	cmp	w1, #2
-	b.ne	.LBB19_76
-// %bb.103:                             //   in Loop: Header=BB19_78 Depth=2
-	ldrb	w11, [x0, #1]
-	ldrb	w14, [x0, #3]
-	mov	w26, #4                         // =0x4
-	lsl	w11, w11, #8
-	lsl	w14, w14, #8
-	strh	w11, [x0]
-	strh	w14, [x0, #2]
-	b	.LBB19_77
-.LBB19_104:                             //   in Loop: Header=BB19_78 Depth=2
-	mov	w30, #65535                     // =0xffff
-	b	.LBB19_113
-.LBB19_105:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #16]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldrh	w11, [x14, x11]
-	eor	w30, w11, #0xffff
-	tst	x19, #0xff00
-	b.ne	.LBB19_93
-.LBB19_106:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #64]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	tst	x19, #0xff0000
-	b.ne	.LBB19_94
-.LBB19_107:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #56]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	tst	x19, #0xff000000
+.LBB19_85:                              // =>This Loop Header: Depth=1
+                                        //     Child Loop BB19_91 Depth 2
+	ldr	w11, [x24, #268]
+	mov	w12, w28
+	cbz	w11, .LBB19_87
+// %bb.86:                              //   in Loop: Header=BB19_85 Depth=1
+	ldr	w11, [x24, #192]
+	mvn	w12, w28
+	add	w12, w11, w12
+.LBB19_87:                              //   in Loop: Header=BB19_85 Depth=1
+	cmp	w5, #8
+	b.lo	.LBB19_84
+// %bb.88:                              //   in Loop: Header=BB19_85 Depth=1
+	mul	w12, w12, w7
+	mov	w11, wzr
+	mov	x13, x6
+	add	x12, x4, x12
+	b	.LBB19_91
+.LBB19_89:                              //   in Loop: Header=BB19_91 Depth=2
+	cmp	w26, #0
+	mov	w22, #-1                        // =0xffffffff
+	cset	w14, lt
+	and	w8, w14, w8
+.LBB19_90:                              //   in Loop: Header=BB19_91 Depth=2
+	subs	x13, x13, #1
+	add	w11, w11, #8
+	add	x12, x12, #2
+	b.eq	.LBB19_84
+.LBB19_91:                              //   Parent Loop BB19_85 Depth=1
+                                        // =>  This Inner Loop Header: Depth=2
+	ldr	x14, [x20], #8
+	ldr	x15, [x21], #8
+	cbz	w25, .LBB19_99
+// %bb.92:                              //   in Loop: Header=BB19_91 Depth=2
+	ldr	x16, [x19, #920]
+	cbz	x16, .LBB19_89
+// %bb.93:                              //   in Loop: Header=BB19_91 Depth=2
+	ldr	w17, [x19, #244]
+	ldr	w0, [x23, #1952]
+	asr	w17, w17, #1
+	cmp	w0, #10
+	mul	w17, w17, w28
+	add	x16, x16, w17, sxtw #1
+	asr	w17, w11, #1
+	ldrh	w16, [x16, w17, sxtw #1]
 	b.ne	.LBB19_95
-.LBB19_108:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #48]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	tst	x19, #0xff00000000
-	b.ne	.LBB19_96
-.LBB19_109:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #40]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	tst	x19, #0xff0000000000
-	b.ne	.LBB19_97
-.LBB19_110:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #32]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	tst	x19, #0xff000000000000
-	b.ne	.LBB19_98
-.LBB19_111:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [sp, #24]                  // 8-byte Folded Reload
-	adrp	x14, _16_2bit_mask
-	add	x14, x14, :lo12:_16_2bit_mask
-	ldr	w11, [x14, x11, lsl #2]
-	bic	w30, w30, w11
-	lsr	x11, x19, #56
-	cbz	x11, .LBB19_99
-.LBB19_112:                             //   in Loop: Header=BB19_78 Depth=2
-	cbz	w30, .LBB19_119
-.LBB19_113:                             //   in Loop: Header=BB19_78 Depth=2
-	mov	w8, w4
-	lsl	x11, x28, #2
-	lsr	x17, x28, #6
-	lsr	x4, x28, #14
-	lsr	x5, x28, #22
-	lsr	x6, x28, #30
-	lsr	x19, x28, #38
-	lsr	x14, x28, #46
-	lsr	x28, x28, #54
-	and	x11, x11, #0x3e0
+// %bb.94:                              //   in Loop: Header=BB19_91 Depth=2
+	ldr	w17, [x23, #1948]
+	sdiv	w16, w16, w17
+.LBB19_95:                              //   in Loop: Header=BB19_91 Depth=2
+	ldr	w17, [x23, #1960]
+	sub	w22, w17, w16
+	cmp	w22, w26
+	cset	w16, ge
+	cmp	w22, w10
+	and	w8, w16, w8
+	b.eq	.LBB19_99
+// %bb.96:                              //   in Loop: Header=BB19_91 Depth=2
+	tbnz	w22, #31, .LBB19_99
+// %bb.97:                              //   in Loop: Header=BB19_91 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_99
+// %bb.98:                              //   in Loop: Header=BB19_91 Depth=2
+	ldr	x10, [x19, #1560]
+	lsl	w16, w22, #10
+	add	x27, x10, w16, sxtw
+	mov	w10, w22
+.LBB19_99:                              //   in Loop: Header=BB19_91 Depth=2
+	tbnz	w22, #31, .LBB19_90
+// %bb.100:                             //   in Loop: Header=BB19_91 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_90
+// %bb.101:                             //   in Loop: Header=BB19_91 Depth=2
+	ldr	w16, [x19, #1608]
+	cmp	w16, #8
+	b.eq	.LBB19_103
+// %bb.102:                             //   in Loop: Header=BB19_91 Depth=2
+	cmp	w16, #2
+	b.ne	.LBB19_106
+.LBB19_103:                             //   in Loop: Header=BB19_91 Depth=2
+	and	x16, x15, #0xf8f8f8f8f8f8f8f8
+	cmp	x16, x14
+	b.eq	.LBB19_90
+// %bb.104:                             //   in Loop: Header=BB19_91 Depth=2
+	eor	x16, x16, x14
+	tst	x16, #0xff
+	csel	w17, wzr, w9, eq
+	tst	x16, #0xff00
+	orr	w0, w17, #0xc
+	csel	w17, w17, w0, eq
+	tst	x16, #0xff0000
+	orr	w0, w17, #0x30
+	csel	w17, w17, w0, eq
+	tst	x16, #0xff000000
+	orr	w0, w17, #0xc0
+	csel	w17, w17, w0, eq
+	tst	x16, #0xff00000000
+	orr	w0, w17, #0x300
+	csel	w17, w17, w0, eq
+	tst	x16, #0xff0000000000
+	orr	w0, w17, #0xc00
+	csel	w17, w17, w0, eq
+	lsr	x0, x16, #56
+	tst	x16, #0xff000000000000
+	orr	w16, w17, #0x3000
+	csel	w16, w17, w16, eq
+	cbnz	x0, .LBB19_107
+// %bb.105:                             //   in Loop: Header=BB19_91 Depth=2
+	cbnz	w16, .LBB19_108
+	b	.LBB19_90
+.LBB19_106:                             //   in Loop: Header=BB19_91 Depth=2
+	mov	w16, #65535                     // =0xffff
+	b	.LBB19_108
+.LBB19_107:                             //   in Loop: Header=BB19_91 Depth=2
+	orr	w16, w16, #0xc000
+.LBB19_108:                             //   in Loop: Header=BB19_91 Depth=2
+	lsl	x17, x15, #2
+	lsr	x0, x15, #6
+	lsr	x1, x15, #14
+	lsr	x2, x15, #22
+	lsr	x3, x15, #30
 	and	x17, x17, #0x3e0
-	and	x7, x4, #0x3e0
-	and	x23, x5, #0x3e0
-	and	x15, x6, #0x3e0
-	and	x19, x19, #0x3e0
-	and	x14, x14, #0x3e0
-	and	x24, x28, #0x3e0
-	bfxil	x11, x26, #3, #5
-	bfxil	x17, x26, #11, #5
-	bfxil	x7, x26, #19, #5
-	bfxil	x23, x26, #27, #5
-	bfxil	x15, x26, #35, #5
-	bfxil	x19, x26, #43, #5
-	bfxil	x14, x26, #51, #5
-	bfxil	x24, x26, #59, #5
-	ldrb	w4, [x2, x11]
-	ldrb	w5, [x2, x17]
-	ldrb	w6, [x2, x7]
-	ldrb	w11, [x2, x23]
-	ldrb	w17, [x2, x15]
-	ldrb	w28, [x2, x19]
-	ldrb	w26, [x2, x14]
-	ldrb	w19, [x2, x24]
-	cmp	w1, #4
-	b.eq	.LBB19_116
-// %bb.114:                             //   in Loop: Header=BB19_78 Depth=2
-	cmp	w1, #2
-	b.ne	.LBB19_118
-// %bb.115:                             //   in Loop: Header=BB19_78 Depth=2
-	lsl	w14, w5, #12
-	orr	w14, w14, w4, lsl #14
-	orr	w14, w14, w6, lsl #10
-	orr	w11, w14, w11, lsl #8
-	orr	w11, w11, w17, lsl #6
-	orr	w11, w11, w28, lsl #4
-	orr	w11, w11, w26, lsl #2
-	mov	w26, #4                         // =0x4
-	orr	w11, w11, w19
-	and	w11, w11, w30
-	lsr	w14, w11, #8
-	strb	w11, [x0, #2]
-	strb	w14, [x0]
-	b	.LBB19_124
-.LBB19_116:                             //   in Loop: Header=BB19_78 Depth=2
-	lsl	w14, w5, #12
-	orr	w14, w14, w4, lsl #14
-	orr	w14, w14, w6, lsl #10
-	orr	w11, w14, w11, lsl #8
-	orr	w11, w11, w17, lsl #6
-	orr	w11, w11, w28, lsl #4
-	orr	w11, w11, w26, lsl #2
-	orr	w11, w11, w19
-	and	w19, w11, w30
-	ldur	w11, [x29, #-4]                 // 4-byte Folded Reload
-	cbz	w11, .LBB19_123
-// %bb.117:                             //   in Loop: Header=BB19_78 Depth=2
-	ldur	x5, [x29, #-16]                 // 8-byte Folded Reload
-	mov	w17, #255                       // =0xff
-	ldr	w14, [x0]
-	and	w15, w19, #0xff00
-	mov	w26, #4                         // =0x4
-	mov	w4, w8
-	ldr	x11, [x5, #120]
-	mov	x8, x5
-	ldr	w11, [x11, #100]
-	lsl	w11, w17, w11
-	bic	w11, w14, w11
-	str	w11, [x0]
-	ldr	x14, [x5, #120]
-	ldr	w14, [x14, #100]
-	sub	w14, w14, #8
-	lsl	w14, w15, w14
-	and	w15, w19, #0xff
-	orr	w11, w14, w11
-	str	w11, [x0]
-	ldr	x14, [x5, #120]
-	ldr	w14, [x14, #96]
-	lsl	w14, w17, w14
-	bic	w11, w11, w14
-	str	w11, [x0]
-	ldr	x14, [x5, #120]
-	ldr	w14, [x14, #96]
-	lsl	w14, w15, w14
-	orr	w11, w14, w11
-	str	w11, [x0]
-	b	.LBB19_77
-.LBB19_118:                             //   in Loop: Header=BB19_78 Depth=2
-	ldp	w15, w14, [x29, #-28]           // 8-byte Folded Reload
-	lsl	w14, w4, w14
-	lsl	w15, w5, w15
-	ldp	w5, w4, [x29, #-36]             // 8-byte Folded Reload
-	orr	w14, w15, w14
-	lsl	w4, w6, w4
-	lsl	w11, w11, w5
-	ldp	w5, w6, [x29, #-44]             // 8-byte Folded Reload
-	orr	w11, w4, w11
-	orr	w11, w14, w11
-	lsl	w17, w17, w6
-	ldur	w6, [x29, #-48]                 // 4-byte Folded Reload
-	lsl	w5, w28, w5
-	lsl	w6, w26, w6
-	orr	w15, w17, w5
-	mov	w26, #2                         // =0x2
-	orr	w14, w15, w6
-	ldur	w15, [x29, #-52]                // 4-byte Folded Reload
-	orr	w11, w11, w14
-	lsl	w15, w19, w15
-	orr	w11, w11, w15
-	and	w11, w11, w30
-	strh	w11, [x0]
-	b	.LBB19_124
-.LBB19_119:                             //   in Loop: Header=BB19_78 Depth=2
-	ldur	x8, [x29, #-16]                 // 8-byte Folded Reload
-	cmp	w1, #4
-	b.ne	.LBB19_102
-.LBB19_120:                             //   in Loop: Header=BB19_78 Depth=2
-	ldur	w11, [x29, #-4]                 // 4-byte Folded Reload
-	cbz	w11, .LBB19_122
-// %bb.121:                             //   in Loop: Header=BB19_78 Depth=2
-	ldr	x11, [x8, #120]
-	mov	w15, #255                       // =0xff
-	mov	w26, #4                         // =0x4
-	ldp	w11, w14, [x11, #96]
-	lsl	w14, w15, w14
-	lsl	w11, w15, w11
-	ldr	w15, [x0]
-	orr	w11, w11, w14
-	bic	w11, w15, w11
-	str	w11, [x0]
-	b	.LBB19_77
-.LBB19_122:                             //   in Loop: Header=BB19_78 Depth=2
-	ldp	w11, w14, [x0]
-	mov	w26, #8                         // =0x8
-	and	w11, w11, #0xffffff00
-	and	w14, w14, #0xffffff00
-	stp	w11, w14, [x0]
-	b	.LBB19_77
-.LBB19_123:                             //   in Loop: Header=BB19_78 Depth=2
-	lsr	w11, w19, #8
-	mov	w26, #8                         // =0x8
-	strb	w19, [x0, #4]
-	strb	w11, [x0]
-.LBB19_124:                             //   in Loop: Header=BB19_78 Depth=2
-	mov	w4, w8
-	ldur	x8, [x29, #-16]                 // 8-byte Folded Reload
-	b	.LBB19_77
-.LBB19_125:
-	strb	w8, [x22, #1972]
-.LBB19_126:
-	ldr	w10, [x20, #1824]
-	cmp	w10, #2
-	b.ge	.LBB19_128
-.LBB19_127:
-	ldp	x20, x19, [sp, #240]            // 16-byte Folded Reload
-	ldp	x22, x21, [sp, #224]            // 16-byte Folded Reload
-	ldp	x24, x23, [sp, #208]            // 16-byte Folded Reload
-	ldp	x26, x25, [sp, #192]            // 16-byte Folded Reload
-	ldp	x28, x27, [sp, #176]            // 16-byte Folded Reload
-	ldp	x29, x30, [sp, #160]            // 16-byte Folded Reload
-	add	sp, sp, #256
+	and	x0, x0, #0x3e0
+	and	x1, x1, #0x3e0
+	bfxil	x17, x14, #3, #5
+	bfxil	x0, x14, #11, #5
+	bfxil	x1, x14, #19, #5
+	and	x2, x2, #0x3e0
+	ldrb	w17, [x27, x17]
+	ldrb	w0, [x27, x0]
+	bfxil	x2, x14, #27, #5
+	orr	w17, w17, w0, lsl #2
+	ldrb	w0, [x27, x1]
+	and	x1, x3, #0x3e0
+	lsr	x3, x15, #38
+	bfxil	x1, x14, #35, #5
+	orr	w17, w17, w0, lsl #4
+	ldrb	w0, [x27, x2]
+	and	x2, x3, #0x3e0
+	lsr	x3, x15, #46
+	lsr	x15, x15, #54
+	orr	w17, w17, w0, lsl #6
+	ldrb	w0, [x27, x1]
+	bfxil	x2, x14, #43, #5
+	and	x1, x3, #0x3e0
+	and	x15, x15, #0x3e0
+	orr	w17, w17, w0, lsl #8
+	ldrb	w0, [x27, x2]
+	bfxil	x1, x14, #51, #5
+	bfxil	x15, x14, #59, #5
+	orr	w17, w17, w0, lsl #10
+	ldrb	w0, [x27, x1]
+	ldrb	w15, [x27, x15]
+	orr	w14, w17, w0, lsl #12
+	orr	w14, w14, w15, lsl #14
+	and	w14, w14, w16
+	strh	w14, [x12]
+	b	.LBB19_90
+.LBB19_109:
+	ldr	w9, [sp, #4]                    // 4-byte Folded Reload
+	and	w8, w8, #0x1
+	cmp	w9, #2
+	b.eq	.LBB19_42
+.LBB19_110:
+	strb	w8, [x23, #1972]
+.LBB19_111:
+	ldr	w9, [x19, #1824]
+	cmp	w9, #2
+	b.ge	.LBB19_155
+.LBB19_112:
+	ldp	x20, x19, [sp, #192]            // 16-byte Folded Reload
+	ldp	x22, x21, [sp, #176]            // 16-byte Folded Reload
+	ldp	x24, x23, [sp, #160]            // 16-byte Folded Reload
+	ldp	x26, x25, [sp, #144]            // 16-byte Folded Reload
+	ldp	x28, x27, [sp, #128]            // 16-byte Folded Reload
+	ldp	x29, x30, [sp, #112]            // 16-byte Folded Reload
+	add	sp, sp, #208
 	ldr	x30, [x18, #-8]!
 	ret
-.LBB19_128:
-	adrp	x10, .L.str.114
-	add	x10, x10, :lo12:.L.str.114
-	cmp	w12, #2
-	adrp	x11, .L.str.113
-	add	x11, x11, :lo12:.L.str.113
-	ldr	x0, [x20]
-	csel	x10, x11, x10, eq
-	adrp	x11, .L.str.112
-	add	x11, x11, :lo12:.L.str.112
-	cmp	w12, #3
+.LBB19_113:
+	mul	w16, w13, w17
+	sbfiz	x16, x16, #3, #32
+	add	x8, x8, x16
+	add	x9, x9, x16
+	cmp	w13, w14
+	b.ge	.LBB19_40
+.LBB19_114:
+	ldr	w16, [x24, #260]
+	ldr	w12, [x15, #120]
+	mov	w15, #1                         // =0x1
+	str	x0, [sp, #32]                   // 8-byte Folded Spill
+	mov	w0, #255                        // =0xff
+	mov	w1, #49152                      // =0xc000
+	mov	w2, w22
+	stur	w17, [x29, #-4]                 // 4-byte Folded Spill
+	stur	w12, [x29, #-16]                // 4-byte Folded Spill
+	b	.LBB19_116
+.LBB19_115:                             //   in Loop: Header=BB19_116 Depth=1
+	add	w13, w13, #1
+	cmp	w13, w14
+	b.eq	.LBB19_41
+.LBB19_116:                             // =>This Loop Header: Depth=1
+                                        //     Child Loop BB19_122 Depth 2
+	ldr	w3, [x24, #268]
+	mov	w4, w13
+	cbz	w3, .LBB19_118
+// %bb.117:                             //   in Loop: Header=BB19_116 Depth=1
+	ldr	w3, [x24, #192]
+	mvn	w4, w13
+	add	w4, w3, w4
+.LBB19_118:                             //   in Loop: Header=BB19_116 Depth=1
+	cmp	w11, #8
+	b.lo	.LBB19_115
+// %bb.119:                             //   in Loop: Header=BB19_116 Depth=1
+	ldr	x5, [x24, #120]
+	ldur	w12, [x29, #-16]                // 4-byte Folded Reload
+	mov	w3, wzr
+	ldr	w5, [x5, #104]
+	mul	w4, w4, w12
+	ldr	x12, [sp, #32]                  // 8-byte Folded Reload
+	mul	w5, w5, w10
+	add	x4, x12, x4
+	add	x4, x4, x5
+	ldur	w5, [x29, #-4]                  // 4-byte Folded Reload
+	b	.LBB19_122
+.LBB19_120:                             //   in Loop: Header=BB19_122 Depth=2
+	ldrb	w12, [x4, #1]
+	ldrb	w17, [x4, #3]
+	mov	w6, #4                          // =0x4
+	lsl	w12, w12, #8
+	lsl	w17, w17, #8
+	strh	w12, [x4]
+	strh	w17, [x4, #2]
+.LBB19_121:                             //   in Loop: Header=BB19_122 Depth=2
+	subs	w5, w5, #1
+	add	x4, x4, x6
+	add	w3, w3, #8
+	b.eq	.LBB19_115
+.LBB19_122:                             //   Parent Loop BB19_116 Depth=1
+                                        // =>  This Inner Loop Header: Depth=2
+	ldr	x6, [x8], #8
+	ldr	x7, [x9], #8
+	cbz	w25, .LBB19_130
+// %bb.123:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	x20, [x19, #920]
+	cbz	x20, .LBB19_137
+// %bb.124:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	w21, [x19, #244]
+	ldr	w22, [x23, #1952]
+	asr	w21, w21, #1
+	cmp	w22, #10
+	mul	w21, w21, w13
+	add	x20, x20, w21, sxtw #1
+	asr	w21, w3, #1
+	ldrh	w20, [x20, w21, sxtw #1]
+	b.ne	.LBB19_126
+// %bb.125:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	w21, [x23, #1948]
+	sdiv	w20, w20, w21
+.LBB19_126:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	w21, [x23, #1960]
+	sub	w22, w21, w20
+	cmp	w22, w26
+	cset	w20, ge
+	cmp	w22, w2
+	and	w15, w20, w15
+	b.eq	.LBB19_130
+// %bb.127:                             //   in Loop: Header=BB19_122 Depth=2
+	tbnz	w22, #31, .LBB19_130
+// %bb.128:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_130
+// %bb.129:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	x2, [x19, #1560]
+	lsl	w20, w22, #10
+	add	x27, x2, w20, sxtw
+	mov	w2, w22
+.LBB19_130:                             //   in Loop: Header=BB19_122 Depth=2
+	tbnz	w22, #31, .LBB19_138
+// %bb.131:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w22, w26
+	b.ge	.LBB19_138
+// %bb.132:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	w20, [x19, #1608]
+	cmp	w20, #8
+	b.eq	.LBB19_134
+// %bb.133:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w20, #2
+	b.ne	.LBB19_143
+.LBB19_134:                             //   in Loop: Header=BB19_122 Depth=2
+	and	x20, x7, #0xf8f8f8f8f8f8f8f8
+	cmp	x20, x6
+	b.eq	.LBB19_138
+// %bb.135:                             //   in Loop: Header=BB19_122 Depth=2
+	eor	x20, x20, x6
+	tst	x20, #0xff
+	csel	w21, wzr, w1, eq
+	tst	x20, #0xff00
+	orr	w28, w21, #0x3000
+	csel	w21, w21, w28, eq
+	tst	x20, #0xff0000
+	orr	w28, w21, #0xc00
+	csel	w21, w21, w28, eq
+	tst	x20, #0xff000000
+	orr	w28, w21, #0x300
+	csel	w21, w21, w28, eq
+	tst	x20, #0xff00000000
+	orr	w28, w21, #0xc0
+	csel	w21, w21, w28, eq
+	tst	x20, #0xff0000000000
+	orr	w28, w21, #0x30
+	csel	w21, w21, w28, eq
+	lsr	x28, x20, #56
+	tst	x20, #0xff000000000000
+	orr	w20, w21, #0xc
+	csel	w20, w21, w20, eq
+	cbnz	x28, .LBB19_145
+// %bb.136:                             //   in Loop: Header=BB19_122 Depth=2
+	cbnz	w20, .LBB19_146
+	b	.LBB19_138
+.LBB19_137:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w26, #0
+	mov	w22, #-1                        // =0xffffffff
+	cset	w6, lt
+	and	w15, w6, w15
+.LBB19_138:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w10, #4
+	b.eq	.LBB19_141
+// %bb.139:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w10, #2
+	b.eq	.LBB19_120
+// %bb.140:                             //   in Loop: Header=BB19_122 Depth=2
+	strh	wzr, [x4]
+	b	.LBB19_153
+.LBB19_141:                             //   in Loop: Header=BB19_122 Depth=2
+	cbz	w16, .LBB19_144
+// %bb.142:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	x12, [x24, #120]
+	ldr	w6, [x4]
+	ldp	w12, w17, [x12, #96]
+	lsl	w17, w0, w17
+	lsl	w12, w0, w12
+	orr	w12, w12, w17
+	bic	w12, w6, w12
+	b	.LBB19_151
+.LBB19_143:                             //   in Loop: Header=BB19_122 Depth=2
+	mov	w20, #65535                     // =0xffff
+	b	.LBB19_146
+.LBB19_144:                             //   in Loop: Header=BB19_122 Depth=2
+	ldp	w12, w17, [x4]
+	mov	w6, #8                          // =0x8
+	and	w12, w12, #0xffffff00
+	and	w17, w17, #0xffffff00
+	stp	w12, w17, [x4]
+	b	.LBB19_121
+.LBB19_145:                             //   in Loop: Header=BB19_122 Depth=2
+	orr	w20, w20, #0x3
+.LBB19_146:                             //   in Loop: Header=BB19_122 Depth=2
+	lsr	x21, x7, #6
+	lsl	x28, x7, #2
+	lsr	x30, x7, #14
+	lsr	x17, x7, #22
+	lsr	x12, x7, #30
+	cmp	w10, #4
+	and	x21, x21, #0x3e0
+	and	x28, x28, #0x3e0
+	and	x30, x30, #0x3e0
+	bfxil	x21, x6, #11, #5
+	bfxil	x28, x6, #3, #5
+	bfxil	x30, x6, #19, #5
+	and	x17, x17, #0x3e0
+	and	x12, x12, #0x3e0
+	ldrb	w21, [x27, x21]
+	ldrb	w28, [x27, x28]
+	bfxil	x17, x6, #27, #5
+	bfxil	x12, x6, #35, #5
+	lsl	w21, w21, #12
+	ldrb	w17, [x27, x17]
+	ldrb	w12, [x27, x12]
+	orr	w21, w21, w28, lsl #14
+	ldrb	w28, [x27, x30]
+	lsr	x30, x7, #38
+	orr	w21, w21, w28, lsl #10
+	and	x28, x30, #0x3e0
+	lsr	x30, x7, #46
+	bfxil	x28, x6, #43, #5
+	lsr	x7, x7, #54
+	orr	w17, w21, w17, lsl #8
+	and	x21, x30, #0x3e0
+	bfxil	x21, x6, #51, #5
+	and	x7, x7, #0x3e0
+	orr	w12, w17, w12, lsl #6
+	ldrb	w17, [x27, x28]
+	bfxil	x7, x6, #59, #5
+	orr	w12, w12, w17, lsl #4
+	ldrb	w17, [x27, x21]
+	orr	w12, w12, w17, lsl #2
+	ldrb	w17, [x27, x7]
+	orr	w12, w12, w17
+	and	w6, w12, w20
+	b.eq	.LBB19_149
+// %bb.147:                             //   in Loop: Header=BB19_122 Depth=2
+	cmp	w10, #2
+	b.ne	.LBB19_152
+// %bb.148:                             //   in Loop: Header=BB19_122 Depth=2
+	lsr	w12, w6, #8
+	strb	w6, [x4, #2]
+	mov	w6, #4                          // =0x4
+	strb	w12, [x4]
+	b	.LBB19_121
+.LBB19_149:                             //   in Loop: Header=BB19_122 Depth=2
+	cbz	w16, .LBB19_154
+// %bb.150:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	x12, [x24, #120]
+	ldr	w17, [x4]
+	and	w7, w6, #0xff00
+	and	w6, w6, #0xff
+	ldr	w12, [x12, #100]
+	lsl	w12, w0, w12
+	bic	w12, w17, w12
+	str	w12, [x4]
+	ldr	x17, [x24, #120]
+	ldr	w17, [x17, #100]
+	sub	w17, w17, #8
+	lsl	w17, w7, w17
+	orr	w12, w17, w12
+	str	w12, [x4]
+	ldr	x17, [x24, #120]
+	ldr	w17, [x17, #96]
+	lsl	w17, w0, w17
+	bic	w12, w12, w17
+	str	w12, [x4]
+	ldr	x17, [x24, #120]
+	ldr	w17, [x17, #96]
+	lsl	w17, w6, w17
+	orr	w12, w17, w12
+.LBB19_151:                             //   in Loop: Header=BB19_122 Depth=2
+	str	w12, [x4]
+	mov	w6, #4                          // =0x4
+	b	.LBB19_121
+.LBB19_152:                             //   in Loop: Header=BB19_122 Depth=2
+	strh	w6, [x4]
+.LBB19_153:                             //   in Loop: Header=BB19_122 Depth=2
+	mov	w6, #2                          // =0x2
+	b	.LBB19_121
+.LBB19_154:                             //   in Loop: Header=BB19_122 Depth=2
+	ldr	w12, [x4]
+	strb	w6, [x4, #4]
+	and	w12, w12, #0xffffff00
+	orr	w12, w12, w6, lsr #8
+	mov	w6, #8                          // =0x8
+	str	w12, [x4]
+	b	.LBB19_121
+.LBB19_155:
+	ldr	w11, [sp, #4]                   // 4-byte Folded Reload
+	adrp	x9, .L.str.114
+	add	x9, x9, :lo12:.L.str.114
+	adrp	x10, .L.str.113
+	add	x10, x10, :lo12:.L.str.113
+	ldr	x0, [x19]
+	cmp	w11, #2
 	adrp	x1, .L.str.119
 	add	x1, x1, :lo12:.L.str.119
-	csel	x2, x11, x10, eq
-	adrp	x10, .L.str.116
-	add	x10, x10, :lo12:.L.str.116
-	adrp	x11, .L.str.115
-	add	x11, x11, :lo12:.L.str.115
-	cmp	w9, #0
-	csel	x4, x11, x10, ne
+	csel	x9, x10, x9, eq
+	adrp	x10, .L.str.112
+	add	x10, x10, :lo12:.L.str.112
+	cmp	w11, #3
+	mov	w3, w22
+	csel	x2, x10, x9, eq
+	adrp	x9, .L.str.116
+	add	x9, x9, :lo12:.L.str.116
+	adrp	x10, .L.str.115
+	add	x10, x10, :lo12:.L.str.115
+	cmp	w25, #0
+	csel	x4, x10, x9, ne
 	cmp	w8, #0
-	csel	x5, x11, x10, ne
+	csel	x5, x10, x9, ne
 	bl	_dev_info
-	b	.LBB19_127
+	b	.LBB19_112
 .Lfunc_end19:
 	.size	get_full_or_part_data, .Lfunc_end19-get_full_or_part_data
                                         // -- End function
@@ -8140,15 +8556,15 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	stp	x22, x21, [sp, #400]            // 16-byte Folded Spill
 	stp	x20, x19, [sp, #416]            // 16-byte Folded Spill
 	mrs	x8, SP_EL0
-	adrp	x20, global_ebc
+	adrp	x19, global_ebc
 	ldr	x8, [x8, #1608]
 	stur	x8, [x29, #-8]
 	mov	w8, #28690                      // =0x7012
-	ldr	x21, [x20, :lo12:global_ebc]
-	ldr	x22, [x0, #32]
+	ldr	x21, [x19, :lo12:global_ebc]
+	ldr	x23, [x0, #32]
 	cmp	w1, w8
 	stur	wzr, [x29, #-16]
-	add	x19, x21, #4, lsl #12           // =16384
+	add	x22, x21, #4, lsl #12           // =16384
 	stp	xzr, xzr, [x29, #-32]
 	stp	xzr, xzr, [x29, #-48]
 	stp	xzr, xzr, [x29, #-64]
@@ -8157,14 +8573,14 @@ ebc_io_ctl:                             // @ebc_io_ctl
 // %bb.1:
 	mov	w8, #-28693                     // =0xffff8feb
 	add	w8, w1, w8
-	cmp	w8, #16
-	b.hs	.LBB25_25
+	cmp	w8, #17
+	b.hs	.LBB25_31
 .LBB25_2:
-	cbz	x2, .LBB25_33
+	cbz	x2, .LBB25_39
 // %bb.3:
 	sub	w8, w1, #7, lsl #12             // =28672
-	cmp	w8, #36
-	b.hi	.LBB25_117
+	cmp	w8, #37
+	b.hi	.LBB25_131
 // %bb.4:
 	adrp	x9, .LJTI25_0
 	add	x9, x9, :lo12:.LJTI25_0
@@ -8175,7 +8591,7 @@ ebc_io_ctl:                             // @ebc_io_ctl
 .LBB25_5:
 	ldr	w8, [x21, #2128]
 	cmp	w8, #2
-	b.ge	.LBB25_125
+	b.ge	.LBB25_136
 .LBB25_6:
 	sub	x0, x29, #80
 	mov	x19, x2
@@ -8183,11 +8599,11 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	mov	w2, #68                         // =0x44
 	sub	x20, x29, #80
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
+	cbnz	w0, .LBB25_120
 // %bb.7:
 	add	x0, x20, #48
 	bl	ebc_empty_buf_get
-	cbz	x0, .LBB25_127
+	cbz	x0, .LBB25_135
 // %bb.8:
 	ldp	w10, w9, [x21, #188]
 	ldrsw	x8, [x0, #4]
@@ -8200,15 +8616,15 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	mov	w2, #68                         // =0x44
 	stp	w9, w10, [x29, #-72]
 	stur	w11, [x29, #-64]
-	ldr	x9, [x22]
+	ldr	x9, [x23]
 	ldr	w8, [x9, x8, lsl #2]
 	stur	w8, [x29, #-16]
 	bl	_inline_copy_to_user
-	cbz	w0, .LBB25_118
+	cbz	w0, .LBB25_30
 // %bb.9:
 	mov	x0, x20
 	bl	ebc_buf_release
-	b	.LBB25_107
+	b	.LBB25_120
 .LBB25_10:
 	mov	w8, #28677                      // =0x7005
 	cmp	w1, w8
@@ -8216,7 +8632,7 @@ ebc_io_ctl:                             // @ebc_io_ctl
 // %bb.11:
 	mov	w8, #28687                      // =0x700f
 	cmp	w1, w8
-	b.gt	.LBB25_19
+	b.gt	.LBB25_22
 // %bb.12:
 	mov	w8, #-28678                     // =0xffff8ffa
 	add	w8, w1, w8
@@ -8226,7 +8642,7 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	mov	w8, #28683                      // =0x700b
 	cmp	w1, w8
 	b.eq	.LBB25_2
-	b	.LBB25_117
+	b	.LBB25_131
 .LBB25_14:
 	sub	w8, w1, #7, lsl #12             // =28672
 	cmp	w8, #3
@@ -8234,196 +8650,189 @@ ebc_io_ctl:                             // @ebc_io_ctl
 // %bb.15:
 	mov	w8, #28676                      // =0x7004
 	cmp	w1, w8
-	b.eq	.LBB25_22
+	b.eq	.LBB25_26
 // %bb.16:
 	mov	w8, #28677                      // =0x7005
 	cmp	w1, w8
-	b.ne	.LBB25_117
+	b.ne	.LBB25_131
 .LBB25_17:
-	ldr	w8, [x21, #2128]
-	tbz	w8, #31, .LBB25_116
-.LBB25_18:
-	mov	x0, xzr
-	strb	wzr, [x19, #2280]
-	b	.LBB25_119
+	bl	ebc_overlay_enable_control
+	cbz	w0, .LBB25_19
+// %bb.18:
+	tbz	w0, #0, .LBB25_20
 .LBB25_19:
+	ldrb	w8, [x22, #2280]
+	and	w8, w8, #0xfe
+	strb	w8, [x22, #2280]
+.LBB25_20:
+	ldr	w8, [x21, #2128]
+	tbnz	w8, #31, .LBB25_30
+// %bb.21:
+	ldr	x0, [x21, #304]
+	ldrb	w3, [x22, #2280]
+	adrp	x1, .L.str.223
+	add	x1, x1, :lo12:.L.str.223
+	b	.LBB25_130
+.LBB25_22:
 	mov	w8, #28688                      // =0x7010
 	cmp	w1, w8
 	b.eq	.LBB25_2
-// %bb.20:
+// %bb.23:
 	mov	w8, #28689                      // =0x7011
 	cmp	w1, w8
-	b.eq	.LBB25_24
-// %bb.21:
+	b.eq	.LBB25_25
+// %bb.24:
 	mov	w8, #28690                      // =0x7012
 	cmp	w1, w8
 	b.eq	.LBB25_2
-	b	.LBB25_117
-.LBB25_22:
-	ldr	w8, [x21, #2128]
-	tbz	w8, #31, .LBB25_115
-.LBB25_23:
-	mov	w8, #1                          // =0x1
-	mov	x0, xzr
-	strb	w8, [x19, #2280]
-	b	.LBB25_119
-.LBB25_24:
-	bl	ebc_drop_one_dsp_buf
-	cbnz	w0, .LBB25_107
-	b	.LBB25_118
+	b	.LBB25_131
 .LBB25_25:
-	mov	w8, #28691                      // =0x7013
-	cmp	w1, w8
-	b.eq	.LBB25_31
-// %bb.26:
-	mov	w8, #28692                      // =0x7014
-	cmp	w1, w8
-	b.ne	.LBB25_117
-.LBB25_27:
-	ldr	w8, [x21, #2128]
-	tbz	w8, #31, .LBB25_122
-// %bb.28:
-	ldr	w8, [x21, #2152]
-	cbz	w8, .LBB25_30
+	bl	ebc_drop_one_dsp_buf
+	cbnz	w0, .LBB25_120
+	b	.LBB25_30
+.LBB25_26:
+	bl	ebc_overlay_enable_control
+	cbz	w0, .LBB25_28
+// %bb.27:
+	tbz	w0, #0, .LBB25_29
+.LBB25_28:
+	ldrb	w8, [x22, #2280]
+	orr	w8, w8, #0x1
+	strb	w8, [x22, #2280]
 .LBB25_29:
-	mov	w0, #3                          // =0x3
-	bl	ebc_notify
+	ldr	w8, [x21, #2128]
+	tbz	w8, #31, .LBB25_129
 .LBB25_30:
 	mov	x0, xzr
-	str	wzr, [x21, #2152]
-	b	.LBB25_119
+	b	.LBB25_88
 .LBB25_31:
+	mov	w8, #28691                      // =0x7013
+	cmp	w1, w8
+	b.eq	.LBB25_37
+// %bb.32:
+	mov	w8, #28692                      // =0x7014
+	cmp	w1, w8
+	b.ne	.LBB25_131
+.LBB25_33:
 	ldr	w8, [x21, #2128]
-	tbz	w8, #31, .LBB25_123
-.LBB25_32:
+	tbz	w8, #31, .LBB25_132
+// %bb.34:
+	ldr	w8, [x21, #2152]
+	cbz	w8, .LBB25_36
+.LBB25_35:
+	mov	w0, #3                          // =0x3
+	bl	ebc_notify
+.LBB25_36:
+	mov	x0, xzr
+	str	wzr, [x21, #2152]
+	b	.LBB25_88
+.LBB25_37:
+	ldr	w8, [x21, #2128]
+	tbz	w8, #31, .LBB25_133
+.LBB25_38:
 	mov	w0, #2                          // =0x2
 	bl	ebc_notify
 	mov	w8, #1                          // =0x1
 	mov	x0, xzr
 	str	w8, [x21, #2152]
-	b	.LBB25_119
-.LBB25_33:
+	b	.LBB25_88
+.LBB25_39:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.202
 	add	x1, x1, :lo12:.L.str.202
 	adrp	x2, .L__func__.ebc_io_ctl
 	add	x2, x2, :lo12:.L__func__.ebc_io_ctl
 	bl	_dev_err
-	b	.LBB25_107
-.LBB25_34:
+	b	.LBB25_120
+.LBB25_40:
+	mov	x20, x2
+	bl	ebc_overlay_enable_control
+	mov	w19, w0
+	mov	x0, sp
+	mov	x1, x20
+	mov	w2, #4                          // =0x4
+	str	wzr, [sp]
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.41:
+	tbz	w19, #1, .LBB25_43
+// %bb.42:
+	ldr	w8, [sp]
+	ldrb	w9, [x22, #2280]
+	cmp	w8, #0
+	and	w9, w9, #0xfffffffd
+	cset	w8, ne
+	orr	w8, w9, w8, lsl #1
+	strb	w8, [x22, #2280]
+.LBB25_43:
+	ldr	w8, [x21, #2128]
+	tbnz	w8, #31, .LBB25_30
+// %bb.44:
+	ldr	x0, [x21, #304]
+	ldr	w3, [sp]
+	adrp	x1, .L.str.224
+	add	x1, x1, :lo12:.L.str.224
+	ldrb	w4, [x22, #2280]
+	adrp	x2, .L.str.205
+	add	x2, x2, :lo12:.L.str.205
+	bl	_dev_info
+	b	.LBB25_30
+.LBB25_45:
+	add	x1, x21, #2112
+	b	.LBB25_85
+.LBB25_46:
+	ldr	w8, [x21, #2128]
+	mov	x19, x2
+	cmp	w8, #2
+	b.ge	.LBB25_134
+// %bb.47:
+	bl	ebc_empty_osd_buf_get
+	cbz	x0, .LBB25_135
+.LBB25_48:
+	ldp	w10, w9, [x21, #188]
+	ldrsw	x8, [x0, #4]
+	ldr	w11, [x21, #264]
+	sub	x1, x29, #80
+	stur	wzr, [x29, #-36]
+	mov	x0, x19
+	mov	w2, #68                         // =0x44
+	stur	w8, [x29, #-80]
+	stp	w9, w10, [x29, #-72]
+	stur	w11, [x29, #-64]
+	ldr	x9, [x23]
+	ldr	w8, [x9, x8, lsl #2]
+	stur	w8, [x29, #-16]
+	b	.LBB25_87
+.LBB25_49:
 	ldrb	w8, [x21, #2145]
-	b	.LBB25_65
-.LBB25_35:
+	b	.LBB25_84
+.LBB25_50:
 	ldrb	w8, [x21, #2144]
-	ldr	w9, [x19, #2208]
+	ldr	w9, [x22, #2208]
 	cmp	w8, #1
 	str	w9, [sp]
-	b.ne	.LBB25_118
-// %bb.36:
+	b.ne	.LBB25_30
+// %bb.51:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.37:
+	cbnz	w0, .LBB25_120
+// %bb.52:
 	ldr	w3, [sp]
 	ldr	w9, [x21, #2128]
 	sub	w8, w3, #1
 	cmp	w8, #2
 	mov	w8, #2                          // =0x2
 	csel	w8, w3, w8, lo
-	str	w8, [x19, #2208]
-	tbnz	w9, #31, .LBB25_118
-// %bb.38:
+	str	w8, [x22, #2208]
+	tbnz	w9, #31, .LBB25_30
+// %bb.53:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.215
 	add	x1, x1, :lo12:.L.str.215
-	b	.LBB25_113
-.LBB25_39:
-	mov	x19, x2
-	mov	x0, sp
-	mov	w1, wzr
-	mov	w2, #272                        // =0x110
-	bl	memset
-	ldr	w25, [x21, #1312]
-	ldrb	w8, [x21, #2147]
-	ldr	w24, [x21, #1384]
-	ldr	w23, [x21, #1528]
-	ldr	w20, [x21, #1600]
-	tbnz	w8, #0, .LBB25_41
-// %bb.40:
-	ldrb	w8, [x21, #2144]
-	cmp	w8, #1
-	b.ne	.LBB25_107
-.LBB25_41:
-	mov	x0, sp
-	mov	x1, x19
-	mov	w2, #272                        // =0x110
-	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.42:
-	ldp	w8, w9, [x21, #188]
-	str	w25, [sp]
-	mov	x1, sp
-	mov	x0, x19
-	mov	w2, #272                        // =0x110
-	stp	w9, w8, [sp, #8]
-	ldr	x10, [x22]
-	ldr	w11, [x10, w25, sxtw #2]
-	stp	w9, w8, [sp, #76]
-	stp	w11, w24, [sp, #64]
-	ldr	w11, [x10, w24, sxtw #2]
-	stp	w9, w8, [sp, #144]
-	stp	w11, w23, [sp, #132]
-	ldr	w11, [x10, w23, sxtw #2]
-	stp	w9, w8, [sp, #212]
-	stp	w11, w20, [sp, #200]
-	ldr	w8, [x10, w20, sxtw #2]
-	str	w8, [sp, #268]
-	b	.LBB25_104
-.LBB25_43:
-	mov	x0, sp
-	mov	x1, x2
-	mov	w2, #4                          // =0x4
-	str	wzr, [sp]
-	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.44:
-	ldr	w3, [sp]
-	cmp	w3, #11
-	b.lo	.LBB25_108
-// %bb.45:
-	str	wzr, [sp]
-	b	.LBB25_110
-.LBB25_46:
-	ldr	w8, [x21, #2128]
-	cmp	w8, #2
-	b.ge	.LBB25_124
-.LBB25_47:
-	ldrb	w8, [x21, #2147]
-	cmp	w8, #1
-	b.ne	.LBB25_107
-// %bb.48:
-	sub	x0, x29, #80
-	mov	x1, x2
-	mov	w2, #68                         // =0x44
-	bl	_inline_copy_from_user
-	cbnz	x0, .LBB25_107
-// %bb.49:
-	bl	ebc_osd_buf_clone
-	cbz	x0, .LBB25_119
-// %bb.50:
-	ldur	w8, [x29, #-76]
-	ldur	w9, [x29, #-60]
-	str	w8, [x0, #32]
-	ldur	x8, [x29, #-56]
-	str	w9, [x0, #40]
-	ldur	w9, [x29, #-48]
-	stur	x8, [x0, #44]
-	str	w9, [x0, #52]
-	bl	ebc_add_to_osd_buf_list_tail
-	b	.LBB25_63
-.LBB25_51:
+	b	.LBB25_130
+.LBB25_54:
 	ldp	w8, w9, [x21, #188]
 	ldr	w10, [x21, #264]
 	sub	x1, x29, #80
@@ -8435,69 +8844,41 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	stur	w10, [x29, #-64]
 	stp	w8, w9, [x29, #-44]
 	bl	_inline_copy_to_user
-	cbz	x0, .LBB25_119
-// %bb.52:
+	cbz	x0, .LBB25_88
+// %bb.55:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.209
 	add	x1, x1, :lo12:.L.str.209
 	bl	_dev_err
-	b	.LBB25_107
-.LBB25_53:
-	mov	w8, #-1                         // =0xffffffff
+	b	.LBB25_120
+.LBB25_56:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
-	str	w8, [sp]
+	str	wzr, [sp]
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.54:
-	ldr	w3, [sp]
-	ldr	w8, [x21, #2128]
-	str	w3, [x19, #2188]
-	tbnz	w8, #31, .LBB25_118
-// %bb.55:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.218
-	add	x1, x1, :lo12:.L.str.218
-	b	.LBB25_113
-.LBB25_56:
-	ldr	w8, [x21, #2128]
-	mov	x19, x2
-	cmp	w8, #2
-	b.ge	.LBB25_126
+	cbnz	w0, .LBB25_120
 // %bb.57:
-	bl	ebc_empty_osd_buf_get
-	cbz	x0, .LBB25_127
-.LBB25_58:
-	ldp	w10, w9, [x21, #188]
-	ldrsw	x8, [x0, #4]
-	ldr	w11, [x21, #264]
-	sub	x1, x29, #80
-	stur	wzr, [x29, #-36]
-	mov	x0, x19
-	mov	w2, #68                         // =0x44
-	stur	w8, [x29, #-80]
-	stp	w9, w10, [x29, #-72]
-	stur	w11, [x29, #-64]
-	ldr	x9, [x22]
-	ldr	w8, [x9, x8, lsl #2]
-	stur	w8, [x29, #-16]
-	bl	_inline_copy_to_user
-	b	.LBB25_119
+	ldr	w3, [sp]
+	cmp	w3, #11
+	b.lo	.LBB25_123
+// %bb.58:
+	str	wzr, [sp]
+	b	.LBB25_125
 .LBB25_59:
 	ldr	w8, [x21, #2128]
 	cmp	w8, #2
-	b.ge	.LBB25_128
+	b.ge	.LBB25_137
 .LBB25_60:
 	sub	x0, x29, #80
 	mov	x1, x2
 	mov	w2, #68                         // =0x44
 	bl	_inline_copy_from_user
-	cbnz	x0, .LBB25_107
+	cbnz	x0, .LBB25_120
 // %bb.61:
 	ldur	w0, [x29, #-80]
 	bl	ebc_find_buf_by_id
-	cbz	x0, .LBB25_119
+	cbz	x0, .LBB25_88
 // %bb.62:
 	ldur	w8, [x29, #-76]
 	ldp	w9, w10, [x29, #-60]
@@ -8508,49 +8889,131 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	stp	w11, w8, [x0, #52]
 	str	w9, [x0, #48]
 	bl	ebc_add_to_dsp_buf_list_tail
+	b	.LBB25_75
 .LBB25_63:
-	ldr	x8, [x20, :lo12:global_ebc]
+	mov	w8, #-1                         // =0xffffffff
+	mov	x0, sp
+	mov	x1, x2
+	mov	w2, #4                          // =0x4
+	str	w8, [sp]
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.64:
+	ldr	w3, [sp]
+	ldr	w8, [x21, #2128]
+	str	w3, [x22, #2188]
+	tbnz	w8, #31, .LBB25_30
+// %bb.65:
+	ldr	x0, [x21, #304]
+	adrp	x1, .L.str.218
+	add	x1, x1, :lo12:.L.str.218
+	b	.LBB25_130
+.LBB25_66:
+	mov	x19, x2
+	mov	x0, sp
+	mov	w1, wzr
+	mov	w2, #272                        // =0x110
+	bl	memset
+	ldr	w25, [x21, #1312]
+	ldrb	w8, [x21, #2147]
+	ldr	w24, [x21, #1384]
+	ldr	w22, [x21, #1528]
+	ldr	w20, [x21, #1600]
+	tbnz	w8, #0, .LBB25_68
+// %bb.67:
+	ldrb	w8, [x21, #2144]
+	cmp	w8, #1
+	b.ne	.LBB25_120
+.LBB25_68:
+	mov	x0, sp
+	mov	x1, x19
+	mov	w2, #272                        // =0x110
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.69:
+	ldp	w8, w9, [x21, #188]
+	str	w25, [sp]
+	mov	x1, sp
+	mov	x0, x19
+	mov	w2, #272                        // =0x110
+	stp	w9, w8, [sp, #8]
+	ldr	x10, [x23]
+	ldr	w11, [x10, w25, sxtw #2]
+	stp	w9, w8, [sp, #76]
+	stp	w11, w24, [sp, #64]
+	ldr	w11, [x10, w24, sxtw #2]
+	stp	w9, w8, [sp, #144]
+	stp	w11, w22, [sp, #132]
+	ldr	w11, [x10, w22, sxtw #2]
+	stp	w9, w8, [sp, #212]
+	stp	w11, w20, [sp, #200]
+	ldr	w8, [x10, w20, sxtw #2]
+	str	w8, [sp, #268]
+	b	.LBB25_117
+.LBB25_70:
+	ldr	w8, [x21, #2128]
+	cmp	w8, #2
+	b.ge	.LBB25_138
+.LBB25_71:
+	ldrb	w8, [x21, #2147]
+	cmp	w8, #1
+	b.ne	.LBB25_120
+// %bb.72:
+	sub	x0, x29, #80
+	mov	x1, x2
+	mov	w2, #68                         // =0x44
+	bl	_inline_copy_from_user
+	cbnz	x0, .LBB25_120
+// %bb.73:
+	bl	ebc_osd_buf_clone
+	cbz	x0, .LBB25_88
+// %bb.74:
+	ldur	w8, [x29, #-76]
+	ldur	w9, [x29, #-60]
+	str	w8, [x0, #32]
+	ldur	x8, [x29, #-56]
+	str	w9, [x0, #40]
+	ldur	w9, [x29, #-48]
+	stur	x8, [x0, #44]
+	str	w9, [x0, #52]
+	bl	ebc_add_to_osd_buf_list_tail
+.LBB25_75:
+	ldr	x8, [x19, :lo12:global_ebc]
 	add	x0, x8, #432
 	bl	cancel_delayed_work_sync
 	adrp	x8, ebc_task
 	ldr	x0, [x8, :lo12:ebc_task]
 	bl	wake_up_process
-	b	.LBB25_118
-.LBB25_64:
-	mov	w8, #1                          // =0x1
-.LBB25_65:
-	str	w8, [sp]
-	mov	x1, sp
-	b	.LBB25_85
-.LBB25_66:
+	b	.LBB25_30
+.LBB25_76:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	str	wzr, [sp]
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.67:
+	cbnz	w0, .LBB25_120
+// %bb.77:
 	ldr	w8, [sp]
 	ldr	w9, [x21, #2128]
 	cmp	w8, #0
 	cset	w10, ne
-	strb	w10, [x19, #2248]
-	tbnz	w9, #31, .LBB25_118
-// %bb.68:
+	strb	w10, [x22, #2248]
+	tbnz	w9, #31, .LBB25_30
+// %bb.78:
 	cmp	w8, #0
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.221
 	add	x1, x1, :lo12:.L.str.221
 	cset	w3, ne
-	b	.LBB25_113
-.LBB25_69:
+	b	.LBB25_130
+.LBB25_79:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	str	wzr, [sp]
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.70:
+	cbnz	w0, .LBB25_120
+// %bb.80:
 	ldrsw	x8, [sp]
 	mov	w9, #26215                      // =0x6667
 	movk	w9, #26214, lsl #16
@@ -8564,14 +9027,14 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	add	w8, w9, w11
 	ldr	w9, [x21, #2128]
 	csinc	w3, w8, wzr, le
-	str	w3, [x19, #2244]
-	tbnz	w9, #31, .LBB25_118
-// %bb.71:
+	str	w3, [x22, #2244]
+	tbnz	w9, #31, .LBB25_30
+// %bb.81:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.220
 	add	x1, x1, :lo12:.L.str.220
-	b	.LBB25_113
-.LBB25_72:
+	b	.LBB25_130
+.LBB25_82:
 	mov	x19, x2
 	bl	epd_lut_get_wf_bit
 	cmp	w0, #32
@@ -8580,127 +9043,133 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	cset	w8, eq
 	str	w8, [sp]
 	b	.LBB25_86
-.LBB25_73:
-	ldrb	w8, [x21, #2144]
-	ldr	w9, [x19, #2196]
-	cmp	w8, #1
-	str	w9, [sp]
-	b.ne	.LBB25_118
-// %bb.74:
-	mov	x0, sp
-	mov	x1, x2
-	mov	w2, #4                          // =0x4
-	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.75:
-	ldr	w8, [sp]
-	ldr	w9, [x21, #2128]
-	cmn	w8, #1
-	csinc	w3, w8, wzr, ne
-	str	w3, [x19, #2196]
-	tbnz	w9, #31, .LBB25_118
-// %bb.76:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.213
-	add	x1, x1, :lo12:.L.str.213
-	b	.LBB25_113
-.LBB25_77:
-	ldrb	w8, [x21, #2149]
-	str	wzr, [sp]
-	cmp	w8, #1
-	b.ne	.LBB25_118
-// %bb.78:
-	mov	x0, sp
-	mov	x1, x2
-	mov	w2, #4                          // =0x4
-	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.79:
-	ldr	w8, [sp]
-	str	w8, [x19, #2164]
-	b	.LBB25_118
-.LBB25_80:
-	ldrb	w8, [x21, #2144]
-	ldr	w9, [x19, #2204]
-	cmp	w8, #1
-	str	w9, [sp]
-	b.ne	.LBB25_118
-// %bb.81:
-	mov	x0, sp
-	mov	x1, x2
-	mov	w2, #4                          // =0x4
-	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.82:
-	ldr	w3, [sp]
-	ldr	w8, [x21, #2128]
-	cmn	w3, #1
-	csinc	w9, w3, wzr, ne
-	str	w9, [x19, #2204]
-	tbnz	w8, #31, .LBB25_118
-// %bb.83:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.214
-	add	x1, x1, :lo12:.L.str.214
-	b	.LBB25_113
+.LBB25_83:
+	mov	w8, #1                          // =0x1
 .LBB25_84:
-	add	x1, x21, #2112
+	str	w8, [sp]
+	mov	x1, sp
 .LBB25_85:
 	mov	x0, x2
 .LBB25_86:
 	mov	w2, #4                          // =0x4
-	bl	_inline_copy_to_user
-	b	.LBB25_119
 .LBB25_87:
+	bl	_inline_copy_to_user
+.LBB25_88:
+	sxtw	x0, w0
+	b	.LBB25_121
+.LBB25_89:
+	ldrb	w8, [x21, #2144]
+	ldr	w9, [x22, #2196]
+	cmp	w8, #1
+	str	w9, [sp]
+	b.ne	.LBB25_30
+// %bb.90:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
-	str	wzr, [sp]
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.88:
-	ldr	w3, [sp]
-	ldr	w8, [x21, #548]
-	cmp	w3, #1
-	b.lt	.LBB25_90
-// %bb.89:
-	cmp	w3, w8
-	b.le	.LBB25_91
-.LBB25_90:
-	mov	w3, w8
-	str	w8, [sp]
-.LBB25_91:
-	ldr	w8, [x21, #2128]
-	str	w3, [x19, #2268]
-	tbnz	w8, #31, .LBB25_118
+	cbnz	w0, .LBB25_120
+// %bb.91:
+	ldr	w8, [sp]
+	ldr	w9, [x21, #2128]
+	cmn	w8, #1
+	csinc	w3, w8, wzr, ne
+	str	w3, [x22, #2196]
+	tbnz	w9, #31, .LBB25_30
 // %bb.92:
 	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.216
-	add	x1, x1, :lo12:.L.str.216
-	b	.LBB25_113
+	adrp	x1, .L.str.213
+	add	x1, x1, :lo12:.L.str.213
+	b	.LBB25_130
 .LBB25_93:
-	ldrb	w8, [x21, #2144]
-	ldr	w9, [x19, #2200]
+	ldrb	w8, [x21, #2149]
+	str	wzr, [sp]
 	cmp	w8, #1
-	str	w9, [sp]
-	b.ne	.LBB25_118
+	b.ne	.LBB25_30
 // %bb.94:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
+	cbnz	w0, .LBB25_120
 // %bb.95:
+	ldr	w8, [sp]
+	str	w8, [x22, #2164]
+	b	.LBB25_30
+.LBB25_96:
+	ldrb	w8, [x21, #2144]
+	ldr	w9, [x22, #2204]
+	cmp	w8, #1
+	str	w9, [sp]
+	b.ne	.LBB25_30
+// %bb.97:
+	mov	x0, sp
+	mov	x1, x2
+	mov	w2, #4                          // =0x4
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.98:
 	ldr	w3, [sp]
 	ldr	w8, [x21, #2128]
-	str	w3, [x19, #2200]
-	tbnz	w8, #31, .LBB25_118
-// %bb.96:
+	cmn	w3, #1
+	csinc	w9, w3, wzr, ne
+	str	w9, [x22, #2204]
+	tbnz	w8, #31, .LBB25_30
+// %bb.99:
+	ldr	x0, [x21, #304]
+	adrp	x1, .L.str.214
+	add	x1, x1, :lo12:.L.str.214
+	b	.LBB25_130
+.LBB25_100:
+	mov	x0, sp
+	mov	x1, x2
+	mov	w2, #4                          // =0x4
+	str	wzr, [sp]
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.101:
+	ldr	w3, [sp]
+	ldr	w8, [x21, #548]
+	cmp	w3, #1
+	b.lt	.LBB25_103
+// %bb.102:
+	cmp	w3, w8
+	b.le	.LBB25_104
+.LBB25_103:
+	mov	w3, w8
+	str	w8, [sp]
+.LBB25_104:
+	ldr	w8, [x21, #2128]
+	str	w3, [x22, #2268]
+	tbnz	w8, #31, .LBB25_30
+// %bb.105:
+	ldr	x0, [x21, #304]
+	adrp	x1, .L.str.216
+	add	x1, x1, :lo12:.L.str.216
+	b	.LBB25_130
+.LBB25_106:
+	ldrb	w8, [x21, #2144]
+	ldr	w9, [x22, #2200]
+	cmp	w8, #1
+	str	w9, [sp]
+	b.ne	.LBB25_30
+// %bb.107:
+	mov	x0, sp
+	mov	x1, x2
+	mov	w2, #4                          // =0x4
+	bl	_inline_copy_from_user
+	cbnz	w0, .LBB25_120
+// %bb.108:
+	ldr	w3, [sp]
+	ldr	w8, [x21, #2128]
+	str	w3, [x22, #2200]
+	tbnz	w8, #31, .LBB25_30
+// %bb.109:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.212
 	add	x1, x1, :lo12:.L.str.212
-	b	.LBB25_113
-.LBB25_97:
+	b	.LBB25_130
+.LBB25_110:
 	stp	xzr, xzr, [sp, #48]
 	mov	x19, x2
 	stp	xzr, xzr, [sp, #32]
@@ -8715,40 +9184,39 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	mov	x1, sp
 	mov	x0, x19
 	mov	w2, #64                         // =0x40
-	bl	_inline_copy_to_user
-	b	.LBB25_119
-.LBB25_98:
+	b	.LBB25_87
+.LBB25_111:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	str	wzr, [sp]
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.99:
+	cbnz	w0, .LBB25_120
+// %bb.112:
 	ldr	w8, [sp]
 	ldr	w9, [x21, #2128]
 	cmp	w8, #0
 	cset	w10, ne
-	strb	w10, [x19, #2192]
-	tbnz	w9, #31, .LBB25_118
-// %bb.100:
+	strb	w10, [x22, #2192]
+	tbnz	w9, #31, .LBB25_30
+// %bb.113:
 	cmp	w8, #0
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.219
 	add	x1, x1, :lo12:.L.str.219
 	cset	w3, ne
-	b	.LBB25_113
-.LBB25_101:
+	b	.LBB25_130
+.LBB25_114:
 	sub	x0, x29, #80
 	mov	x19, x2
 	mov	x1, x2
 	mov	w2, #68                         // =0x44
 	bl	_inline_copy_from_user
-	cbnz	w0, .LBB25_107
-// %bb.102:
+	cbnz	w0, .LBB25_120
+// %bb.115:
 	ldr	x8, [x21, #1800]
-	cbz	x8, .LBB25_127
-// %bb.103:
+	cbz	x8, .LBB25_135
+// %bb.116:
 	ldp	w10, w9, [x21, #188]
 	ldrsw	x8, [x8, #4]
 	ldr	w11, [x21, #264]
@@ -8759,88 +9227,34 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	stur	w8, [x29, #-80]
 	stp	w9, w10, [x29, #-72]
 	stur	w11, [x29, #-64]
-	ldr	x9, [x22]
+	ldr	x9, [x23]
 	ldr	w8, [x9, x8, lsl #2]
 	stur	w8, [x29, #-16]
-.LBB25_104:
+.LBB25_117:
 	bl	_inline_copy_to_user
-	cbnz	w0, .LBB25_107
-	b	.LBB25_118
-.LBB25_105:
+	cbnz	w0, .LBB25_120
+	b	.LBB25_30
+.LBB25_118:
 	ldrb	w8, [x21, #2145]
 	mov	w9, #1                          // =0x1
 	str	w9, [sp]
 	cmp	w8, #1
-	b.ne	.LBB25_118
-// %bb.106:
+	b.ne	.LBB25_30
+// %bb.119:
 	mov	x0, sp
 	mov	x1, x2
 	mov	w2, #4                          // =0x4
 	bl	_inline_copy_from_user
-	cbz	w0, .LBB25_114
-.LBB25_107:
-	mov	x0, #-14                        // =0xfffffffffffffff2
-	b	.LBB25_120
-.LBB25_108:
-	cbz	w3, .LBB25_110
-// %bb.109:
-	mov	w8, #1                          // =0x1
-	b	.LBB25_111
-.LBB25_110:
-	mov	w8, wzr
-	mov	w3, wzr
-.LBB25_111:
-	ldr	w9, [x21, #2128]
-	strb	w8, [x19, #2261]
-	str	w3, [x19, #2272]
-	tbnz	w9, #31, .LBB25_118
-// %bb.112:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.217
-	add	x1, x1, :lo12:.L.str.217
-.LBB25_113:
-	adrp	x2, .L.str.205
-	add	x2, x2, :lo12:.L.str.205
-	bl	_dev_info
-	b	.LBB25_118
-.LBB25_114:
-	ldr	w8, [sp]
-	str	w8, [x19, #2240]
-	b	.LBB25_118
-.LBB25_115:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.222
-	add	x1, x1, :lo12:.L.str.222
-	adrp	x2, .L.str.205
-	add	x2, x2, :lo12:.L.str.205
-	bl	_dev_info
-	b	.LBB25_23
-.LBB25_116:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.223
-	add	x1, x1, :lo12:.L.str.223
-	adrp	x2, .L.str.205
-	add	x2, x2, :lo12:.L.str.205
-	bl	_dev_info
-	b	.LBB25_18
-.LBB25_117:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.224
-	add	x1, x1, :lo12:.L.str.224
-	adrp	x2, .L__func__.ebc_io_ctl
-	add	x2, x2, :lo12:.L__func__.ebc_io_ctl
-	bl	_dev_err
-.LBB25_118:
-	mov	x0, xzr
-.LBB25_119:
-	sxtw	x0, w0
+	cbz	w0, .LBB25_128
 .LBB25_120:
+	mov	x0, #-14                        // =0xfffffffffffffff2
+.LBB25_121:
 	mrs	x8, SP_EL0
 	ldr	x8, [x8, #1608]
 	ldur	x9, [x29, #-8]
 	cmp	x8, x9
-	b.ne	.LBB25_129
-// %bb.121:
+	b.ne	.LBB25_139
+// %bb.122:
 	ldp	x20, x19, [sp, #416]            // 16-byte Folded Reload
 	ldp	x22, x21, [sp, #400]            // 16-byte Folded Reload
 	ldp	x24, x23, [sp, #384]            // 16-byte Folded Reload
@@ -8849,7 +9263,47 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	add	sp, sp, #432
 	ldr	x30, [x18, #-8]!
 	ret
-.LBB25_122:
+.LBB25_123:
+	cbz	w3, .LBB25_125
+// %bb.124:
+	mov	w8, #1                          // =0x1
+	b	.LBB25_126
+.LBB25_125:
+	mov	w8, wzr
+	mov	w3, wzr
+.LBB25_126:
+	ldr	w9, [x21, #2128]
+	strb	w8, [x22, #2261]
+	str	w3, [x22, #2272]
+	tbnz	w9, #31, .LBB25_30
+// %bb.127:
+	ldr	x0, [x21, #304]
+	adrp	x1, .L.str.217
+	add	x1, x1, :lo12:.L.str.217
+	b	.LBB25_130
+.LBB25_128:
+	ldr	w8, [sp]
+	str	w8, [x22, #2240]
+	b	.LBB25_30
+.LBB25_129:
+	ldr	x0, [x21, #304]
+	ldrb	w3, [x22, #2280]
+	adrp	x1, .L.str.222
+	add	x1, x1, :lo12:.L.str.222
+.LBB25_130:
+	adrp	x2, .L.str.205
+	add	x2, x2, :lo12:.L.str.205
+	bl	_dev_info
+	b	.LBB25_30
+.LBB25_131:
+	ldr	x0, [x21, #304]
+	adrp	x1, .L.str.225
+	add	x1, x1, :lo12:.L.str.225
+	adrp	x2, .L__func__.ebc_io_ctl
+	add	x2, x2, :lo12:.L__func__.ebc_io_ctl
+	bl	_dev_err
+	b	.LBB25_30
+.LBB25_132:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.211
 	add	x1, x1, :lo12:.L.str.211
@@ -8857,28 +9311,29 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	add	x2, x2, :lo12:.L.str.205
 	bl	_dev_info
 	ldr	w8, [x21, #2152]
-	cbnz	w8, .LBB25_29
-	b	.LBB25_30
-.LBB25_123:
+	cbnz	w8, .LBB25_35
+	b	.LBB25_36
+.LBB25_133:
 	ldr	x0, [x21, #304]
 	adrp	x1, .L.str.210
 	add	x1, x1, :lo12:.L.str.210
 	adrp	x2, .L.str.205
 	add	x2, x2, :lo12:.L.str.205
 	bl	_dev_info
-	b	.LBB25_32
-.LBB25_124:
+	b	.LBB25_38
+.LBB25_134:
 	ldr	x0, [x21, #304]
-	adrp	x8, .L.str.205
-	add	x8, x8, :lo12:.L.str.205
-	adrp	x1, .L.str.208
-	add	x1, x1, :lo12:.L.str.208
-	mov	x19, x2
-	mov	x2, x8
+	adrp	x1, .L.str.204
+	add	x1, x1, :lo12:.L.str.204
+	adrp	x2, .L.str.205
+	add	x2, x2, :lo12:.L.str.205
 	bl	_dev_info
-	mov	x2, x19
-	b	.LBB25_47
-.LBB25_125:
+	bl	ebc_empty_osd_buf_get
+	cbnz	x0, .LBB25_48
+.LBB25_135:
+	mov	x0, #-1                         // =0xffffffffffffffff
+	b	.LBB25_121
+.LBB25_136:
 	ldr	x0, [x21, #304]
 	adrp	x8, .L.str.205
 	add	x8, x8, :lo12:.L.str.205
@@ -8889,30 +9344,29 @@ ebc_io_ctl:                             // @ebc_io_ctl
 	bl	_dev_info
 	mov	x2, x19
 	b	.LBB25_6
-.LBB25_126:
-	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.204
-	add	x1, x1, :lo12:.L.str.204
-	adrp	x2, .L.str.205
-	add	x2, x2, :lo12:.L.str.205
-	bl	_dev_info
-	bl	ebc_empty_osd_buf_get
-	cbnz	x0, .LBB25_58
-.LBB25_127:
-	mov	x0, #-1                         // =0xffffffffffffffff
-	b	.LBB25_120
-.LBB25_128:
+.LBB25_137:
 	ldr	x0, [x21, #304]
 	adrp	x8, .L.str.205
 	add	x8, x8, :lo12:.L.str.205
 	adrp	x1, .L.str.207
 	add	x1, x1, :lo12:.L.str.207
-	mov	x19, x2
+	mov	x20, x2
 	mov	x2, x8
 	bl	_dev_info
-	mov	x2, x19
+	mov	x2, x20
 	b	.LBB25_60
-.LBB25_129:
+.LBB25_138:
+	ldr	x0, [x21, #304]
+	adrp	x8, .L.str.205
+	add	x8, x8, :lo12:.L.str.205
+	adrp	x1, .L.str.208
+	add	x1, x1, :lo12:.L.str.208
+	mov	x20, x2
+	mov	x2, x8
+	bl	_dev_info
+	mov	x2, x20
+	b	.LBB25_71
+.LBB25_139:
 	bl	__stack_chk_fail
 .Lfunc_end25:
 	.size	ebc_io_ctl, .Lfunc_end25-ebc_io_ctl
@@ -8921,41 +9375,42 @@ ebc_io_ctl:                             // @ebc_io_ctl
 .LJTI25_0:
 	.hword	(.LBB25_5-.LBB25_5)>>2
 	.hword	(.LBB25_59-.LBB25_5)>>2
-	.hword	(.LBB25_51-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_22-.LBB25_5)>>2
+	.hword	(.LBB25_54-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_26-.LBB25_5)>>2
 	.hword	(.LBB25_17-.LBB25_5)>>2
-	.hword	(.LBB25_56-.LBB25_5)>>2
 	.hword	(.LBB25_46-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_39-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_117-.LBB25_5)>>2
-	.hword	(.LBB25_64-.LBB25_5)>>2
-	.hword	(.LBB25_24-.LBB25_5)>>2
-	.hword	(.LBB25_84-.LBB25_5)>>2
-	.hword	(.LBB25_31-.LBB25_5)>>2
-	.hword	(.LBB25_27-.LBB25_5)>>2
-	.hword	(.LBB25_93-.LBB25_5)>>2
-	.hword	(.LBB25_80-.LBB25_5)>>2
-	.hword	(.LBB25_34-.LBB25_5)>>2
-	.hword	(.LBB25_87-.LBB25_5)>>2
-	.hword	(.LBB25_43-.LBB25_5)>>2
-	.hword	(.LBB25_53-.LBB25_5)>>2
-	.hword	(.LBB25_98-.LBB25_5)>>2
-	.hword	(.LBB25_69-.LBB25_5)>>2
+	.hword	(.LBB25_70-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
 	.hword	(.LBB25_66-.LBB25_5)>>2
-	.hword	(.LBB25_101-.LBB25_5)>>2
-	.hword	(.LBB25_72-.LBB25_5)>>2
-	.hword	(.LBB25_105-.LBB25_5)>>2
-	.hword	(.LBB25_73-.LBB25_5)>>2
-	.hword	(.LBB25_77-.LBB25_5)>>2
-	.hword	(.LBB25_97-.LBB25_5)>>2
-	.hword	(.LBB25_35-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_131-.LBB25_5)>>2
+	.hword	(.LBB25_83-.LBB25_5)>>2
+	.hword	(.LBB25_25-.LBB25_5)>>2
+	.hword	(.LBB25_45-.LBB25_5)>>2
+	.hword	(.LBB25_37-.LBB25_5)>>2
+	.hword	(.LBB25_33-.LBB25_5)>>2
+	.hword	(.LBB25_106-.LBB25_5)>>2
+	.hword	(.LBB25_96-.LBB25_5)>>2
+	.hword	(.LBB25_49-.LBB25_5)>>2
+	.hword	(.LBB25_100-.LBB25_5)>>2
+	.hword	(.LBB25_56-.LBB25_5)>>2
+	.hword	(.LBB25_63-.LBB25_5)>>2
+	.hword	(.LBB25_111-.LBB25_5)>>2
+	.hword	(.LBB25_79-.LBB25_5)>>2
+	.hword	(.LBB25_76-.LBB25_5)>>2
+	.hword	(.LBB25_114-.LBB25_5)>>2
+	.hword	(.LBB25_82-.LBB25_5)>>2
+	.hword	(.LBB25_118-.LBB25_5)>>2
+	.hword	(.LBB25_89-.LBB25_5)>>2
+	.hword	(.LBB25_93-.LBB25_5)>>2
+	.hword	(.LBB25_110-.LBB25_5)>>2
+	.hword	(.LBB25_50-.LBB25_5)>>2
+	.hword	(.LBB25_40-.LBB25_5)>>2
                                         // -- End function
 	.text
 	.p2align	2                               // -- Begin function ebc_open
@@ -8997,8 +9452,8 @@ ebc_open:                               // @ebc_open
 	mov	x24, xzr
 	add	x25, x22, #744
 	mov	w26, #1                         // =0x1
-	adrp	x21, .L.str.225
-	add	x21, x21, :lo12:.L.str.225
+	adrp	x21, .L.str.226
+	add	x21, x21, :lo12:.L.str.226
 	b	.LBB26_6
 .LBB26_4:                               //   in Loop: Header=BB26_6 Depth=1
 	mov	w1, #524288                     // =0x80000
@@ -9304,8 +9759,8 @@ ebc_open:                               // @ebc_open
 	mov	w8, #1                          // =0x1
 	mov	x21, x0
 	strb	w8, [x23, :lo12:get_file.__already_done]
-	adrp	x8, .L.str.225
-	add	x8, x8, :lo12:.L.str.225
+	adrp	x8, .L.str.226
+	add	x8, x8, :lo12:.L.str.226
 	mov	x0, x8
 	bl	__warn_printk
 	mov	x0, x21
@@ -9334,8 +9789,8 @@ ebc_open:                               // @ebc_open
 	mov	w8, #1                          // =0x1
 	mov	x21, x0
 	strb	w8, [x23, :lo12:get_file.__already_done]
-	adrp	x8, .L.str.225
-	add	x8, x8, :lo12:.L.str.225
+	adrp	x8, .L.str.226
+	add	x8, x8, :lo12:.L.str.226
 	mov	x0, x8
 	bl	__warn_printk
 	mov	x0, x21
@@ -9364,8 +9819,8 @@ ebc_open:                               // @ebc_open
 	mov	w8, #1                          // =0x1
 	mov	x21, x0
 	strb	w8, [x23, :lo12:get_file.__already_done]
-	adrp	x8, .L.str.225
-	add	x8, x8, :lo12:.L.str.225
+	adrp	x8, .L.str.226
+	add	x8, x8, :lo12:.L.str.226
 	mov	x0, x8
 	bl	__warn_printk
 	mov	x0, x21
@@ -9394,8 +9849,8 @@ ebc_open:                               // @ebc_open
 	mov	w8, #1                          // =0x1
 	mov	x21, x0
 	strb	w8, [x23, :lo12:get_file.__already_done]
-	adrp	x8, .L.str.225
-	add	x8, x8, :lo12:.L.str.225
+	adrp	x8, .L.str.226
+	add	x8, x8, :lo12:.L.str.226
 	mov	x0, x8
 	bl	__warn_printk
 	mov	x0, x21
@@ -9424,8 +9879,8 @@ ebc_open:                               // @ebc_open
 	mov	w8, #1                          // =0x1
 	mov	x21, x0
 	strb	w8, [x23, :lo12:get_file.__already_done]
-	adrp	x8, .L.str.225
-	add	x8, x8, :lo12:.L.str.225
+	adrp	x8, .L.str.226
+	add	x8, x8, :lo12:.L.str.226
 	mov	x0, x8
 	bl	__warn_printk
 	mov	x0, x21
@@ -12011,8 +12466,8 @@ pmic_temp_read:                         // @pmic_temp_read
 	mov	x1, x20
 	bl	queue_delayed_work_on
 	ldr	w2, [sp, #4]
-	adrp	x1, .L.str.238
-	add	x1, x1, :lo12:.L.str.238
+	adrp	x1, .L.str.239
+	add	x1, x1, :lo12:.L.str.239
 	mov	x0, x19
 	bl	sprintf
 	mrs	x8, SP_EL0
@@ -12070,8 +12525,8 @@ pmic_vcom_read:                         // @pmic_vcom_read
 	asr	x8, x8, #38
 	add	w2, w8, w9
 .LBB45_3:
-	adrp	x1, .L.str.238
-	add	x1, x1, :lo12:.L.str.238
+	adrp	x1, .L.str.239
+	add	x1, x1, :lo12:.L.str.239
 	mov	x0, x19
 	bl	sprintf
                                         // kill: def $w0 killed $w0 def $x0
@@ -12122,14 +12577,14 @@ pmic_vcom_write:                        // @pmic_vcom_write
 	cbz	w0, .LBB46_7
 .LBB46_4:
 	ldr	x0, [x21]
-	adrp	x1, .L.str.242
-	add	x1, x1, :lo12:.L.str.242
+	adrp	x1, .L.str.243
+	add	x1, x1, :lo12:.L.str.243
 	bl	_dev_err
 	b	.LBB46_6
 .LBB46_5:
 	ldr	x0, [x21]
-	adrp	x1, .L.str.241
-	add	x1, x1, :lo12:.L.str.241
+	adrp	x1, .L.str.242
+	add	x1, x1, :lo12:.L.str.242
 	mov	x2, x20
 	bl	_dev_err
 .LBB46_6:
@@ -12184,8 +12639,8 @@ ebc_state_read:                         // @ebc_state_read
 	stp	x29, x30, [sp, #-16]!           // 16-byte Folded Spill
 	adrp	x8, global_ebc
 	mov	x0, x2
-	adrp	x1, .L.str.238
-	add	x1, x1, :lo12:.L.str.238
+	adrp	x1, .L.str.239
+	add	x1, x1, :lo12:.L.str.239
 	ldr	x8, [x8, :lo12:global_ebc]
 	mov	x29, sp
 	ldr	w8, [x8, #2112]
@@ -12225,8 +12680,8 @@ ebc_buf_state_write:                    // @ebc_buf_state_write
 	str	x30, [x18], #8
 	stp	x29, x30, [sp, #-32]!           // 16-byte Folded Spill
 	mov	x0, x2
-	adrp	x1, .L.str.249
-	add	x1, x1, :lo12:.L.str.249
+	adrp	x1, .L.str.250
+	add	x1, x1, :lo12:.L.str.250
 	str	x19, [sp, #16]                  // 8-byte Folded Spill
 	mov	x29, sp
 	mov	x19, x3
@@ -12292,8 +12747,8 @@ dump_buffer_write:                      // @dump_buffer_write
 	ret
 .LBB51_4:
 	ldr	x0, [x21]
-	adrp	x1, .L.str.241
-	add	x1, x1, :lo12:.L.str.241
+	adrp	x1, .L.str.242
+	add	x1, x1, :lo12:.L.str.242
 	mov	x2, x20
 	bl	_dev_err
 	mov	x19, #-1                        // =0xffffffffffffffff
@@ -12333,8 +12788,8 @@ auto_frame_state_read:                  // @auto_frame_state_read
 	strh	w8, [x2]
 	b	.LBB52_6
 .LBB52_5:
-	adrp	x1, .L.str.238
-	add	x1, x1, :lo12:.L.str.238
+	adrp	x1, .L.str.239
+	add	x1, x1, :lo12:.L.str.239
 	mov	x0, x2
 	mov	w2, w8
 	bl	sprintf
@@ -12356,8 +12811,8 @@ ebc_debug_level_read:                   // @ebc_debug_level_read
 	stp	x29, x30, [sp, #-16]!           // 16-byte Folded Spill
 	adrp	x8, global_ebc
 	mov	x0, x2
-	adrp	x1, .L.str.238
-	add	x1, x1, :lo12:.L.str.238
+	adrp	x1, .L.str.239
+	add	x1, x1, :lo12:.L.str.239
 	ldr	x8, [x8, :lo12:global_ebc]
 	mov	x29, sp
 	ldr	w8, [x8, #2128]
@@ -12414,8 +12869,8 @@ ebc_debug_level_write:                  // @ebc_debug_level_write
 	ret
 .LBB54_4:
 	ldr	x0, [x21, #304]
-	adrp	x1, .L.str.241
-	add	x1, x1, :lo12:.L.str.241
+	adrp	x1, .L.str.242
+	add	x1, x1, :lo12:.L.str.242
 	mov	x2, x20
 	bl	_dev_err
 	mov	x19, #-1                        // =0xffffffffffffffff
@@ -12437,8 +12892,8 @@ wf_data_write:                          // @wf_data_write
 	mov	x0, x2
 	ldr	x19, [x8, :lo12:global_ebc]
 	stp	x26, x25, [sp, #48]             // 16-byte Folded Spill
-	adrp	x1, .L.str.249
-	add	x1, x1, :lo12:.L.str.249
+	adrp	x1, .L.str.250
+	add	x1, x1, :lo12:.L.str.250
 	stp	x29, x30, [sp, #16]             // 16-byte Folded Spill
 	add	x29, sp, #16
 	ldr	x25, [x19, #1864]
@@ -12462,17 +12917,17 @@ wf_data_write:                          // @wf_data_write
 .LBB55_2:
 	ldr	w8, [x19, #1848]
 	ldr	w9, [x19, #1840]
-	adrp	x0, .L.str.259
-	add	x0, x0, :lo12:.L.str.259
+	adrp	x0, .L.str.260
+	add	x0, x0, :lo12:.L.str.260
 	cmp	w8, w9
 	csel	w19, w8, w9, gt
 	mov	w1, w19
 	bl	_printk
 	mov	x21, xzr
-	adrp	x22, .L.str.260
-	add	x22, x22, :lo12:.L.str.260
-	adrp	x23, .L.str.261
-	add	x23, x23, :lo12:.L.str.261
+	adrp	x22, .L.str.261
+	add	x22, x22, :lo12:.L.str.261
+	adrp	x23, .L.str.262
+	add	x23, x23, :lo12:.L.str.262
 .LBB55_3:                               // =>This Loop Header: Depth=1
                                         //     Child Loop BB55_4 Depth 2
                                         //       Child Loop BB55_6 Depth 3
@@ -12524,8 +12979,8 @@ overlay_wf_data_write:                  // @overlay_wf_data_write
 	mov	x0, x2
 	ldr	x19, [x8, :lo12:global_ebc]
 	stp	x26, x25, [sp, #48]             // 16-byte Folded Spill
-	adrp	x1, .L.str.249
-	add	x1, x1, :lo12:.L.str.249
+	adrp	x1, .L.str.250
+	add	x1, x1, :lo12:.L.str.250
 	stp	x29, x30, [sp, #16]             // 16-byte Folded Spill
 	add	x29, sp, #16
 	ldr	x25, [x19, #1872]
@@ -12548,16 +13003,16 @@ overlay_wf_data_write:                  // @overlay_wf_data_write
 	ret
 .LBB56_2:
 	ldr	w20, [x19, #1844]
-	adrp	x0, .L.str.259
-	add	x0, x0, :lo12:.L.str.259
+	adrp	x0, .L.str.260
+	add	x0, x0, :lo12:.L.str.260
 	mov	w1, w20
 	bl	_printk
 	lsl	x26, x20, #10
 	mov	x21, xzr
-	adrp	x22, .L.str.260
-	add	x22, x22, :lo12:.L.str.260
-	adrp	x23, .L.str.261
-	add	x23, x23, :lo12:.L.str.261
+	adrp	x22, .L.str.261
+	add	x22, x22, :lo12:.L.str.261
+	adrp	x23, .L.str.262
+	add	x23, x23, :lo12:.L.str.262
 .LBB56_3:                               // =>This Loop Header: Depth=1
                                         //     Child Loop BB56_4 Depth 2
                                         //       Child Loop BB56_6 Depth 3
@@ -12626,32 +13081,32 @@ ori_wf_data_write:                      // @ori_wf_data_write
 	bl	__kmalloc_large_noprof
 	cbnz	x0, .LBB57_2
 // %bb.1:
-	adrp	x0, .L.str.266
-	add	x0, x0, :lo12:.L.str.266
+	adrp	x0, .L.str.267
+	add	x0, x0, :lo12:.L.str.267
 	bl	_printk
 	b	.LBB57_16
 .LBB57_2:
 	mov	x20, x0
 	str	x0, [sp, #40]
-	adrp	x1, .L.str.249
-	add	x1, x1, :lo12:.L.str.249
+	adrp	x1, .L.str.250
+	add	x1, x1, :lo12:.L.str.250
 	mov	x0, x21
 	bl	strstr
 	cbnz	x0, .LBB57_4
 // %bb.3:
-	adrp	x0, .L.str.269
-	add	x0, x0, :lo12:.L.str.269
+	adrp	x0, .L.str.270
+	add	x0, x0, :lo12:.L.str.270
 	b	.LBB57_15
 .LBB57_4:
-	adrp	x1, .L.str.267
-	add	x1, x1, :lo12:.L.str.267
+	adrp	x1, .L.str.268
+	add	x1, x1, :lo12:.L.str.268
 	add	x2, sp, #12
 	add	x3, sp, #8
 	mov	x0, x21
 	bl	sscanf
 	ldp	w3, w2, [sp, #8]
-	adrp	x0, .L.str.268
-	add	x0, x0, :lo12:.L.str.268
+	adrp	x0, .L.str.269
+	add	x0, x0, :lo12:.L.str.269
 	adrp	x1, .L__func__.ori_wf_data_write
 	add	x1, x1, :lo12:.L__func__.ori_wf_data_write
 	bl	_printk
@@ -12668,16 +13123,16 @@ ori_wf_data_write:                      // @ori_wf_data_write
 	str	x19, [sp]                       // 8-byte Folded Spill
 	bl	epd_lut_get_original
 	ldr	w21, [sp, #16]
-	adrp	x0, .L.str.259
-	add	x0, x0, :lo12:.L.str.259
+	adrp	x0, .L.str.260
+	add	x0, x0, :lo12:.L.str.260
 	mov	w1, w21
 	bl	_printk
 	lsl	x26, x21, #10
 	mov	x22, xzr
-	adrp	x23, .L.str.260
-	add	x23, x23, :lo12:.L.str.260
-	adrp	x24, .L.str.261
-	add	x24, x24, :lo12:.L.str.261
+	adrp	x23, .L.str.261
+	add	x23, x23, :lo12:.L.str.261
+	adrp	x24, .L.str.262
+	add	x24, x24, :lo12:.L.str.262
 .LBB57_7:                               // =>This Loop Header: Depth=1
                                         //     Child Loop BB57_8 Depth 2
                                         //       Child Loop BB57_10 Depth 3
@@ -12718,8 +13173,8 @@ ori_wf_data_write:                      // @ori_wf_data_write
 	ldr	x19, [sp]                       // 8-byte Folded Reload
 	b	.LBB57_16
 .LBB57_14:
-	adrp	x0, .L.str.270
-	add	x0, x0, :lo12:.L.str.270
+	adrp	x0, .L.str.271
+	add	x0, x0, :lo12:.L.str.271
 .LBB57_15:
 	adrp	x1, .L__func__.ori_wf_data_write
 	add	x1, x1, :lo12:.L__func__.ori_wf_data_write
@@ -12772,8 +13227,8 @@ ebc_suspend:                            // @ebc_suspend
 	blr	x8
 .LBB58_2:
 	ldr	x0, [x19, #304]
-	adrp	x1, .L.str.271
-	add	x1, x1, :lo12:.L.str.271
+	adrp	x1, .L.str.272
+	add	x1, x1, :lo12:.L.str.272
 	bl	_dev_info
 	ldr	x19, [sp, #16]                  // 8-byte Folded Reload
 	mov	w0, wzr
@@ -12807,8 +13262,8 @@ ebc_resume:                             // @ebc_resume
 	blr	x8
 .LBB59_2:
 	ldr	x0, [x19, #304]
-	adrp	x1, .L.str.272
-	add	x1, x1, :lo12:.L.str.272
+	adrp	x1, .L.str.273
+	add	x1, x1, :lo12:.L.str.273
 	str	wzr, [x19, #2156]
 	bl	_dev_info
 	ldr	x19, [sp, #16]                  // 8-byte Folded Reload
@@ -12954,7 +13409,7 @@ ebc_driver:
 
 	.type	.L.str.3,@object                // @.str.3
 .L.str.3:
-	.asciz	"10.07"
+	.asciz	"10.08"
 	.size	.L.str.3, 6
 
 	.type	global_ebc,@object              // @global_ebc
@@ -13562,6 +14017,22 @@ _8_8bit_mask:
 	.asciz	"false"
 	.size	.L.str.116, 6
 
+	.type	.L__const.get_normal_panel_soft_tcon_auto_data.shift_table,@object // @__const.get_normal_panel_soft_tcon_auto_data.shift_table
+.L__const.get_normal_panel_soft_tcon_auto_data.shift_table:
+	.asciz	"\016\f\n\b\006\004\002"
+	.size	.L__const.get_normal_panel_soft_tcon_auto_data.shift_table, 8
+
+	.type	.L.str.117,@object              // @.str.117
+.L.str.117:
+	.asciz	"[%s] overlay left: %d, frame total: (%d, %d, %d)\n"
+	.size	.L.str.117, 50
+
+	.type	.L__const.get_normal_panel_auto_data.shift_table,@object // @__const.get_normal_panel_auto_data.shift_table
+	.section	.rodata.cst8,"aM",@progbits,8
+.L__const.get_normal_panel_auto_data.shift_table:
+	.ascii	"\000\002\004\006\b\n\f\016"
+	.size	.L__const.get_normal_panel_auto_data.shift_table, 8
+
 	.type	.L__const.get_normal_panel_auto_data.offset,@object // @__const.get_normal_panel_auto_data.offset
 	.section	.rodata.cst32,"aM",@progbits,32
 	.p2align	2, 0x0
@@ -13575,34 +14046,6 @@ _8_8bit_mask:
 	.word	51                              // 0x33
 	.word	59                              // 0x3b
 	.size	.L__const.get_normal_panel_auto_data.offset, 32
-
-	.type	.L.str.117,@object              // @.str.117
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.117:
-	.asciz	"[%s] overlay left: %d, frame total: (%d, %d, %d)\n"
-	.size	.L.str.117, 50
-
-	.type	_16_2bit_mask,@object           // @_16_2bit_mask
-	.section	.rodata,"a",@progbits
-	.p2align	2, 0x0
-_16_2bit_mask:
-	.word	3                               // 0x3
-	.word	12                              // 0xc
-	.word	48                              // 0x30
-	.word	192                             // 0xc0
-	.word	768                             // 0x300
-	.word	3072                            // 0xc00
-	.word	12288                           // 0x3000
-	.word	49152                           // 0xc000
-	.word	196608                          // 0x30000
-	.word	786432                          // 0xc0000
-	.word	3145728                         // 0x300000
-	.word	12582912                        // 0xc00000
-	.word	50331648                        // 0x3000000
-	.word	201326592                       // 0xc000000
-	.word	805306368                       // 0x30000000
-	.word	3221225472                      // 0xc0000000
-	.size	_16_2bit_mask, 64
 
 	.type	.L.str.118,@object              // @.str.118
 	.section	.rodata.str1.1,"aMS",@progbits,1
@@ -14180,18 +14623,23 @@ ebc_ops:
 
 	.type	.L.str.222,@object              // @.str.222
 .L.str.222:
-	.asciz	"[%s] EBC_ENABLE_OVERLAY\n"
-	.size	.L.str.222, 25
+	.asciz	"[%s] EBC_ENABLE_OVERLAY, overlay_enable_control = %d\n"
+	.size	.L.str.222, 54
 
 	.type	.L.str.223,@object              // @.str.223
 .L.str.223:
-	.asciz	"[%s] EBC_DISABLE_OVERLAY\n"
-	.size	.L.str.223, 26
+	.asciz	"[%s] EBC_DISABLE_OVERLAY, overlay_enable_control = %d\n"
+	.size	.L.str.223, 55
 
 	.type	.L.str.224,@object              // @.str.224
 .L.str.224:
+	.asciz	"[%s] EBC_PEN_PROXIMITY = %d, overlay_enable_control = %d\n"
+	.size	.L.str.224, 58
+
+	.type	.L.str.225,@object              // @.str.225
+.L.str.225:
 	.asciz	"%s: unknown cmd\n"
-	.size	.L.str.224, 17
+	.size	.L.str.225, 17
 
 	.type	get_file.__already_done,@object // @get_file.__already_done
 	.section	.data..once,"aw",@progbits
@@ -14199,16 +14647,16 @@ get_file.__already_done:
 	.byte	0                               // 0x0
 	.size	get_file.__already_done, 1
 
-	.type	.L.str.225,@object              // @.str.225
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.225:
-	.asciz	"struct file::f_count incremented from zero; use-after-free condition present!\n"
-	.size	.L.str.225, 79
-
 	.type	.L.str.226,@object              // @.str.226
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.226:
+	.asciz	"struct file::f_count incremented from zero; use-after-free condition present!\n"
+	.size	.L.str.226, 79
+
+	.type	.L.str.227,@object              // @.str.227
+.L.str.227:
 	.asciz	"waveform"
-	.size	.L.str.226, 9
+	.size	.L.str.227, 9
 
 	.type	waveform_misc,@object           // @waveform_misc
 	.data
@@ -14216,7 +14664,7 @@ get_file.__already_done:
 waveform_misc:
 	.word	244                             // 0xf4
 	.zero	4
-	.xword	.L.str.226
+	.xword	.L.str.227
 	.xword	waveform_ops
 	.zero	16
 	.xword	0
@@ -14267,11 +14715,11 @@ waveform_ops:
 	.xword	0
 	.size	waveform_ops, 264
 
-	.type	.L.str.229,@object              // @.str.229
+	.type	.L.str.230,@object              // @.str.230
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.229:
+.L.str.230:
 	.asciz	"transition_lut"
-	.size	.L.str.229, 15
+	.size	.L.str.230, 15
 
 	.type	transition_lut_misc,@object     // @transition_lut_misc
 	.data
@@ -14279,7 +14727,7 @@ waveform_ops:
 transition_lut_misc:
 	.word	245                             // 0xf5
 	.zero	4
-	.xword	.L.str.229
+	.xword	.L.str.230
 	.xword	transition_lut_ops
 	.zero	16
 	.xword	0
@@ -14353,318 +14801,318 @@ transition_lut_vm_ops:
 	.xword	0                               // 0x0
 	.size	transition_lut_vm_ops, 144
 
-	.type	.L.str.232,@object              // @.str.232
+	.type	.L.str.233,@object              // @.str.233
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.232:
+.L.str.233:
 	.asciz	"waveform_version"
-	.size	.L.str.232, 17
+	.size	.L.str.233, 17
 
 	.type	dev_attr_waveform_version,@object // @dev_attr_waveform_version
 	.data
 	.p2align	3, 0x0
 dev_attr_waveform_version:
-	.xword	.L.str.232
+	.xword	.L.str.233
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	waveform_version_read
 	.xword	0
 	.size	dev_attr_waveform_version, 32
 
-	.type	.L.str.234,@object              // @.str.234
+	.type	.L.str.235,@object              // @.str.235
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.234:
+.L.str.235:
 	.asciz	"pmic_name"
-	.size	.L.str.234, 10
+	.size	.L.str.235, 10
 
 	.type	dev_attr_pmic_name,@object      // @dev_attr_pmic_name
 	.data
 	.p2align	3, 0x0
 dev_attr_pmic_name:
-	.xword	.L.str.234
+	.xword	.L.str.235
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	pmic_name_read
 	.xword	0
 	.size	dev_attr_pmic_name, 32
 
-	.type	.L.str.236,@object              // @.str.236
+	.type	.L.str.237,@object              // @.str.237
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.236:
+.L.str.237:
 	.asciz	"pmic_temp"
-	.size	.L.str.236, 10
+	.size	.L.str.237, 10
 
 	.type	dev_attr_pmic_temp,@object      // @dev_attr_pmic_temp
 	.data
 	.p2align	3, 0x0
 dev_attr_pmic_temp:
-	.xword	.L.str.236
+	.xword	.L.str.237
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	pmic_temp_read
 	.xword	0
 	.size	dev_attr_pmic_temp, 32
 
-	.type	.L.str.238,@object              // @.str.238
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.238:
-	.asciz	"%d\n"
-	.size	.L.str.238, 4
-
 	.type	.L.str.239,@object              // @.str.239
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.239:
+	.asciz	"%d\n"
+	.size	.L.str.239, 4
+
+	.type	.L.str.240,@object              // @.str.240
+.L.str.240:
 	.asciz	"pmic_vcom"
-	.size	.L.str.239, 10
+	.size	.L.str.240, 10
 
 	.type	dev_attr_pmic_vcom,@object      // @dev_attr_pmic_vcom
 	.data
 	.p2align	3, 0x0
 dev_attr_pmic_vcom:
-	.xword	.L.str.239
+	.xword	.L.str.240
 	.hword	420                             // 0x1a4
 	.zero	6
 	.xword	pmic_vcom_read
 	.xword	pmic_vcom_write
 	.size	dev_attr_pmic_vcom, 32
 
-	.type	.L.str.241,@object              // @.str.241
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.241:
-	.asciz	"invalid value = %s\n"
-	.size	.L.str.241, 20
-
 	.type	.L.str.242,@object              // @.str.242
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.242:
-	.asciz	"set vcom value failed\n"
-	.size	.L.str.242, 23
+	.asciz	"invalid value = %s\n"
+	.size	.L.str.242, 20
 
 	.type	.L.str.243,@object              // @.str.243
 .L.str.243:
+	.asciz	"set vcom value failed\n"
+	.size	.L.str.243, 23
+
+	.type	.L.str.244,@object              // @.str.244
+.L.str.244:
 	.asciz	"ebc_version"
-	.size	.L.str.243, 12
+	.size	.L.str.244, 12
 
 	.type	dev_attr_ebc_version,@object    // @dev_attr_ebc_version
 	.data
 	.p2align	3, 0x0
 dev_attr_ebc_version:
-	.xword	.L.str.243
+	.xword	.L.str.244
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	ebc_version_read
 	.xword	0
 	.size	dev_attr_ebc_version, 32
 
-	.type	.L.str.245,@object              // @.str.245
+	.type	.L.str.246,@object              // @.str.246
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.245:
+.L.str.246:
 	.asciz	"ebc_state"
-	.size	.L.str.245, 10
+	.size	.L.str.246, 10
 
 	.type	dev_attr_ebc_state,@object      // @dev_attr_ebc_state
 	.data
 	.p2align	3, 0x0
 dev_attr_ebc_state:
-	.xword	.L.str.245
+	.xword	.L.str.246
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	ebc_state_read
 	.xword	0
 	.size	dev_attr_ebc_state, 32
 
-	.type	.L.str.247,@object              // @.str.247
+	.type	.L.str.248,@object              // @.str.248
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.247:
+.L.str.248:
 	.asciz	"ebc_buf_state"
-	.size	.L.str.247, 14
+	.size	.L.str.248, 14
 
 	.type	dev_attr_ebc_buf_state,@object  // @dev_attr_ebc_buf_state
 	.data
 	.p2align	3, 0x0
 dev_attr_ebc_buf_state:
-	.xword	.L.str.247
+	.xword	.L.str.248
 	.hword	420                             // 0x1a4
 	.zero	6
 	.xword	ebc_buf_state_read
 	.xword	ebc_buf_state_write
 	.size	dev_attr_ebc_buf_state, 32
 
-	.type	.L.str.249,@object              // @.str.249
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.249:
-	.asciz	"603893"
-	.size	.L.str.249, 7
-
 	.type	.L.str.250,@object              // @.str.250
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.250:
+	.asciz	"603893"
+	.size	.L.str.250, 7
+
+	.type	.L.str.251,@object              // @.str.251
+.L.str.251:
 	.asciz	"dump_buffer"
-	.size	.L.str.250, 12
+	.size	.L.str.251, 12
 
 	.type	dev_attr_dump_buffer,@object    // @dev_attr_dump_buffer
 	.data
 	.p2align	3, 0x0
 dev_attr_dump_buffer:
-	.xword	.L.str.250
+	.xword	.L.str.251
 	.hword	128                             // 0x80
 	.zero	6
 	.xword	0
 	.xword	dump_buffer_write
 	.size	dev_attr_dump_buffer, 32
 
-	.type	.L.str.252,@object              // @.str.252
+	.type	.L.str.253,@object              // @.str.253
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.252:
+.L.str.253:
 	.asciz	"auto_frame_state"
-	.size	.L.str.252, 17
+	.size	.L.str.253, 17
 
 	.type	dev_attr_auto_frame_state,@object // @dev_attr_auto_frame_state
 	.data
 	.p2align	3, 0x0
 dev_attr_auto_frame_state:
-	.xword	.L.str.252
+	.xword	.L.str.253
 	.hword	292                             // 0x124
 	.zero	6
 	.xword	auto_frame_state_read
 	.xword	0
 	.size	dev_attr_auto_frame_state, 32
 
-	.type	.L.str.254,@object              // @.str.254
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.254:
-	.asciz	"0\n"
-	.size	.L.str.254, 3
-
 	.type	.L.str.255,@object              // @.str.255
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.255:
+	.asciz	"0\n"
+	.size	.L.str.255, 3
+
+	.type	.L.str.256,@object              // @.str.256
+.L.str.256:
 	.asciz	"ebc_debug_level"
-	.size	.L.str.255, 16
+	.size	.L.str.256, 16
 
 	.type	dev_attr_ebc_debug_level,@object // @dev_attr_ebc_debug_level
 	.data
 	.p2align	3, 0x0
 dev_attr_ebc_debug_level:
-	.xword	.L.str.255
+	.xword	.L.str.256
 	.hword	420                             // 0x1a4
 	.zero	6
 	.xword	ebc_debug_level_read
 	.xword	ebc_debug_level_write
 	.size	dev_attr_ebc_debug_level, 32
 
-	.type	.L.str.257,@object              // @.str.257
+	.type	.L.str.258,@object              // @.str.258
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.257:
+.L.str.258:
 	.asciz	"wf_data"
-	.size	.L.str.257, 8
+	.size	.L.str.258, 8
 
 	.type	dev_attr_wf_data,@object        // @dev_attr_wf_data
 	.data
 	.p2align	3, 0x0
 dev_attr_wf_data:
-	.xword	.L.str.257
+	.xword	.L.str.258
 	.hword	128                             // 0x80
 	.zero	6
 	.xword	0
 	.xword	wf_data_write
 	.size	dev_attr_wf_data, 32
 
-	.type	.L.str.259,@object              // @.str.259
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.259:
-	.asciz	"lutdata: %d frames\n"
-	.size	.L.str.259, 20
-
 	.type	.L.str.260,@object              // @.str.260
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.260:
-	.asciz	"[%d-->%d]: \n"
-	.size	.L.str.260, 13
+	.asciz	"lutdata: %d frames\n"
+	.size	.L.str.260, 20
 
 	.type	.L.str.261,@object              // @.str.261
 .L.str.261:
-	.asciz	"\001c\0017%d, "
-	.size	.L.str.261, 9
+	.asciz	"[%d-->%d]: \n"
+	.size	.L.str.261, 13
 
 	.type	.L.str.262,@object              // @.str.262
 .L.str.262:
+	.asciz	"\001c\0017%d, "
+	.size	.L.str.262, 9
+
+	.type	.L.str.263,@object              // @.str.263
+.L.str.263:
 	.asciz	"overlay_wf_data"
-	.size	.L.str.262, 16
+	.size	.L.str.263, 16
 
 	.type	dev_attr_overlay_wf_data,@object // @dev_attr_overlay_wf_data
 	.data
 	.p2align	3, 0x0
 dev_attr_overlay_wf_data:
-	.xword	.L.str.262
+	.xword	.L.str.263
 	.hword	128                             // 0x80
 	.zero	6
 	.xword	0
 	.xword	overlay_wf_data_write
 	.size	dev_attr_overlay_wf_data, 32
 
-	.type	.L.str.264,@object              // @.str.264
+	.type	.L.str.265,@object              // @.str.265
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.264:
+.L.str.265:
 	.asciz	"ori_wf_data"
-	.size	.L.str.264, 12
+	.size	.L.str.265, 12
 
 	.type	dev_attr_ori_wf_data,@object    // @dev_attr_ori_wf_data
 	.data
 	.p2align	3, 0x0
 dev_attr_ori_wf_data:
-	.xword	.L.str.264
+	.xword	.L.str.265
 	.hword	128                             // 0x80
 	.zero	6
 	.xword	0
 	.xword	ori_wf_data_write
 	.size	dev_attr_ori_wf_data, 32
 
-	.type	.L.str.266,@object              // @.str.266
-	.section	.rodata.str1.1,"aMS",@progbits,1
-.L.str.266:
-	.asciz	"malloc wf_table buffer failed\n"
-	.size	.L.str.266, 31
-
 	.type	.L.str.267,@object              // @.str.267
+	.section	.rodata.str1.1,"aMS",@progbits,1
 .L.str.267:
-	.asciz	"603893 %d %d"
-	.size	.L.str.267, 13
+	.asciz	"malloc wf_table buffer failed\n"
+	.size	.L.str.267, 31
 
 	.type	.L.str.268,@object              // @.str.268
 .L.str.268:
+	.asciz	"603893 %d %d"
+	.size	.L.str.268, 13
+
+	.type	.L.str.269,@object              // @.str.269
+.L.str.269:
 	.asciz	"%s: wf mode %d on temp %d\n"
-	.size	.L.str.268, 27
+	.size	.L.str.269, 27
 
 	.type	.L__func__.ori_wf_data_write,@object // @__func__.ori_wf_data_write
 .L__func__.ori_wf_data_write:
 	.asciz	"ori_wf_data_write"
 	.size	.L__func__.ori_wf_data_write, 18
 
-	.type	.L.str.269,@object              // @.str.269
-.L.str.269:
-	.asciz	"%s: err code\n"
-	.size	.L.str.269, 14
-
 	.type	.L.str.270,@object              // @.str.270
 .L.str.270:
-	.asciz	"%s: err lut_type or temp\n"
-	.size	.L.str.270, 26
+	.asciz	"%s: err code\n"
+	.size	.L.str.270, 14
 
 	.type	.L.str.271,@object              // @.str.271
 .L.str.271:
-	.asciz	"device suspend\n"
-	.size	.L.str.271, 16
+	.asciz	"%s: err lut_type or temp\n"
+	.size	.L.str.271, 26
 
 	.type	.L.str.272,@object              // @.str.272
 .L.str.272:
-	.asciz	"device resume\n"
-	.size	.L.str.272, 15
+	.asciz	"device suspend\n"
+	.size	.L.str.272, 16
 
-	.type	.Lswitch.table.ebc_probe.274,@object // @switch.table.ebc_probe.274
+	.type	.L.str.273,@object              // @.str.273
+.L.str.273:
+	.asciz	"device resume\n"
+	.size	.L.str.273, 15
+
+	.type	.Lswitch.table.ebc_probe.275,@object // @switch.table.ebc_probe.275
 	.section	.rodata,"a",@progbits
 	.p2align	2, 0x0
-.Lswitch.table.ebc_probe.274:
+.Lswitch.table.ebc_probe.275:
 	.word	3566                            // 0xdee
 	.word	3576                            // 0xdf8
 	.word	3572                            // 0xdf4
 	.word	3506                            // 0xdb2
 	.word	3326                            // 0xcfe
-	.size	.Lswitch.table.ebc_probe.274, 20
+	.size	.Lswitch.table.ebc_probe.275, 20
 
 	.ident	"Android (13290119, +pgo, +bolt, +lto, +mlgo, based on r547379) clang version 20.0.0 (https://android.googlesource.com/toolchain/llvm-project b718bcaf8c198c82f3021447d943401e3ab5bd54)"
 	.section	".note.GNU-stack","",@progbits

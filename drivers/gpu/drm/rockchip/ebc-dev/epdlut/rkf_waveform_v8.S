@@ -1355,56 +1355,78 @@ rkf_lut_wf_table:                       // @rkf_lut_wf_table
 	.type	rkf_wf_normal_fix,@function
 rkf_wf_normal_fix:                      // @rkf_wf_normal_fix
 // %bb.0:
-                                        // kill: def $w1 killed $w1 def $x1
-	cmp	w1, #1
-	b.lt	.LBB6_5
+	str	x30, [x18], #8
+	stp	x29, x30, [sp, #-48]!           // 16-byte Folded Spill
+	str	x21, [sp, #16]                  // 8-byte Folded Spill
+	mov	x29, sp
+	mov	x21, x0
+	stp	x20, x19, [sp, #32]             // 16-byte Folded Spill
+	mov	w20, w2
+	mov	w19, w1
+	bl	epd_normal_repair
+	cbnz	w0, .LBB6_11
 // %bb.1:
-	ubfiz	x8, x1, #10, #32
-	mov	x9, xzr
-	b	.LBB6_3
-.LBB6_2:                                //   in Loop: Header=BB6_3 Depth=1
-	ldrb	w11, [x10, #30]
-	add	x9, x9, #1024
-	strb	wzr, [x10, #958]
-	cmp	x8, x9
-	strb	wzr, [x10, #1022]
-	strb	w11, [x10, #31]
-	strb	w11, [x10, #29]
-	strb	w11, [x10, #61]
-	b.eq	.LBB6_5
-.LBB6_3:                                // =>This Inner Loop Header: Depth=1
-	add	x10, x0, w9, sxtw
-	cbz	w2, .LBB6_2
-// %bb.4:                               //   in Loop: Header=BB6_3 Depth=1
-	ldrb	w11, [x10, #990]
-	strb	wzr, [x10, #990]
-	strb	w11, [x10, #989]
-	strb	w11, [x10, #1021]
-	strb	w11, [x10, #957]
-	b	.LBB6_2
-.LBB6_5:
-	cbz	w2, .LBB6_7
-// %bb.6:
-	lsl	w8, w1, #10
-	mov	w10, #1                         // =0x1
-	sub	w9, w8, #1, lsl #12             // =4096
-	sub	w11, w8, #3072
-	sub	w8, w8, #2048
-	add	x9, x0, w9, sxtw
-	add	x11, x0, w11, sxtw
-	add	x8, x0, w8, sxtw
-	strb	w10, [x9, #991]
-	strb	w10, [x9, #959]
-	strb	w10, [x9, #1023]
-	mov	w9, #2                          // =0x2
-	strb	w9, [x11, #991]
-	strb	w9, [x11, #959]
-	strb	w9, [x11, #1023]
-	strb	w9, [x8, #991]
-	strb	w9, [x8, #959]
-	strb	w9, [x8, #1023]
-.LBB6_7:
-	mov	w0, w1
+	cmp	w19, #1
+	b.lt	.LBB6_11
+// %bb.2:
+	sub	w9, w19, #5
+	sub	w10, w19, #4
+	sub	w11, w19, #3
+	ubfiz	x9, x9, #10, #32
+	ubfiz	x10, x10, #10, #32
+	ubfiz	x11, x11, #10, #32
+	ubfiz	x12, x19, #10, #32
+	mov	x8, xzr
+	mov	w13, #1                         // =0x1
+	mov	w14, #2                         // =0x2
+	b	.LBB6_5
+.LBB6_3:                                //   in Loop: Header=BB6_5 Depth=1
+	strb	w13, [x15, #991]
+	strb	w13, [x15, #959]
+	strb	w13, [x15, #1023]
+.LBB6_4:                                //   in Loop: Header=BB6_5 Depth=1
+	ldrb	w16, [x15, #30]
+	add	x8, x8, #1024
+	strb	wzr, [x15, #958]
+	cmp	x12, x8
+	strb	wzr, [x15, #1022]
+	strb	w16, [x15, #31]
+	strb	w16, [x15, #29]
+	strb	w16, [x15, #61]
+	b.eq	.LBB6_11
+.LBB6_5:                                // =>This Inner Loop Header: Depth=1
+	add	x15, x21, w8, sxtw
+	cbz	w20, .LBB6_4
+// %bb.6:                               //   in Loop: Header=BB6_5 Depth=1
+	ldrb	w16, [x15, #990]
+	cmp	x9, x8
+	strb	wzr, [x15, #990]
+	strb	w16, [x15, #989]
+	strb	w16, [x15, #1021]
+	strb	w16, [x15, #957]
+	b.eq	.LBB6_3
+// %bb.7:                               //   in Loop: Header=BB6_5 Depth=1
+	cmp	x10, x8
+	b.eq	.LBB6_9
+// %bb.8:                               //   in Loop: Header=BB6_5 Depth=1
+	cmp	x11, x8
+	b.ne	.LBB6_10
+.LBB6_9:                                //   in Loop: Header=BB6_5 Depth=1
+	strb	w14, [x15, #991]
+	strb	w14, [x15, #959]
+	strb	w14, [x15, #1023]
+	b	.LBB6_4
+.LBB6_10:                               //   in Loop: Header=BB6_5 Depth=1
+	strb	wzr, [x15, #991]
+	strb	wzr, [x15, #959]
+	strb	wzr, [x15, #1023]
+	b	.LBB6_4
+.LBB6_11:
+	mov	w0, w19
+	ldp	x20, x19, [sp, #32]             // 16-byte Folded Reload
+	ldr	x21, [sp, #16]                  // 8-byte Folded Reload
+	ldp	x29, x30, [sp], #48             // 16-byte Folded Reload
+	ldr	x30, [x18, #-8]!
 	ret
 .Lfunc_end6:
 	.size	rkf_wf_normal_fix, .Lfunc_end6-rkf_wf_normal_fix

@@ -1364,10 +1364,10 @@ rkf_wf_normal_fix:                      // @rkf_wf_normal_fix
 	mov	w20, w2
 	mov	w19, w1
 	bl	epd_normal_repair
-	cbnz	w0, .LBB6_11
+	cbnz	w0, .LBB6_12
 // %bb.1:
 	cmp	w19, #1
-	b.lt	.LBB6_11
+	b.lt	.LBB6_12
 // %bb.2:
 	sub	w9, w19, #5
 	sub	w10, w19, #4
@@ -1379,49 +1379,70 @@ rkf_wf_normal_fix:                      // @rkf_wf_normal_fix
 	mov	x8, xzr
 	mov	w13, #1                         // =0x1
 	mov	w14, #2                         // =0x2
-	b	.LBB6_5
-.LBB6_3:                                //   in Loop: Header=BB6_5 Depth=1
+	b	.LBB6_6
+.LBB6_3:                                //   in Loop: Header=BB6_6 Depth=1
 	strb	w13, [x15, #991]
+	mov	w16, #2                         // =0x2
 	strb	w13, [x15, #959]
 	strb	w13, [x15, #1023]
-.LBB6_4:                                //   in Loop: Header=BB6_5 Depth=1
+.LBB6_4:                                //   in Loop: Header=BB6_6 Depth=1
+	strb	w16, [x15]
+.LBB6_5:                                //   in Loop: Header=BB6_6 Depth=1
 	ldrb	w16, [x15, #30]
 	add	x8, x8, #1024
 	strb	wzr, [x15, #958]
 	cmp	x12, x8
 	strb	wzr, [x15, #1022]
 	strb	w16, [x15, #31]
+	strb	w16, [x15, #63]
+	strb	w16, [x15, #127]
 	strb	w16, [x15, #29]
 	strb	w16, [x15, #61]
-	b.eq	.LBB6_11
-.LBB6_5:                                // =>This Inner Loop Header: Depth=1
+	strb	w16, [x15, #125]
+	ldrb	w16, [x15, #960]
+	strb	wzr, [x15, #96]
+	strb	wzr, [x15, #32]
+	strb	w16, [x15, #961]
+	strb	w16, [x15, #993]
+	strb	w16, [x15, #929]
+	strb	w16, [x15, #963]
+	strb	w16, [x15, #995]
+	strb	w16, [x15, #931]
+	b.eq	.LBB6_12
+.LBB6_6:                                // =>This Inner Loop Header: Depth=1
 	add	x15, x21, w8, sxtw
-	cbz	w20, .LBB6_4
-// %bb.6:                               //   in Loop: Header=BB6_5 Depth=1
+	cbz	w20, .LBB6_5
+// %bb.7:                               //   in Loop: Header=BB6_6 Depth=1
 	ldrb	w16, [x15, #990]
+	ldrb	w17, [x15]
 	cmp	x9, x8
 	strb	wzr, [x15, #990]
 	strb	w16, [x15, #989]
 	strb	w16, [x15, #1021]
 	strb	w16, [x15, #957]
+	strb	w17, [x15, #3]
+	strb	w17, [x15, #35]
+	strb	w17, [x15, #99]
 	b.eq	.LBB6_3
-// %bb.7:                               //   in Loop: Header=BB6_5 Depth=1
+// %bb.8:                               //   in Loop: Header=BB6_6 Depth=1
 	cmp	x10, x8
-	b.eq	.LBB6_9
-// %bb.8:                               //   in Loop: Header=BB6_5 Depth=1
+	b.eq	.LBB6_10
+// %bb.9:                               //   in Loop: Header=BB6_6 Depth=1
 	cmp	x11, x8
-	b.ne	.LBB6_10
-.LBB6_9:                                //   in Loop: Header=BB6_5 Depth=1
+	b.ne	.LBB6_11
+.LBB6_10:                               //   in Loop: Header=BB6_6 Depth=1
 	strb	w14, [x15, #991]
+	mov	w16, #1                         // =0x1
 	strb	w14, [x15, #959]
 	strb	w14, [x15, #1023]
 	b	.LBB6_4
-.LBB6_10:                               //   in Loop: Header=BB6_5 Depth=1
+.LBB6_11:                               //   in Loop: Header=BB6_6 Depth=1
+	mov	w16, wzr
 	strb	wzr, [x15, #991]
 	strb	wzr, [x15, #959]
 	strb	wzr, [x15, #1023]
 	b	.LBB6_4
-.LBB6_11:
+.LBB6_12:
 	mov	w0, w19
 	ldp	x20, x19, [sp, #32]             // 16-byte Folded Reload
 	ldr	x21, [sp, #16]                  // 8-byte Folded Reload

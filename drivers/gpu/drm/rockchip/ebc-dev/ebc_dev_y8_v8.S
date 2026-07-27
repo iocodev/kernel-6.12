@@ -9,7 +9,7 @@
 	.file	"ebc_dev_y8.c"
                                         // Start of file scope inline assembly
 	.section	.initcall6s.init,"a",@progbits
-__initcall__kmod_rkebc__649_4911_ebc_init6s:
+__initcall__kmod_rkebc__649_4908_ebc_init6s:
 .Ltmp0:
 	.word	ebc_init-.Ltmp0
 	.text
@@ -1206,7 +1206,7 @@ ebc_lut_table_init:                     // @ebc_lut_table_init
 	add	x1, x1, :lo12:.L.str.80
 	adrp	x2, .L__func__.ebc_lut_table_init
 	add	x2, x2, :lo12:.L__func__.ebc_lut_table_init
-	mov	w3, #4035                       // =0xfc3
+	mov	w3, #4032                       // =0xfc0
 	bl	_dev_err
 	mov	w0, #-12                        // =0xfffffff4
 	b	.LBB6_9
@@ -13409,7 +13409,7 @@ ebc_driver:
 
 	.type	.L.str.3,@object                // @.str.3
 .L.str.3:
-	.asciz	"10.08"
+	.asciz	"10.09"
 	.size	.L.str.3, 6
 
 	.type	global_ebc,@object              // @global_ebc
@@ -13731,13 +13731,13 @@ ebc_flip_wq:
 
 	.type	.L.str.65,@object               // @.str.65
 .L.str.65:
-	.asciz	"panel,panel_16bit"
-	.size	.L.str.65, 18
+	.asciz	"panel,panel_bit_depth"
+	.size	.L.str.65, 22
 
 	.type	.L.str.66,@object               // @.str.66
 .L.str.66:
-	.asciz	"panel,panel_bit_depth"
-	.size	.L.str.66, 22
+	.asciz	"panel,panel_16bit"
+	.size	.L.str.66, 18
 
 	.type	.L.str.67,@object               // @.str.67
 .L.str.67:

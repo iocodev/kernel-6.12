@@ -187,6 +187,7 @@
 #define RK3576_UPDATE_MODE_MASK		BIT(29)
 #define RK3576_DISPLAY_MODE_MASK	BIT(28)
 #define RK3576_DSP_VCOM_MODE(x)		UPDATE(x, 27, 27)
+#define RK3576_DSP_SDCLK_POL(x)		UPDATE(x, 20, 20)
 #define RK3576_DSP_SDCLK_DIV(x)		UPDATE(x, 19, 16)
 #define RK3576_DSP_SDCLK_DIV_MASK	GENMASK(19, 16)
 #define RK3576_DSP_SDOE_MODE(x)		UPDATE(x, 0, 0)
@@ -234,7 +235,11 @@
 #define RK3576_DSP_FRM_INT_MASK			BIT(6)
 #define RK3576_LINE_FLAG_INT_MASK		BIT(7)
 
+#define RK3572_LUT_MEM_AXI_BUS_SEL(x)	UPDATE(x, 28, 28)
 #define RK3572_WIN2_MUX(x)		UPDATE(x, 27, 27)
+#define RK3572_OUTPUT_MODE(x)		UPDATE(x, 26, 26)
+#define RK3572_DISPLAY_ALIGN(x)		UPDATE(x, 25, 25)
+#define RK3572_DISPLAY_MODE(x)		UPDATE(x, 24, 24)
 #define RK3576_DSP_SDCE_WIDTH(x)	UPDATE(x, 23, 12)
 #define RK3576_DSP_SDCE_WIDTH_MASK(x)	GENMASK(x, 23, 12)
 #define RK3576_DSP_FRM_TOTAL(x)		UPDATE(x, 11, 4)
@@ -306,8 +311,9 @@ static inline void rk3576_tcon_cfg_done(struct ebc_tcon *tcon)
 
 static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 {
-	u32 width, height, vir_width, vir_height;
-	u32 val;
+	u32 width, height, vir_width, vir_height, val;
+	u16 lsl, lbl, ldl, lel, gdck_sta, lgonl;
+	u8 sddw_mode, swap_mode, display_mode, output_mode, sdclk_pol;
 
 	clk_prepare_enable(tcon->hclk);
 	clk_prepare_enable(tcon->aclk);
@@ -331,13 +337,29 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 		vir_height = panel->vir_height;
 	}
 
+	lsl = panel->lsl;
+	lbl = panel->lbl;
+	ldl = panel->ldl;
+	lel = panel->lel;
+	gdck_sta = panel->gdck_sta;
+	lgonl = panel->lgonl;
+
+	if (panel->data_rate == 2) {
+		lsl *= 2;
+		lbl *= 2;
+		ldl *= 2;
+		lel *= 2;
+		gdck_sta *= 2;
+		lgonl *= 2;
+	}
+
 	/* panel timing and win info config */
 	tcon_write(tcon, RK3576_EBC_DSP_HTIMING0,
-		   RK3576_DSP_HTOTAL(panel->lsl + panel->lbl + panel->ldl + panel->lel) |
-		   RK3576_DSP_HS_END(panel->lsl));
-	val = panel->lsl + panel->lbl + panel->ldl + (panel->lel_keep_clk ? panel->lel : 0);
+		   RK3576_DSP_HTOTAL(lsl + lbl + ldl + lel) |
+		   RK3576_DSP_HS_END(lsl));
+	val = lsl + lbl + ldl + (panel->lel_keep_clk ? lel : 0);
 	tcon_write(tcon, RK3576_EBC_DSP_HTIMING1,
-		   RK3576_DSP_HACT_END(val) | RK3576_DSP_HACT_ST(panel->lsl + panel->lbl - 1));
+		   RK3576_DSP_HACT_END(val) | RK3576_DSP_HACT_ST(lsl + lbl - 1));
 	tcon_write(tcon, RK3576_EBC_DSP_VTIMING0,
 		   RK3576_DSP_VTOTAL(panel->fsl + panel->fbl + panel->fdl + panel->fel) |
 		   RK3576_DSP_VS_END(panel->fsl));
@@ -352,7 +374,7 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 		   RK3576_WIN_ACT_WIDTH(width));
 	tcon_write(tcon, RK3576_EBC_WIN_DSP, RK3576_WIN_DSP_HEIGHT(height) |
 		   RK3576_WIN_DSP_WIDTH(width));
-	if (width != vir_width || height != vir_height) {
+	if (!PANEL_IS_24BIT(panel) && (width != vir_width || height != vir_height)) {
 		if (((vir_width - width) / 2) % 2)
 			dev_warn(tcon->dev,
 				 "Margin left/right between width/vir_width must be same\n");
@@ -360,24 +382,24 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 			dev_warn(tcon->dev,
 				 "Margin top/bottom between height/vir_height must be same\n");
 
-		val = panel->panel_16bit ? 8 : 4;
+		val = PANEL_IS_16BIT(panel) ? 8 : 4;
 		if (((vir_width - width) / 2) % val)
 			dev_warn(tcon->dev,
 				 "Margin left/right between width/vir_width must align with %d\n",
 				 val);
 
 		val = RK3576_WIN_DSP_YST(panel->fsl + panel->fbl + (vir_height - height) / 2);
-		if (panel->panel_16bit)
-			val |= RK3576_WIN_DSP_XST(panel->lsl + panel->lbl +
+		if (PANEL_IS_16BIT(panel))
+			val |= RK3576_WIN_DSP_XST(lsl + lbl +
 						  (vir_width - width) / 2 / 8);
 		else
-			val |= RK3576_WIN_DSP_XST(panel->lsl + panel->lbl +
+			val |= RK3576_WIN_DSP_XST(lsl + lbl +
 						  (vir_width - width) / 2 / 4);
 		tcon_write(tcon, RK3576_EBC_WIN_DSP_ST, val);
 	} else {
 		tcon_write(tcon, RK3576_EBC_WIN_DSP_ST,
 			   RK3576_WIN_DSP_YST(panel->fsl + panel->fbl) |
-			   RK3576_WIN_DSP_XST(panel->lsl + panel->lbl));
+			   RK3576_WIN_DSP_XST(lsl + lbl));
 	}
 
 	/*
@@ -404,6 +426,14 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 		   RK3576_SW_AXI_RD_URGENCY_EN | RK3576_SW_NOC_HURRY_THRESHOLD(12) |
 		   RK3576_SW_NOC_HURRY_VALUE(3) | RK3576_SW_NOC_HURRY_EN |
 		   RK3576_SW_NOC_QOS_VALUE(3) | RK3576_SW_NOC_QOS_EN);
+
+	if (PANEL_IS_24BIT(panel))
+		sddw_mode = 2;
+	else if (PANEL_IS_16BIT(panel))
+		sddw_mode = 1;
+	else
+		sddw_mode = 0;
+
 	/*
 	 * RK3576_EBC_EPD_CTRL info:
 	 * DSP_GD_END : GCLK falling edge point(SCLK), which count from the rising edge of hsync
@@ -415,15 +445,15 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 	 * EPD_SDSHR: source scanning direction 1: right to left 0: left to right
 	 */
 	tcon_write(tcon, RK3576_EBC_EPD_CTRL, RK3576_EINK_MODE_SWAP(1) |
-		   RK3576_DSP_GD_ST(panel->lsl + panel->gdck_sta) |
-		   RK3576_DSP_GD_END(panel->lsl + panel->gdck_sta + panel->lgonl) |
-		   RK3576_DSP_THREE_WIN_MODE(0) | RK3576_DSP_SDDW_MODE(!!panel->panel_16bit) |
+		   RK3576_DSP_GD_ST(lsl + gdck_sta) |
+		   RK3576_DSP_GD_END(lsl + gdck_sta + lgonl) |
+		   RK3576_DSP_THREE_WIN_MODE(0) | RK3576_DSP_SDDW_MODE(sddw_mode) |
 		   RK3576_EPD_AUO(0) | RK3576_EPD_GDRL(1) | RK3576_EPD_SDSHR(1));
 
 	tcon_write(tcon, RK3576_EBC_DSP_START, 0);
 
 	if (panel->sdce_width == 0)
-		val = RK3576_DSP_SDCE_WIDTH(panel->ldl);
+		val = RK3576_DSP_SDCE_WIDTH(ldl);
 	else
 		val = RK3576_DSP_SDCE_WIDTH(panel->sdce_width);
 
@@ -431,7 +461,43 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 	if (tcon->version == EBC_VERSION_RK3572)
 		val |= RK3572_WIN2_MUX(1);
 
-	tcon_write(tcon, RK3576_EBC_DSP_CTRL2, RK3576_SW_BURST_CTRL | val);
+	if (panel->data_rate == 2) {
+		output_mode = 1;
+		sdclk_pol = 1;
+	} else {
+		output_mode = 0;
+		sdclk_pol = 0;
+	}
+
+	/*
+	 * display_mode: 1 for 3bit/4bit per pixel, 0 for 2bit per pixel
+	 * swap_mode: { P0, P1, P2, P3, ... }
+	 */
+	if (PANEL_IS_24BIT(panel)) {
+		display_mode = 1;
+		swap_mode = 2;
+	} else if (PANEL_IS_16BIT(panel)) {
+		if ((panel->data_rate == 1 && panel->ldl * 4 == panel->vir_width) ||
+		    (panel->data_rate == 2 && panel->ldl * 8 == panel->vir_width)) {
+			/* 4bit per pixel */
+			display_mode = 1;
+			swap_mode = 3;
+		} else {
+			/* 2bit per pixel */
+			display_mode = 0;
+			swap_mode = 2;
+		}
+	} else {
+		display_mode = 0;
+		swap_mode = 3;
+	}
+
+	if (tcon->version == EBC_VERSION_RK3576)
+		tcon_write(tcon, RK3576_EBC_DSP_CTRL2, RK3576_SW_BURST_CTRL | val);
+	else
+		tcon_write(tcon, RK3576_EBC_DSP_CTRL2, RK3576_SW_BURST_CTRL |
+			   RK3572_DISPLAY_MODE(display_mode) | RK3572_OUTPUT_MODE(output_mode) |
+			   val);
 
 	/**
 	 *  SDOE_MODE 1 : sdce signal act as vden
@@ -442,8 +508,8 @@ static int rk3576_tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 	else
 		val = RK3576_DSP_SDOE_MODE(0);
 	tcon_write(tcon, RK3576_EBC_DSP_CTRL,
-		   RK3576_DSP_SWAP_MODE(panel->panel_16bit ? 2 : 3) | RK3576_DSP_VCOM_MODE(1) |
-		   val);
+		   RK3576_DSP_SWAP_MODE(swap_mode) | RK3576_DSP_VCOM_MODE(1) |
+		   RK3576_DSP_SDCLK_POL(sdclk_pol) | val);
 	/* unmask RK3576_DSP_END_INT_MASK */
 	tcon_update_bits(tcon, RK3576_EBC_INT_STATUS, RK3576_DSP_END_INT_MASK |
 			 RK3576_DSP_FRM_INT_MASK | RK3576_FRM_END_INT_MASK |
@@ -483,19 +549,19 @@ static void rk3576_tcon_dsp_mode_set(struct ebc_tcon *tcon, int update_mode,
 	int ret;
 
 	if (panel && display_mode != tcon->display_mode) {
-		if (display_mode == DIRECT_MODE && panel->panel_16bit)
+		if (display_mode == DIRECT_MODE && PANEL_IS_16BIT(panel))
 			ret = tcon->clk_set_rate(tcon->dclk, panel->sdck);
 		else
-			ret = tcon->clk_set_rate(tcon->dclk,
-						 panel->sdck * ((panel->panel_16bit ? 7 : 3) + 1));
+			ret = tcon->clk_set_rate(tcon->dclk, panel->sdck *
+						 ((PANEL_IS_16BIT(panel) ? 7 : 3) + 1));
 		if (ret)
 			dev_err(tcon->dev, "Failed to set dclk:%d\n", ret);
 	}
 
-	if (display_mode == DIRECT_MODE && panel && panel->panel_16bit)
+	if (display_mode == DIRECT_MODE && panel && PANEL_IS_16BIT(panel))
 		val = RK3576_DSP_SDCLK_DIV(0);
 	else
-		val = RK3576_DSP_SDCLK_DIV((panel && panel->panel_16bit) ? 7 : 3);
+		val = RK3576_DSP_SDCLK_DIV((panel && PANEL_IS_16BIT(panel)) ? 7 : 3);
 
 	tcon->display_mode = display_mode;
 
@@ -522,14 +588,20 @@ static void rk3572_tcon_dsp_mode_set(struct ebc_tcon *tcon, int update_mode,
 				     int eink_mode)
 {
 	struct ebc_panel *panel = tcon->panel;
-	u32 val;
+	u32 rate;
+	u8 sdclk_div;
 	int ret;
 
-	ret = tcon->clk_set_rate(tcon->dclk, panel->sdck * ((panel->panel_16bit ? 1 : 0) + 1));
+	/* 4 pixel per clk */
+	sdclk_div = 1;
+	if (panel->data_rate == 2)
+		rate = panel->sdck * 4;
+	else
+		rate = panel->sdck * 2;
+
+	ret = tcon->clk_set_rate(tcon->dclk, rate);
 	if (ret)
 		dev_err(tcon->dev, "Failed to set dclk:%d\n", ret);
-
-	val = RK3576_DSP_SDCLK_DIV((panel && panel->panel_16bit) ? 1 : 0);
 
 	tcon->display_mode = display_mode;
 
@@ -539,7 +611,8 @@ static void rk3572_tcon_dsp_mode_set(struct ebc_tcon *tcon, int update_mode,
 	tcon_update_bits(tcon, RK3576_EBC_DSP_CTRL, RK3576_UPDATE_MODE_MASK |
 			 RK3576_DISPLAY_MODE_MASK | RK3576_DSP_SDCLK_DIV_MASK,
 			 RK3576_DSP_UPDATE_MODE(!!update_mode) |
-			 RK3576_DSP_DISPLAY_MODE(!!display_mode) | val);
+			 RK3576_DSP_DISPLAY_MODE(!!display_mode) |
+			 RK3576_DSP_SDCLK_DIV(sdclk_div));
 	rk3576_tcon_cfg_done(tcon);
 }
 
@@ -626,7 +699,7 @@ static int tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 	 * from rasing edge of hsync, not falling edge of hsync)
 	 * DSP_GD_END : GCLK falling edge point(SCLK), which count from the rasing edge of hsync
 	 * DSP_THREE_WIN_MODE: 0: lut mode or direct mode; 1: three win mode
-	 * DSP_SDDW_MODE: 0: 8 bit data output; 1: 16 bit data output
+	 * DSP_SDDW_MODE: 0: 8 bit data output; 1: 16 bit data output; 2: 24 bit data output
 	 * EPD_AUO: 0: EINK; 1:AUO
 	 * EPD_GDRL: gate scanning direction: 1: button to top 0: top to button
 	 * EPD_SDSHR: source scanning direction 1: right to left 0: left to right
@@ -635,7 +708,7 @@ static int tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 				| DSP_GD_ST(panel->lsl + panel->gdck_sta)
 				| DSP_GD_END(panel->lsl + panel->gdck_sta + panel->lgonl)
 				| DSP_THREE_WIN_MODE(0)
-				| DSP_SDDW_MODE(!!panel->panel_16bit)
+				| DSP_SDDW_MODE(!!PANEL_IS_16BIT(panel))
 				| EPD_AUO(0)
 				| EPD_GDRL(1)
 				| EPD_SDSHR(1));
@@ -643,7 +716,7 @@ static int tcon_enable(struct ebc_tcon *tcon, struct ebc_panel *panel)
 	dclk_rate = clk_get_rate(clk_get_parent(tcon->dclk));
 	div = DIV_ROUND_CLOSEST(dclk_rate, panel->sdck);
 	tcon_write(tcon, EBC_DSP_CTRL,
-				DSP_SWAP_MODE(panel->panel_16bit ? 2 : 3) | DSP_VCOM_MODE(1) |
+				DSP_SWAP_MODE(PANEL_IS_16BIT(panel) ? 2 : 3) | DSP_VCOM_MODE(1) |
 				DSP_SDCLK_DIV(div ? div - 1 : div));
 	/* unmask DSP_END_INT_MASK */
 	tcon_update_bits(tcon, EBC_INT_STATUS, FRM_END_INT_MASK | DSP_END_INT_MASK |

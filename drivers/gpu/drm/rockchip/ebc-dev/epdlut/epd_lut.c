@@ -140,7 +140,7 @@ int epd_normal_repair(u8 *wf_table, int frame_num)
 
 //return value
 //0 : no modify  1: modify by customer
-int epd_regal_repair(u8 *wf_table, int frame_num)
+int epd_regal_repair(u8 *wf_table, int frame_num, int regal_repair)
 {
 	return 0;
 }
